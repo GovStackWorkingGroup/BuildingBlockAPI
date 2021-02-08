@@ -1,0 +1,157 @@
+---
+openapi: 3.0.0
+info:
+  title: Registration Building Block API
+  description: Registration Building Block API
+  contact:
+    email: you@your-company.com
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  version: 1.0.0-oas3-oas3
+servers:
+- url: https://virtserver.swaggerhub.com/DigitalImpactAllianc/Registration/1.0.0
+tags:
+- name: admins
+  description: Secured Admin-only calls
+- name: developers
+  description: Operations available to regular developers
+paths:
+  /facility:
+    get:
+      tags:
+      - developers
+      summary: returns data about a particular facility
+      description: |
+        Pass in the ID of the facility and it will return all information about that facility
+      operationId: getFacility
+      parameters:
+      - name: facilityId
+        in: query
+        description: pass the unique identifier of the facility
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: integer
+      responses:
+        "200":
+          description: search results matching criteria
+          content:
+            application/json:
+              schema:
+                type: object
+                items:
+                  $ref: '#/components/schemas/Facility'
+        "404":
+          description: facility not found
+    post:
+      tags:
+      - admins
+      summary: adds a facility
+      description: Adds a facility to the system
+      operationId: addFacility
+      requestBody:
+        description: Inventory item to add
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Facility'
+      responses:
+        "201":
+          description: item created
+        "400":
+          description: invalid input, object invalid
+        "409":
+          description: an existing item already exists
+components:
+  schemas:
+    Person:
+      required:
+      - birthDate
+      - firstName
+      - governmentId
+      - id
+      - mobileNumber
+      - surname
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        surname:
+          type: string
+        firstName:
+          type: string
+        birthDate:
+          type: string
+          format: date
+          example: 2016-08-29
+        mobileNumber:
+          type: string
+          example: +1(555)555-5555
+        governmentId:
+          type: string
+          description: Government Issued ID Number
+          example: A0244251
+        program:
+          $ref: '#/components/schemas/Program'
+    Program:
+      required:
+      - description
+      - id
+      - name
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+          example: Vaccination Outreach Program
+        description:
+          type: string
+        contact:
+          type: string
+          example: Hani Eskandar
+    Facility:
+      required:
+      - facilityType
+      - name
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+          example: Kigali Central Hospital
+        facilityType:
+          type: string
+          example: Hospital
+          enum:
+          - Hospital
+          - School
+        location:
+          $ref: '#/components/schemas/Location'
+    Location:
+      required:
+      - latitude
+      - longitude
+      type: object
+      properties:
+        country:
+          type: string
+          example: Rwanda
+        city:
+          type: string
+          example: Kigali
+        latitude:
+          type: number
+          format: float
+        longitude:
+          type: number
+          format: float
+  securitySchemes:
+    basicAuth:
+      type: http
+      scheme: basic
