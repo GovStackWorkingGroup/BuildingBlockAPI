@@ -1,0 +1,36 @@
+title Registration Workflow
+
+Front End Application->Registration: Create Registration
+note right of Front End Application
+    Registration data:
+    Name
+    Address
+    Birth date
+    Phone Number
+    ID (optional)
+end note
+
+Registration->ID: Validate ID
+note right of Registration: Look up ID and name in database
+opt error
+    ID-->Registration: Validation Error
+    Registration-->Front End Application:Return 400 - Invalid ID
+    note left of Front End Application
+        User corrects and
+        resubmits data
+    end note
+    Front End Application->Registration: Create Registration
+    Registration->ID: Validate ID
+end
+ID->Registration: Validation Success
+note over Registration
+    Internal De-duplication search
+end note
+opt record exists
+    Registration-->Front End Application:Return 400 - Record exists
+end
+note over Registration
+    Store registration record
+end note
+Registration->Front End Application:Return 201 - Record created
+
