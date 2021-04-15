@@ -28,7 +28,19 @@ const endpoints: [
     // a list of message types to 'subscribe to' for multicast
     subscribesToMessageTypes: [
       { type: 'patientRegistration', endpoint: '/api/v2/newPatient' },
-      { type: 'patientReferral', endpoint: '/api/v2/referralMade' }
+      {
+        type: 'patientReferral',
+        endpoint: '/api/v2/referralMade',
+        transformation: state => {
+          return {
+            patientId: state.data.id,
+            referralType: 'external',
+            conditions: state.data.known_conditions.map(x => ({ cid: x.id, description: x.desc })),
+            name: state.data.surname,
+            dob: state.data.date_of_birth
+          }
+        }
+      }
     ],
   }
 ];
