@@ -1,6 +1,14 @@
 // Message types for multicast
 const standards: [
   {
+    'type': 'birth',
+    requiredStructure: {
+      'date': 'string',
+      'liveBirth': 'boolean',
+      'motherId': 'string', 
+    },
+  },
+  {
     type: 'patientReferral',
     requiredStructure: {
       citizenId: 'string',
