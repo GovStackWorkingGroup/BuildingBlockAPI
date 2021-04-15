@@ -1,3 +1,16 @@
+// Message types for multicast
+const standards: [
+  {
+    type: 'patientReferral',
+    requiredStructure: {
+      citizenId: 'string',
+      fromProvider: 'string',
+      toProvider: 'string',
+      service: 'string'
+    }
+];
+
+// Registered endpoints/services on the information mediator
 const endpoints: [
   {
     id: 'payment-gateway-123'
