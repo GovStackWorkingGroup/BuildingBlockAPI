@@ -31,6 +31,7 @@ const endpoints: [
       {
         type: 'patientReferral',
         endpoint: '/api/v2/referralMade',
+        // @Ramkumar, a transformation may be defined so that endpoints can ingest standard data from the multicast
         transformation: state => {
           return {
             patientId: state.data.id,
