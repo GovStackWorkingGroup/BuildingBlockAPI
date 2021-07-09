@@ -1,1 +1,894 @@
-{"openapi":"3.0.1","info":{"title":"Citizen register","description":"","version":"1.0"},"servers":[{"url":"http://ss2.egovstack.net/r1/eGovStack/COM/11222456/swaggerhub/creg/"}],"tags":[{"name":"Data","description":""}],"paths":{"/data/CR/1.0":{"get":{"tags":["Data"],"operationId":"GDB-CR(1.0)-list","summary":"GDB-CR(1.0)-list","parameters":[{"name":"search","in":"query","required":false,"schema":{"type":"string"}},{"name":"filter","in":"query","required":false,"schema":{"type":"string"}},{"name":"ordering","in":"query","required":false,"schema":{"type":"string"}},{"name":"page","in":"query","required":false,"schema":{"type":"integer"}},{"name":"page_size","in":"query","required":false,"schema":{"type":"integer"}},{"name":"query.ID","in":"query","required":false,"schema":{"type":"string","readOnly":true}},{"name":"query.FirstName","in":"query","required":false,"schema":{"type":"string"}},{"name":"query.LastName","in":"query","required":false,"schema":{"type":"string"}},{"name":"query.BirthCertificateID","in":"query","required":false,"schema":{"type":"string"}}],"responses":{"200":{"description":"","content":{"application/json":{"schema":{"type":"object","properties":{"count":{"type":"integer"},"next":{"type":"string","format":"uri","x-nullable":true},"previous":{"type":"string","format":"uri","x-nullable":true},"results":{"type":"array","items":{"type":"object","properties":{"content":{"type":"object","properties":{"ID":{"type":"string"},"FirstName":{"type":"string"},"LastName":{"type":"string"},"BirthCertificateID":{"type":"string"}},"required":["ID"]}}}}},"required":["count","results"]}}}}},"security":[{"apiKey":[]}]}},"/data/CR/1.0/create":{"post":{"tags":["Data"],"operationId":"GDB-CR(1.0)-create","summary":"GDB-CR(1.0)-create","requestBody":{"description":"","required":true,"content":{"application/json":{"schema":{"type":"object","properties":{"write":{"type":"object","properties":{"content":{"type":"object","properties":{"ID":{"type":"string"},"FirstName":{"type":"string"},"LastName":{"type":"string"},"BirthCertificateID":{"type":"string"}},"required":["ID"]}},"required":["content"]}},"required":["write"]}}}},"responses":{"200":{"description":"","content":{"application/json":{"schema":{"type":"object","properties":{"content":{"type":"object","properties":{"ID":{"type":"string"},"FirstName":{"type":"string"},"LastName":{"type":"string"},"BirthCertificateID":{"type":"string"}},"required":["ID"]}}}}}}},"security":[{"apiKey":[]}]}},"/data/CR/1.0/exists":{"post":{"tags":["Data"],"operationId":"GDB-CR(1.0)-exists","summary":"GDB-CR(1.0)-exists","requestBody":{"description":"","required":true,"content":{"application/json":{"schema":{"type":"object","properties":{"query":{"type":"object","properties":{"content":{"type":"object","properties":{"ID":{"type":"string"},"FirstName":{"type":"string"},"LastName":{"type":"string"},"BirthCertificateID":{"type":"string"}}}},"required":["content"]}},"required":["query"]}}}},"responses":{"200":{"description":"","content":{"application/json":{"schema":{"type":"object","properties":{"answer":{"type":"object","properties":{"status":{"type":"boolean"},"message":{"type":"string"}},"required":["status"]}},"required":["answer"]}}}}},"security":[{"apiKey":[]}]}},"/data/CR/1.0/read":{"post":{"tags":["Data"],"operationId":"GDB-CR(1.0)-read","summary":"GDB-CR(1.0)-read","requestBody":{"description":"","required":true,"content":{"application/json":{"schema":{"type":"object","properties":{"query":{"type":"object","properties":{"content":{"type":"object","properties":{"ID":{"type":"string"},"FirstName":{"type":"string"},"LastName":{"type":"string"},"BirthCertificateID":{"type":"string"}}}},"required":["content"]}},"required":["query"]}}}},"responses":{"200":{"description":"","content":{"application/json":{"schema":{"type":"object","properties":{"content":{"type":"object","properties":{"ID":{"type":"string"},"FirstName":{"type":"string"},"LastName":{"type":"string"},"BirthCertificateID":{"type":"string"}},"required":["ID"]}}}}}}},"security":[{"apiKey":[]}]}},"/data/CR/1.0/update":{"put":{"tags":["Data"],"operationId":"GDB-CR(1.0)-update","summary":"GDB-CR(1.0)-update","requestBody":{"description":"","required":true,"content":{"application/json":{"schema":{"type":"object","properties":{"query":{"type":"object","properties":{"content":{"type":"object","properties":{"ID":{"type":"string"},"FirstName":{"type":"string"},"LastName":{"type":"string"},"BirthCertificateID":{"type":"string"}},"required":["ID"]}},"required":["content"]},"write":{"type":"object","properties":{"content":{"type":"object","properties":{"ID":{"type":"string"},"FirstName":{"type":"string"},"LastName":{"type":"string"},"BirthCertificateID":{"type":"string"}},"required":["ID"]}},"required":["content"]}},"required":["write"]}}}},"responses":{"200":{"description":""}},"security":[{"apiKey":[]}]}},"/data/CR/1.0/update-entries":{"put":{"tags":["Data"],"operationId":"GDB-CR(1.0)-update-entries","summary":"GDB-CR(1.0)-update-entries","requestBody":{"description":"","required":true,"content":{"application/json":{"schema":{"type":"object","properties":{"query":{"type":"object","properties":{"content":{"type":"object","properties":{"ID":{"type":"string"},"FirstName":{"type":"string"},"LastName":{"type":"string"},"BirthCertificateID":{"type":"string"}},"required":["ID"]}},"required":["content"]},"write":{"type":"object","properties":{"content":{"type":"object","properties":{"ID":{"type":"string"},"FirstName":{"type":"string"},"LastName":{"type":"string"},"BirthCertificateID":{"type":"string"}},"required":["ID"]}},"required":["content"]}},"required":["write"]}}}},"responses":{"200":{"description":""}},"security":[{"apiKey":[]}]}},"/data/CR/1.0/update-or-create":{"post":{"tags":["Data"],"operationId":"GDB-CR(1.0)-update-or-create","summary":"GDB-CR(1.0)-update-or-create","requestBody":{"description":"","required":true,"content":{"application/json":{"schema":{"type":"object","properties":{"query":{"type":"object","properties":{"content":{"type":"object","properties":{"ID":{"type":"string"},"FirstName":{"type":"string"},"LastName":{"type":"string"},"BirthCertificateID":{"type":"string"}}}},"required":["content"]},"write":{"type":"object","properties":{"content":{"type":"object","properties":{"ID":{"type":"string"},"FirstName":{"type":"string"},"LastName":{"type":"string"},"BirthCertificateID":{"type":"string"}}}},"required":["content"]}},"required":["write"]}}}},"responses":{"200":{"description":"","content":{"application/json":{"schema":{"type":"object","properties":{"content":{"type":"object","properties":{"ID":{"type":"string"},"FirstName":{"type":"string"},"LastName":{"type":"string"},"BirthCertificateID":{"type":"string"}},"required":["ID"]}}}}}}},"security":[{"apiKey":[]}]}},"/data/CR/1.0/{ID}/delete":{"delete":{"tags":["Data"],"operationId":"GDB-CR(1.0)-delete","summary":"GDB-CR(1.0)-delete","parameters":[{"name":"ID","in":"path","required":true,"schema":{"type":"string"}}],"responses":{"204":{"description":""}},"security":[{"apiKey":[]}]}},"/data/CR/1.0/{uuid}/read-value/{field}.{ext}":{"get":{"tags":["Data"],"operationId":"GDB-CR(1.0)-read-value","summary":"GDB-CR(1.0)-read-value","parameters":[{"name":"uuid","in":"path","required":true,"schema":{"type":"string"}},{"name":"field","in":"path","required":true,"schema":{"type":"string"}},{"name":"ext","in":"path","required":true,"schema":{"type":"string"}}],"responses":{"200":{"description":"","content":{"application/json":{"schema":{"anyOf":[{"type":"string"},{"type":"object","properties":{"value":{"anyOf":[{"type":"array","items":{"anyOf":[{"type":"boolean"},{"type":"integer"},{"type":"number"},{"type":"object"},{"type":"string"}]}},{"type":"boolean"},{"type":"integer"},{"type":"number"},{"type":"object"},{"type":"string"}]}}}]}}}}},"security":[{"apiKey":[]}]}}},"components":{"securitySchemes":{"apiKey":{"type":"apiKey","name":"Authorization","in":"header"}}}}
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "Citizen register",
+    "description": "",
+    "version": "1.0"
+  },
+  "servers": [
+    {
+      "url": "http://ss2.egovstack.net/r1/eGovStack/COM/11222456/swaggerhub/creg/"
+    }
+  ],
+  "tags": [
+    {
+      "name": "Data",
+      "description": ""
+    }
+  ],
+  "paths": {
+    "/data/CR/1.0": {
+      "get": {
+        "tags": [
+          "Data"
+        ],
+        "operationId": "GDB-CR(1.0)-list",
+        "summary": "GDB-CR(1.0)-list",
+        "parameters": [
+          {
+            "name": "search",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "filter",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "ordering",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "page_size",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "query.ID",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "readOnly": true
+            }
+          },
+          {
+            "name": "query.FirstName",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "query.LastName",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "query.BirthCertificateID",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "count": {
+                      "type": "integer"
+                    },
+                    "next": {
+                      "type": "string",
+                      "format": "uri",
+                      "x-nullable": true
+                    },
+                    "previous": {
+                      "type": "string",
+                      "format": "uri",
+                      "x-nullable": true
+                    },
+                    "results": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "content": {
+                            "type": "object",
+                            "properties": {
+                              "ID": {
+                                "type": "string"
+                              },
+                              "FirstName": {
+                                "type": "string"
+                              },
+                              "LastName": {
+                                "type": "string"
+                              },
+                              "BirthCertificateID": {
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "ID"
+                            ]
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "required": [
+                    "count",
+                    "results"
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "apiKey": []
+          }
+        ]
+      }
+    },
+    "/data/CR/1.0/create": {
+      "post": {
+        "parameters":{
+          "$ref":"#/components/parameters/X-Road-Client"
+        }
+        "tags": [
+          "Data"
+        ],
+        "operationId": "GDB-CR(1.0)-create",
+        "summary": "GDB-CR(1.0)-create",
+        "requestBody": {
+          "description": "",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "write": {
+                    "type": "object",
+                    "properties": {
+                      "content": {
+                        "type": "object",
+                        "properties": {
+                          "ID": {
+                            "type": "string"
+                          },
+                          "FirstName": {
+                            "type": "string"
+                          },
+                          "LastName": {
+                            "type": "string"
+                          },
+                          "BirthCertificateID": {
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "ID"
+                        ]
+                      }
+                    },
+                    "required": [
+                      "content"
+                    ]
+                  }
+                },
+                "required": [
+                  "write"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "content": {
+                      "type": "object",
+                      "properties": {
+                        "ID": {
+                          "type": "string"
+                        },
+                        "FirstName": {
+                          "type": "string"
+                        },
+                        "LastName": {
+                          "type": "string"
+                        },
+                        "BirthCertificateID": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "ID"
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "apiKey": []
+          }
+        ]
+      }
+    },
+    "/data/CR/1.0/exists": {
+      "post": {
+        "parameters":{
+          "$ref":"#/components/parameters/X-Road-Client"
+        }
+        "tags": [
+          "Data"
+        ],
+        "operationId": "GDB-CR(1.0)-exists",
+        "summary": "GDB-CR(1.0)-exists",
+        "requestBody": {
+          "description": "",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "query": {
+                    "type": "object",
+                    "properties": {
+                      "content": {
+                        "type": "object",
+                        "properties": {
+                          "ID": {
+                            "type": "string"
+                          },
+                          "FirstName": {
+                            "type": "string"
+                          },
+                          "LastName": {
+                            "type": "string"
+                          },
+                          "BirthCertificateID": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    },
+                    "required": [
+                      "content"
+                    ]
+                  }
+                },
+                "required": [
+                  "query"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "answer": {
+                      "type": "object",
+                      "properties": {
+                        "status": {
+                          "type": "boolean"
+                        },
+                        "message": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "status"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "answer"
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "apiKey": []
+          }
+        ]
+      }
+    },
+    "/data/CR/1.0/read": {
+      "post": {
+        "parameters":{
+          "$ref":"#/components/parameters/X-Road-Client"
+        }
+        "tags": [
+          "Data"
+        ],
+        "operationId": "GDB-CR(1.0)-read",
+        "summary": "GDB-CR(1.0)-read",
+        "requestBody": {
+          "description": "",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "query": {
+                    "type": "object",
+                    "properties": {
+                      "content": {
+                        "type": "object",
+                        "properties": {
+                          "ID": {
+                            "type": "string"
+                          },
+                          "FirstName": {
+                            "type": "string"
+                          },
+                          "LastName": {
+                            "type": "string"
+                          },
+                          "BirthCertificateID": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    },
+                    "required": [
+                      "content"
+                    ]
+                  }
+                },
+                "required": [
+                  "query"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "content": {
+                      "type": "object",
+                      "properties": {
+                        "ID": {
+                          "type": "string"
+                        },
+                        "FirstName": {
+                          "type": "string"
+                        },
+                        "LastName": {
+                          "type": "string"
+                        },
+                        "BirthCertificateID": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "ID"
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "apiKey": []
+          }
+        ]
+      }
+    },
+    "/data/CR/1.0/update": {
+      "put": {
+        "tags": [
+          "Data"
+        ],
+        "operationId": "GDB-CR(1.0)-update",
+        "summary": "GDB-CR(1.0)-update",
+        "requestBody": {
+          "description": "",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "query": {
+                    "type": "object",
+                    "properties": {
+                      "content": {
+                        "type": "object",
+                        "properties": {
+                          "ID": {
+                            "type": "string"
+                          },
+                          "FirstName": {
+                            "type": "string"
+                          },
+                          "LastName": {
+                            "type": "string"
+                          },
+                          "BirthCertificateID": {
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "ID"
+                        ]
+                      }
+                    },
+                    "required": [
+                      "content"
+                    ]
+                  },
+                  "write": {
+                    "type": "object",
+                    "properties": {
+                      "content": {
+                        "type": "object",
+                        "properties": {
+                          "ID": {
+                            "type": "string"
+                          },
+                          "FirstName": {
+                            "type": "string"
+                          },
+                          "LastName": {
+                            "type": "string"
+                          },
+                          "BirthCertificateID": {
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "ID"
+                        ]
+                      }
+                    },
+                    "required": [
+                      "content"
+                    ]
+                  }
+                },
+                "required": [
+                  "write"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "apiKey": []
+          }
+        ]
+      }
+    },
+    "/data/CR/1.0/update-entries": {
+      "put": {
+        "tags": [
+          "Data"
+        ],
+        "operationId": "GDB-CR(1.0)-update-entries",
+        "summary": "GDB-CR(1.0)-update-entries",
+        "requestBody": {
+          "description": "",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "query": {
+                    "type": "object",
+                    "properties": {
+                      "content": {
+                        "type": "object",
+                        "properties": {
+                          "ID": {
+                            "type": "string"
+                          },
+                          "FirstName": {
+                            "type": "string"
+                          },
+                          "LastName": {
+                            "type": "string"
+                          },
+                          "BirthCertificateID": {
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "ID"
+                        ]
+                      }
+                    },
+                    "required": [
+                      "content"
+                    ]
+                  },
+                  "write": {
+                    "type": "object",
+                    "properties": {
+                      "content": {
+                        "type": "object",
+                        "properties": {
+                          "ID": {
+                            "type": "string"
+                          },
+                          "FirstName": {
+                            "type": "string"
+                          },
+                          "LastName": {
+                            "type": "string"
+                          },
+                          "BirthCertificateID": {
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "ID"
+                        ]
+                      }
+                    },
+                    "required": [
+                      "content"
+                    ]
+                  }
+                },
+                "required": [
+                  "write"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "apiKey": []
+          }
+        ]
+      }
+    },
+    "/data/CR/1.0/update-or-create": {
+      "post": {
+        "parameters":{
+          "$ref":"#/components/parameters/X-Road-Client"
+        }
+        "tags": [
+          "Data"
+        ],
+        "operationId": "GDB-CR(1.0)-update-or-create",
+        "summary": "GDB-CR(1.0)-update-or-create",
+        "requestBody": {
+          "description": "",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "query": {
+                    "type": "object",
+                    "properties": {
+                      "content": {
+                        "type": "object",
+                        "properties": {
+                          "ID": {
+                            "type": "string"
+                          },
+                          "FirstName": {
+                            "type": "string"
+                          },
+                          "LastName": {
+                            "type": "string"
+                          },
+                          "BirthCertificateID": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    },
+                    "required": [
+                      "content"
+                    ]
+                  },
+                  "write": {
+                    "type": "object",
+                    "properties": {
+                      "content": {
+                        "type": "object",
+                        "properties": {
+                          "ID": {
+                            "type": "string"
+                          },
+                          "FirstName": {
+                            "type": "string"
+                          },
+                          "LastName": {
+                            "type": "string"
+                          },
+                          "BirthCertificateID": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    },
+                    "required": [
+                      "content"
+                    ]
+                  }
+                },
+                "required": [
+                  "write"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "content": {
+                      "type": "object",
+                      "properties": {
+                        "ID": {
+                          "type": "string"
+                        },
+                        "FirstName": {
+                          "type": "string"
+                        },
+                        "LastName": {
+                          "type": "string"
+                        },
+                        "BirthCertificateID": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "ID"
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "apiKey": []
+          }
+        ]
+      }
+    },
+    "/data/CR/1.0/{ID}/delete": {
+      "delete": {
+        "tags": [
+          "Data"
+        ],
+        "operationId": "GDB-CR(1.0)-delete",
+        "summary": "GDB-CR(1.0)-delete",
+        "parameters": [
+          {
+            "name": "ID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "apiKey": []
+          }
+        ]
+      }
+    },
+    "/data/CR/1.0/{uuid}/read-value/{field}.{ext}": {
+      "get": {
+        "tags": [
+          "Data"
+        ],
+        "operationId": "GDB-CR(1.0)-read-value",
+        "summary": "GDB-CR(1.0)-read-value",
+        "parameters": [
+          {
+            "name": "uuid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "field",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "ext",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "value": {
+                          "anyOf": [
+                            {
+                              "type": "array",
+                              "items": {
+                                "anyOf": [
+                                  {
+                                    "type": "boolean"
+                                  },
+                                  {
+                                    "type": "integer"
+                                  },
+                                  {
+                                    "type": "number"
+                                  },
+                                  {
+                                    "type": "object"
+                                  },
+                                  {
+                                    "type": "string"
+                                  }
+                                ]
+                              }
+                            },
+                            {
+                              "type": "boolean"
+                            },
+                            {
+                              "type": "integer"
+                            },
+                            {
+                              "type": "number"
+                            },
+                            {
+                              "type": "object"
+                            },
+                            {
+                              "type": "string"
+                            }
+                          ]
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "apiKey": []
+          }
+        ]
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "apiKey": {
+        "type": "apiKey",
+        "name": "Authorization",
+        "in": "header"
+      }
+    "parameters": {
+      "X-Road-Client": {
+        "in": "header"
+        "name": "X-Road-Client",
+        "example": "eGovStack/GOV/90000009/eregistrations-dev",
+        "schema":{
+          "type": "string"
+        },
+        "required":true
+      }
+    }
+  }
+}
