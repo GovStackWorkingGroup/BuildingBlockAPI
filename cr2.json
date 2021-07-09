@@ -19,6 +19,9 @@
   "paths": {
     "/data/CR/1.0": {
       "get": {
+        "parameters":{
+          "$ref":"#/components/parameters/X-Road-Client"
+        },
         "tags": [
           "Data"
         ],
@@ -169,7 +172,7 @@
       "post": {
         "parameters":{
           "$ref":"#/components/parameters/X-Road-Client"
-        }
+        },
         "tags": [
           "Data"
         ],
@@ -264,7 +267,7 @@
       "post": {
         "parameters":{
           "$ref":"#/components/parameters/X-Road-Client"
-        }
+        },
         "tags": [
           "Data"
         ],
@@ -353,7 +356,7 @@
       "post": {
         "parameters":{
           "$ref":"#/components/parameters/X-Road-Client"
-        }
+        },
         "tags": [
           "Data"
         ],
@@ -443,6 +446,9 @@
     },
     "/data/CR/1.0/update": {
       "put": {
+        "parameters":{
+          "$ref":"#/components/parameters/X-Road-Client"
+        },
         "tags": [
           "Data"
         ],
@@ -534,6 +540,9 @@
     },
     "/data/CR/1.0/update-entries": {
       "put": {
+        "parameters":{
+          "$ref":"#/components/parameters/X-Road-Client"
+        },
         "tags": [
           "Data"
         ],
@@ -627,7 +636,7 @@
       "post": {
         "parameters":{
           "$ref":"#/components/parameters/X-Road-Client"
-        }
+        },
         "tags": [
           "Data"
         ],
@@ -771,6 +780,9 @@
     },
     "/data/CR/1.0/{uuid}/read-value/{field}.{ext}": {
       "get": {
+        "parameters":{
+          "$ref":"#/components/parameters/X-Road-Client"
+        },
         "tags": [
           "Data"
         ],
