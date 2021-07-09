@@ -19,15 +19,15 @@
   "paths": {
     "/data/CR/1.0": {
       "get": {
-        "parameters":{
-          "$ref":"#/components/parameters/X-Road-Client"
-        },
         "tags": [
           "Data"
         ],
         "operationId": "GDB-CR(1.0)-list",
         "summary": "GDB-CR(1.0)-list",
         "parameters": [
+          {
+            "$ref":"#/components/parameters/X-Road-Client"
+          },
           {
             "name": "search",
             "in": "query",
@@ -758,6 +758,9 @@
         "summary": "GDB-CR(1.0)-delete",
         "parameters": [
           {
+            "$ref":"#/components/parameters/X-Road-Client"
+          },
+          {
             "name": "ID",
             "in": "path",
             "required": true,
@@ -780,15 +783,15 @@
     },
     "/data/CR/1.0/{uuid}/read-value/{field}.{ext}": {
       "get": {
-        "parameters":{
-          "$ref":"#/components/parameters/X-Road-Client"
-        },
         "tags": [
           "Data"
         ],
         "operationId": "GDB-CR(1.0)-read-value",
         "summary": "GDB-CR(1.0)-read-value",
         "parameters": [
+          {
+            "$ref":"#/components/parameters/X-Road-Client"
+          },
           {
             "name": "uuid",
             "in": "path",
@@ -891,9 +894,10 @@
         "name": "Authorization",
         "in": "header"
       }
+    },
     "parameters": {
       "X-Road-Client": {
-        "in": "header"
+        "in": "header",
         "name": "X-Road-Client",
         "example": "eGovStack/GOV/90000009/eregistrations-dev",
         "schema":{
