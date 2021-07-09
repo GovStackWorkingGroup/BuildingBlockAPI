@@ -170,9 +170,11 @@
     },
     "/data/CR/1.0/create": {
       "post": {
-        "parameters":{
-          "$ref":"#/components/parameters/X-Road-Client"
-        },
+        "parameters":[
+          {
+            "$ref":"#/components/parameters/X-Road-Client"
+          }
+        ],
         "tags": [
           "Data"
         ],
@@ -265,9 +267,11 @@
     },
     "/data/CR/1.0/exists": {
       "post": {
-        "parameters":{
-          "$ref":"#/components/parameters/X-Road-Client"
-        },
+        "parameters":[
+          {
+            "$ref":"#/components/parameters/X-Road-Client"
+          }
+        ],
         "tags": [
           "Data"
         ],
@@ -354,9 +358,11 @@
     },
     "/data/CR/1.0/read": {
       "post": {
-        "parameters":{
-          "$ref":"#/components/parameters/X-Road-Client"
-        },
+        "parameters":[
+          {
+            "$ref":"#/components/parameters/X-Road-Client"
+          }
+        ],
         "tags": [
           "Data"
         ],
@@ -446,9 +452,11 @@
     },
     "/data/CR/1.0/update": {
       "put": {
-        "parameters":{
-          "$ref":"#/components/parameters/X-Road-Client"
-        },
+        "parameters":[
+          {
+            "$ref":"#/components/parameters/X-Road-Client"
+          }
+        ],
         "tags": [
           "Data"
         ],
@@ -540,9 +548,11 @@
     },
     "/data/CR/1.0/update-entries": {
       "put": {
-        "parameters":{
-          "$ref":"#/components/parameters/X-Road-Client"
-        },
+        "parameters":[
+          {
+            "$ref":"#/components/parameters/X-Road-Client"
+          }
+        ],
         "tags": [
           "Data"
         ],
@@ -634,9 +644,11 @@
     },
     "/data/CR/1.0/update-or-create": {
       "post": {
-        "parameters":{
-          "$ref":"#/components/parameters/X-Road-Client"
-        },
+        "parameters":[
+          {
+            "$ref":"#/components/parameters/X-Road-Client"
+          }
+        ],
         "tags": [
           "Data"
         ],
