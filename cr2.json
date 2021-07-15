@@ -450,7 +450,7 @@
         ]
       }
     },
-    "/data/CR/1.0/update": {
+    "/data/cr/1.0/update": {
       "put": {
         "parameters":[
           {
