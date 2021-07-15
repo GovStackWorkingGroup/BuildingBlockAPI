@@ -26,7 +26,7 @@
         "summary": "GDB-CR(1.0)-list",
         "parameters": [
           {
-            "$ref":"#/components/parameters/X-Road-Client"
+            "$ref": "#/components/parameters/X-Road-Client"
           },
           {
             "name": "search",
@@ -170,9 +170,9 @@
     },
     "/data/cr/1.0/create": {
       "post": {
-        "parameters":[
+        "parameters": [
           {
-            "$ref":"#/components/parameters/X-Road-Client"
+            "$ref": "#/components/parameters/X-Road-Client"
           }
         ],
         "tags": [
@@ -232,25 +232,30 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "content": {
+                    "receive": {
                       "type": "object",
                       "properties": {
-                        "ID": {
-                          "type": "string"
-                        },
-                        "FirstName": {
-                          "type": "string"
-                        },
-                        "LastName": {
-                          "type": "string"
-                        },
-                        "BirthCertificateID": {
-                          "type": "string"
+                        "content": {
+                          "type": "object",
+                          "properties": {
+                            "ID": {
+                              "type": "string"
+                            },
+                            "FirstName": {
+                              "type": "string"
+                            },
+                            "LastName": {
+                              "type": "string"
+                            },
+                            "BirthCertificateID": {
+                              "type": "string"
+                            }
+                          },
+                          "required": [
+                            "ID"
+                          ]
                         }
-                      },
-                      "required": [
-                        "ID"
-                      ]
+                      }
                     }
                   }
                 }
@@ -267,9 +272,9 @@
     },
     "/data/cr/1.0/exists": {
       "post": {
-        "parameters":[
+        "parameters": [
           {
-            "$ref":"#/components/parameters/X-Road-Client"
+            "$ref": "#/components/parameters/X-Road-Client"
           }
         ],
         "tags": [
@@ -358,9 +363,9 @@
     },
     "/data/cr/1.0/read": {
       "post": {
-        "parameters":[
+        "parameters": [
           {
-            "$ref":"#/components/parameters/X-Road-Client"
+            "$ref": "#/components/parameters/X-Road-Client"
           }
         ],
         "tags": [
@@ -417,25 +422,30 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "content": {
+                    "receive": {
                       "type": "object",
                       "properties": {
-                        "ID": {
-                          "type": "string"
-                        },
-                        "FirstName": {
-                          "type": "string"
-                        },
-                        "LastName": {
-                          "type": "string"
-                        },
-                        "BirthCertificateID": {
-                          "type": "string"
+                        "content": {
+                          "type": "object",
+                          "properties": {
+                            "ID": {
+                              "type": "string"
+                            },
+                            "FirstName": {
+                              "type": "string"
+                            },
+                            "LastName": {
+                              "type": "string"
+                            },
+                            "BirthCertificateID": {
+                              "type": "string"
+                            }
+                          },
+                          "required": [
+                            "ID"
+                          ]
                         }
-                      },
-                      "required": [
-                        "ID"
-                      ]
+                      }
                     }
                   }
                 }
@@ -452,9 +462,9 @@
     },
     "/data/cr/1.0/update": {
       "put": {
-        "parameters":[
+        "parameters": [
           {
-            "$ref":"#/components/parameters/X-Road-Client"
+            "$ref": "#/components/parameters/X-Road-Client"
           }
         ],
         "tags": [
@@ -548,9 +558,9 @@
     },
     "/data/cr/1.0/update-entries": {
       "put": {
-        "parameters":[
+        "parameters": [
           {
-            "$ref":"#/components/parameters/X-Road-Client"
+            "$ref": "#/components/parameters/X-Road-Client"
           }
         ],
         "tags": [
@@ -644,9 +654,9 @@
     },
     "/data/cr/1.0/update-or-create": {
       "post": {
-        "parameters":[
+        "parameters": [
           {
-            "$ref":"#/components/parameters/X-Road-Client"
+            "$ref": "#/components/parameters/X-Road-Client"
           }
         ],
         "tags": [
@@ -728,25 +738,30 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "content": {
+                    "receive": {
                       "type": "object",
                       "properties": {
-                        "ID": {
-                          "type": "string"
-                        },
-                        "FirstName": {
-                          "type": "string"
-                        },
-                        "LastName": {
-                          "type": "string"
-                        },
-                        "BirthCertificateID": {
-                          "type": "string"
+                        "content": {
+                          "type": "object",
+                          "properties": {
+                            "ID": {
+                              "type": "string"
+                            },
+                            "FirstName": {
+                              "type": "string"
+                            },
+                            "LastName": {
+                              "type": "string"
+                            },
+                            "BirthCertificateID": {
+                              "type": "string"
+                            }
+                          },
+                          "required": [
+                            "ID"
+                          ]
                         }
-                      },
-                      "required": [
-                        "ID"
-                      ]
+                      }
                     }
                   }
                 }
@@ -770,7 +785,7 @@
         "summary": "GDB-CR(1.0)-delete",
         "parameters": [
           {
-            "$ref":"#/components/parameters/X-Road-Client"
+            "$ref": "#/components/parameters/X-Road-Client"
           },
           {
             "name": "ID",
@@ -802,7 +817,7 @@
         "summary": "GDB-CR(1.0)-read-value",
         "parameters": [
           {
-            "$ref":"#/components/parameters/X-Road-Client"
+            "$ref": "#/components/parameters/X-Road-Client"
           },
           {
             "name": "uuid",
@@ -912,10 +927,10 @@
         "in": "header",
         "name": "X-Road-Client",
         "example": "eGovStack/GOV/90000009/eregistrations-dev",
-        "schema":{
+        "schema": {
           "type": "string"
         },
-        "required":true
+        "required": true
       }
     }
   }
