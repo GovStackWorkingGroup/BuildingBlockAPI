@@ -17,7 +17,7 @@
     }
   ],
   "paths": {
-    "/data/CR/1.0": {
+    "/data/cr/1.0": {
       "get": {
         "tags": [
           "Data"
