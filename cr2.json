@@ -168,7 +168,7 @@
         ]
       }
     },
-    "/data/CR/1.0/create": {
+    "/data/cr/1.0/create": {
       "post": {
         "parameters":[
           {
@@ -265,7 +265,7 @@
         ]
       }
     },
-    "/data/CR/1.0/exists": {
+    "/data/cr/1.0/exists": {
       "post": {
         "parameters":[
           {
@@ -356,7 +356,7 @@
         ]
       }
     },
-    "/data/CR/1.0/read": {
+    "/data/cr/1.0/read": {
       "post": {
         "parameters":[
           {
@@ -546,7 +546,7 @@
         ]
       }
     },
-    "/data/CR/1.0/update-entries": {
+    "/data/cr/1.0/update-entries": {
       "put": {
         "parameters":[
           {
@@ -642,7 +642,7 @@
         ]
       }
     },
-    "/data/CR/1.0/update-or-create": {
+    "/data/cr/1.0/update-or-create": {
       "post": {
         "parameters":[
           {
@@ -761,7 +761,7 @@
         ]
       }
     },
-    "/data/CR/1.0/{ID}/delete": {
+    "/data/cr/1.0/{ID}/delete": {
       "delete": {
         "tags": [
           "Data"
@@ -793,7 +793,7 @@
         ]
       }
     },
-    "/data/CR/1.0/{uuid}/read-value/{field}.{ext}": {
+    "/data/cr/1.0/{uuid}/read-value/{field}.{ext}": {
       "get": {
         "tags": [
           "Data"
