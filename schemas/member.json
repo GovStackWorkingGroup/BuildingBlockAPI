@@ -1,3 +1,9 @@
+@aleksander :
+Name
+Authority
+Token
+Public IP Address
+
 {
   "$id": "http://example.com/example.json",
   "$schema": "http://json-schema.org/draft-07/schema",
