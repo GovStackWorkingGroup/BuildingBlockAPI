@@ -1,3 +1,12 @@
+@aleksander - 
+
+OpenAPI Url
+Descriptions
+Enabled Endpoints
+Allowed Requesters
+
+
+
 {
   "$id": "http://example.com/example.json",
   "$schema": "http://json-schema.org/draft-07/schema",
