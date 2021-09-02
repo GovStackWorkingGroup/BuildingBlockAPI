@@ -15,11 +15,14 @@
   },
   "servers" : [ {
     "description" : "Eregistrations API",
-    "url" : "https://gdbs.dev.training.eregistrations.org/"
+    "url" : "http://ss2.egovstack.net/r1/eGovStack/COM/11222456/swaggerhub/creg/"
   } ],
   "tags" : [ {
     "name" : "Citizen registry data",
     "description" : "API services for using the citizen registry"
+  }, {
+    "name" : "MCTS Registry",
+    "description" : "API endpoint that allows to query MCTS data from database"
   } ],
   "paths" : {
     "/data/mcc/2.1" : {
@@ -33,49 +36,62 @@
         }, {
           "name" : "search",
           "in" : "query",
+          "description" : "Field for searching random string type data from database",
           "required" : false,
           "schema" : {
-            "type" : "string"
+            "type" : "string",
+            "example" : "John"
           }
         }, {
           "name" : "filter",
           "in" : "query",
+          "description" : "Field name that user wishes to filter",
           "required" : false,
           "schema" : {
-            "type" : "string"
+            "type" : "string",
+            "example" : "FirstName"
           }
         }, {
           "name" : "ordering",
           "in" : "query",
+          "description" : "How user wishes to order the data",
           "required" : false,
           "schema" : {
-            "type" : "string"
+            "type" : "string",
+            "example" : "decending"
           }
         }, {
           "name" : "page",
           "in" : "query",
+          "description" : "Result page number",
           "required" : false,
           "schema" : {
-            "type" : "integer"
+            "type" : "integer",
+            "example" : 1
           }
         }, {
           "name" : "page_size",
           "in" : "query",
+          "description" : "Number of results on one page",
           "required" : false,
           "schema" : {
-            "type" : "integer"
+            "type" : "integer",
+            "example" : 10
           }
         }, {
           "name" : "query.ID",
           "in" : "query",
+          "description" : "Id of the query for identifying possible errors with the query",
           "required" : false,
           "schema" : {
             "type" : "string",
+            "example" : "2b14dc1057db0acf9d67c15c65422851n",
             "readOnly" : true
           }
         }, {
           "name" : "query.Child",
           "in" : "query",
+          "description" : "Child object data that is queried from database",
           "required" : false,
           "schema" : {
             "$ref" : "#/components/schemas/Child"
@@ -83,42 +99,53 @@
         }, {
           "name" : "query.Child.ID",
           "in" : "query",
+          "description" : "Child ID in the database",
           "required" : false,
           "schema" : {
-            "type" : "string"
+            "type" : "string",
+            "example" : "ID1"
           }
         }, {
           "name" : "query.Child.Firstname",
           "in" : "query",
+          "description" : "Child first name in the database",
           "required" : false,
           "schema" : {
-            "type" : "string"
+            "type" : "string",
+            "example" : "Usha"
           }
         }, {
           "name" : "query.Child.Lastname",
           "in" : "query",
+          "description" : "Child last name in the database",
           "required" : false,
           "schema" : {
-            "type" : "string"
+            "type" : "string",
+            "example" : "Bajaj"
           }
         }, {
           "name" : "query.Child.Birthdate",
           "in" : "query",
+          "description" : "Child birth date in the database",
           "required" : false,
           "schema" : {
             "type" : "string",
-            "format" : "date"
+            "format" : "date",
+            "example" : "2021-01-30"
           }
         }, {
           "name" : "query.Child.Address",
           "in" : "query",
+          "description" : "Child address in the database",
           "required" : false,
           "schema" : {
-            "type" : "string"
+            "type" : "string",
+            "example" : "Longroad 123, Big Village"
           }
         }, {
           "name" : "query.Child.Birth_certificate",
           "in" : "query",
+          "description" : "Child birth certificate data in the database",
           "required" : false,
           "schema" : {
             "$ref" : "#/components/schemas/Birth_certificate"
@@ -126,22 +153,27 @@
         }, {
           "name" : "query.Registration date",
           "in" : "query",
+          "description" : "Child registration date in the database",
           "required" : false,
           "schema" : {
             "type" : "string",
-            "format" : "date"
+            "format" : "date",
+            "example" : "2021-01-30"
           }
         }, {
           "name" : "query.Expiry date",
           "in" : "query",
+          "description" : "Child object expiry date in the database",
           "required" : false,
           "schema" : {
             "type" : "string",
-            "format" : "date"
+            "format" : "date",
+            "example" : "2021-01-30"
           }
         }, {
           "name" : "query.Caretaker",
           "in" : "query",
+          "description" : "Child caretaker information in database",
           "required" : false,
           "schema" : {
             "$ref" : "#/components/schemas/Caretaker"
@@ -149,49 +181,62 @@
         }, {
           "name" : "query.Caretaker.ID",
           "in" : "query",
+          "description" : "Caretaker id in the database",
           "required" : false,
           "schema" : {
-            "type" : "string"
+            "type" : "string",
+            "example" : "ID2"
           }
         }, {
           "name" : "query.Caretaker.Firstname",
           "in" : "query",
+          "description" : "Caretaker first name in the database",
           "required" : false,
           "schema" : {
-            "type" : "string"
+            "type" : "string",
+            "example" : "John"
           }
         }, {
           "name" : "query.Caretaker.Lastname",
           "in" : "query",
+          "description" : "Caretaker last name in the database",
           "required" : false,
           "schema" : {
-            "type" : "string"
+            "type" : "string",
+            "example" : "Smith"
           }
         }, {
           "name" : "query.Caretaker.Birthdate",
           "in" : "query",
+          "description" : "Caretaker birth date in the database",
           "required" : false,
           "schema" : {
             "type" : "string",
-            "format" : "date"
+            "format" : "date",
+            "example" : "1980-01-30"
           }
         }, {
           "name" : "query.Caretaker.Phone",
           "in" : "query",
+          "description" : "Caretaker phone number in the database",
           "required" : false,
           "schema" : {
-            "type" : "string"
+            "type" : "string",
+            "example" : "+37258000000"
           }
         }, {
           "name" : "query.Caretaker.Email",
           "in" : "query",
+          "description" : "Caretaker email in the database",
           "required" : false,
           "schema" : {
-            "type" : "string"
+            "type" : "string",
+            "example" : "john.smith@email.com"
           }
         }, {
           "name" : "query.Caretaker.Picture",
           "in" : "query",
+          "description" : "Caretaker picture in the database",
           "required" : false,
           "schema" : {
             "$ref" : "#/components/schemas/Picture"
@@ -199,6 +244,7 @@
         }, {
           "name" : "query.Caretaker.Document_ID",
           "in" : "query",
+          "description" : "Caretaker document copy in the database",
           "required" : false,
           "schema" : {
             "$ref" : "#/components/schemas/Document_ID"
@@ -213,12 +259,16 @@
                   "type" : "object",
                   "properties" : {
                     "count" : {
-                      "type" : "integer"
+                      "type" : "integer",
+                      "description" : "Number of results",
+                      "example" : 1
                     },
                     "next" : {
                       "type" : "string",
                       "format" : "uri",
-                      "x-nullable" : true
+                      "x-nullable" : true,
+                      "description" : "URI to next results page",
+                      "example" : 1
                     },
                     "previous" : {
                       "type" : "string",
@@ -614,7 +664,7 @@
     "/data/mcc/2.1/{uuid}/read-value/{field}.{ext}" : {
       "get" : {
         "tags" : [ "MCTS Registry" ],
-        "description" : "API endpoint that allows to ??? - MAYBE WE SHOULD DELETE IT?",
+        "description" : "API endpoint that allows to search for exact value in database",
         "operationId" : "GDB-MCC(2.1)-read-value",
         "summary" : "GDB-MCC(2.1)-read-value",
         "parameters" : [ {
@@ -624,21 +674,27 @@
           "in" : "path",
           "required" : true,
           "schema" : {
-            "type" : "string"
+            "type" : "string",
+            "description" : "Primary key field",
+            "example" : "DB-1"
           }
         }, {
           "name" : "field",
           "in" : "path",
           "required" : true,
           "schema" : {
-            "type" : "string"
+            "type" : "string",
+            "description" : "Field's path",
+            "example" : "First name"
           }
         }, {
           "name" : "ext",
           "in" : "path",
           "required" : true,
           "schema" : {
-            "type" : "string"
+            "type" : "string",
+            "description" : "Data format",
+            "example" : "json"
           }
         } ],
         "responses" : {
@@ -1214,21 +1270,27 @@
           "in" : "path",
           "required" : true,
           "schema" : {
-            "type" : "string"
+            "type" : "string",
+            "description" : "Primary key field",
+            "example" : "DB-1"
           }
         }, {
           "name" : "field",
           "in" : "path",
           "required" : true,
           "schema" : {
-            "type" : "string"
+            "type" : "string",
+            "description" : "Field's path",
+            "example" : "First name"
           }
         }, {
           "name" : "ext",
           "in" : "path",
           "required" : true,
           "schema" : {
-            "type" : "string"
+            "type" : "string",
+            "description" : "Data format",
+            "example" : "json"
           }
         } ],
         "responses" : {
