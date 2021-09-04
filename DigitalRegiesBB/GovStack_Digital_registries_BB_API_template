@@ -1,0 +1,1333 @@
+openapi: 3.0.0
+info:
+  title: GovStack Digital registries BB API template
+  description: |
+    This is a sample API
+  contact:
+    email: tambetartma88@gmail.com
+  version: 1.1.0
+  termsOfService: '#'
+  license:
+    name: Apache 2.0
+    url: 'http://www.apache.org/licenses/LICENSE-2.0.html'
+
+#Define servers
+servers:
+  # Added by API Auto Mocking Plugin
+  - description: Eregistrations API
+    url: http://ss2.egovstack.net/r1/eGovStack/COM/11222456/swaggerhub/creg/
+
+tags:
+  - name: Citizen registry data
+    description: 'API services for using the citizen registry'
+  - name: MCTS Registry
+    description: 'API endpoint that allows to query MCTS data from database'
+
+#Define paths
+paths:
+  #MCTS APIs
+  /data/mcc/2.1:
+    get:
+      tags:
+        - MCTS Registry
+      description: API endpoint that allows to query MCTS data from database
+      operationId: GDB-MCC(2.1)-list
+      summary: GDB-MCC(2.1)-list
+      parameters:
+        - $ref: '#/components/parameters/X-Road-Client'
+        - name: search
+          in: query
+          description: Field for searching random string type data from database
+          required: false
+          schema:
+            type: string
+            example: John
+        - name: filter
+          in: query
+          description: Field name that user wishes to filter
+          required: false
+          schema:
+            type: string
+            example: FirstName
+        - name: ordering
+          in: query
+          description: How user wishes to order the data
+          required: false
+          schema:
+            type: string
+            example: decending
+        - name: page
+          in: query
+          description: Result page number
+          required: false
+          schema:
+            type: integer
+            example: 1
+        - name: page_size
+          in: query
+          description: Number of results on one page
+          required: false
+          schema:
+            type: integer
+            example: 10
+        - name: query.ID
+          in: query
+          description: Id of the query for identifying possible errors with the query
+          required: false
+          schema:
+            type: string
+            example: '2b14dc1057db0acf9d67c15c65422851n'
+            readOnly: true
+        - name: query.Child
+          in: query
+          description: Child object data that is queried from database
+          required: false
+          schema:
+            $ref: '#/components/schemas/Child'
+        - name: query.Child.ID
+          in: query
+          description: Child ID in the database
+          required: false
+          schema:
+            type: string
+            example: 'ID1'
+        - name: query.Child.Firstname
+          in: query
+          description: Child first name in the database
+          required: false
+          schema:
+            type: string
+            example: 'Usha'
+        - name: query.Child.Lastname
+          in: query
+          description: Child last name in the database
+          required: false
+          schema:
+            type: string
+            example: 'Bajaj'
+        - name: query.Child.Birthdate
+          in: query
+          description: Child birth date in the database
+          required: false
+          schema:
+            type: string
+            format: date
+            example: '2021-01-30'
+        - name: query.Child.Address
+          in: query
+          description: Child address in the database
+          required: false
+          schema:
+            type: string
+            example: 'Longroad 123, Big Village'
+        - name: query.Child.Birth_certificate
+          in: query
+          description: Child birth certificate data in the database
+          required: false
+          schema:
+            $ref: '#/components/schemas/Birth_certificate'
+        - name: query.Registration date
+          in: query
+          description: Child registration date in the database
+          required: false
+          schema:
+            type: string
+            format: date
+            example: '2021-01-30'
+        - name: query.Expiry date
+          in: query
+          description: Child object expiry date in the database
+          required: false
+          schema:
+            type: string
+            format: date
+            example: '2021-01-30'
+        - name: query.Caretaker
+          in: query
+          description: Child caretaker information in database
+          required: false
+          schema:
+            $ref: '#/components/schemas/Caretaker'
+        - name: query.Caretaker.ID
+          in: query
+          description: Caretaker id in the database
+          required: false
+          schema:
+            type: string
+            example: 'ID2'
+        - name: query.Caretaker.Firstname
+          in: query
+          description: Caretaker first name in the database
+          required: false
+          schema:
+            type: string
+            example: 'John'
+        - name: query.Caretaker.Lastname
+          in: query
+          description: Caretaker last name in the database
+          required: false
+          schema:
+            type: string
+            example: 'Smith'
+        - name: query.Caretaker.Birthdate
+          in: query
+          description: Caretaker birth date in the database
+          required: false
+          schema:
+            type: string
+            format: date
+            example: '1980-01-30'
+        - name: query.Caretaker.Phone
+          in: query
+          description: Caretaker phone number in the database
+          required: false
+          schema:
+            type: string
+            example: '+37258000000'
+        - name: query.Caretaker.Email
+          in: query
+          description: Caretaker email in the database
+          required: false
+          schema:
+            type: string
+            example: 'john.smith@email.com'
+        - name: query.Caretaker.Picture
+          in: query
+          description: Caretaker picture in the database
+          required: false
+          schema:
+            $ref: '#/components/schemas/Picture'
+        - name: query.Caretaker.Document_ID
+          in: query
+          description: Caretaker document copy in the database
+          required: false
+          schema:
+            $ref: '#/components/schemas/Document_ID'
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  count:
+                    type: integer
+                    description: Number of results
+                    example: 1
+                  next:
+                    type: string
+                    format: uri
+                    x-nullable: true
+                    description: URI to next results page
+                    example: 1
+                  previous:
+                    type: string
+                    format: uri
+                    x-nullable: true
+                  results:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        content:
+                          $ref: '#/components/schemas/MCC'
+                required:
+                  - count
+                  - results
+      security:
+        - apiKey: []
+  /data/mcc/2.1/create:
+    post:
+      tags:
+        - MCTS Registry
+      description: API endpoint that allows to add MCTS data to database
+      operationId: GDB-MCC(2.1)-create
+      summary: GDB-MCC(2.1)-create
+      parameters:
+        - $ref: '#/components/parameters/X-Road-Client'      
+      requestBody:
+        description: ''
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                write:
+                  type: object
+                  properties:
+                    content:
+                      $ref: '#/components/schemas/MCC'
+                  required:
+                    - content
+              required:
+                - write
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  content:
+                    $ref: '#/components/schemas/MCC'
+      security:
+        - apiKey: []
+  /data/mcc/2.1/exists:
+    post:
+      tags:
+        - MCTS Registry
+      description: API endpoint that allows to query if MCTS data exists in database
+      operationId: GDB-MCC(2.1)-exists
+      summary: GDB-MCC(2.1)-exists
+      parameters:
+        - $ref: '#/components/parameters/X-Road-Client'      
+      requestBody:
+        description: ''
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                query:
+                  type: object
+                  properties:
+                    content:
+                      $ref: '#/components/schemas/MCC'
+                  required:
+                    - content
+              required:
+                - query
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  answer:
+                    type: object
+                    properties:
+                      status:
+                        type: boolean
+                      message:
+                        type: string
+                    required:
+                      - status
+                required:
+                  - answer
+      security:
+        - apiKey: []
+  /data/mcc/2.1/read:
+    post:
+      tags:
+        - MCTS Registry
+      description: API endpoint that allows to query MCTS data from database by sending query as an object
+      operationId: GDB-MCC(2.1)-read
+      summary: GDB-MCC(2.1)-read
+      parameters:
+        - $ref: '#/components/parameters/X-Road-Client'      
+      requestBody:
+        description: ''
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                query:
+                  type: object
+                  properties:
+                    content:
+                      $ref: '#/components/schemas/MCC'
+                  required:
+                    - content
+              required:
+                - query
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  content:
+                    $ref: '#/components/schemas/MCC'
+      security:
+        - apiKey: []
+  /data/mcc/2.1/update:
+    put:
+      tags:
+        - MCTS Registry
+      description: API endpoint that allows to update one MCTS object data at the time
+      operationId: GDB-MCC(2.1)-update
+      summary: GDB-MCC(2.1)-update
+      parameters:
+        - $ref: '#/components/parameters/X-Road-Client'      
+      requestBody:
+        description: ''
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                query:
+                  type: object
+                  properties:
+                    content:
+                      $ref: '#/components/schemas/MCC'
+                  required:
+                    - content
+                write:
+                  type: object
+                  properties:
+                    content:
+                      $ref: '#/components/schemas/MCC'
+                  required:
+                    - content
+              required:
+                - write
+      responses:
+        '200':
+          description: ''
+      security:
+        - apiKey: []
+  /data/mcc/2.1/update-entries:
+    put:
+      tags:
+        - MCTS Registry
+      description: API endpoint that allows to update multiple MCTS objects data at the time
+      operationId: GDB-MCC(2.1)-update-entries
+      summary: GDB-MCC(2.1)-update-entries
+      parameters:
+        - $ref: '#/components/parameters/X-Road-Client'
+      requestBody:
+        description: ''
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                query:
+                  type: object
+                  properties:
+                    content:
+                      $ref: '#/components/schemas/MCC'
+                  required:
+                    - content
+                write:
+                  type: object
+                  properties:
+                    content:
+                      $ref: '#/components/schemas/MCC'
+                  required:
+                    - content
+              required:
+                - write
+      responses:
+        '200':
+          description: ''
+      security:
+        - apiKey: []
+  /data/mcc/2.1/update-or-create:
+    post:
+      tags:
+        - MCTS Registry
+      description: API endpoint that allows to update and create mulitple MCTS object at he same time
+      operationId: GDB-MCC(2.1)-update-or-create
+      summary: GDB-MCC(2.1)-update-or-create
+      parameters:
+        - $ref: '#/components/parameters/X-Road-Client'
+      requestBody:
+        description: ''
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                query:
+                  type: object
+                  properties:
+                    content:
+                      $ref: '#/components/schemas/MCC'
+                  required:
+                    - content
+                write:
+                  type: object
+                  properties:
+                    content:
+                      $ref: '#/components/schemas/MCC'
+                  required:
+                    - content
+              required:
+                - write
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  content:
+                    $ref: '#/components/schemas/MCC'
+      security:
+        - apiKey: []
+  /data/mcc/2.1/{ID}/delete:
+    delete:
+      tags:
+        - MCTS Registry
+      description: API endpoint that allows to delete MCTS object from the database
+      operationId: GDB-MCC(2.1)-delete
+      summary: GDB-MCC(2.1)-delete
+      parameters:
+        - $ref: '#/components/parameters/X-Road-Client'
+        - name: ID
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: ''
+      security:
+        - apiKey: []
+  /data/mcc/2.1/{uuid}/read-value/{field}.{ext}:
+    get:
+      tags:
+        - MCTS Registry
+      description: API endpoint that allows to search for exact value in database
+      operationId: GDB-MCC(2.1)-read-value
+      summary: GDB-MCC(2.1)-read-value
+      parameters:
+        - $ref: '#/components/parameters/X-Road-Client'
+        - name: uuid
+          in: path
+          required: true
+          schema:
+            type: string
+            description: 'Primary key field'
+            example: 'DB-1'
+        - name: field
+          in: path
+          required: true
+          schema:
+            type: string
+            description: Field's path
+            example: 'First name'
+        - name: ext
+          in: path
+          required: true
+          schema:
+            type: string
+            description: 'Data format'
+            example: 'json'
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                anyOf:
+                  - type: string
+                  - type: object
+                    properties:
+                      value:
+                        anyOf:
+                          - type: array
+                            items:
+                              anyOf:
+                                - type: boolean
+                                - type: integer
+                                - type: number
+                                - type: object
+                                - type: string
+                          - type: boolean
+                          - type: integer
+                          - type: number
+                          - type: object
+                          - type: string
+      security:
+        - apiKey: []
+
+
+  #Citizen registry API
+  /data/cr/1.0:
+    get:
+      tags:
+        - Citizen registry data
+      description: API endpoint that allows to query citizen data from database
+      operationId: GDB-CR(1.0)-list
+      summary: GDB-CR(1.0)-list
+      parameters:
+        - $ref: '#/components/parameters/X-Road-Client'
+        - name: search
+          in: query
+          description: Field for searching random string type data from database
+          required: false
+          schema:
+            type: string
+            example: John
+        - name: filter
+          in: query
+          description: Field name that user wishes to filter
+          required: false
+          schema:
+            type: string
+            example: FirstName
+        - name: ordering
+          in: query
+          description: How user wishes to order the data
+          required: false
+          schema:
+            type: string
+            example: decending
+        - name: page
+          in: query
+          description: Result page number
+          required: false
+          schema:
+            type: integer
+            example: 1
+        - name: page_size
+          in: query
+          description: Number of results on one page
+          required: false
+          schema:
+            type: integer
+            example: 10
+        - name: query.ID
+          in: query
+          description: Id of the query for identifying possible errors with the query
+          required: false
+          schema:
+            type: string
+            example: '2b14dc1057db0acf9d67c15c65422851n'
+            readOnly: true
+        - name: query.FirstName
+          in: query
+          description: Citizen first name
+          required: false
+          schema:
+            type: string
+            example: John
+        - name: query.LastName
+          in: query
+          description: Citizen last name
+          required: false
+          schema:
+            type: string
+            example: Smith
+        - name: query.BirthCertificateID
+          in: query
+          description: Citizen birthcertificate ID
+          required: false
+          schema:
+            type: string
+            example: 'ID135'
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  count:
+                    type: integer
+                    description: Number of results
+                    example: 1
+                  next:
+                    type: string
+                    format: uri
+                    x-nullable: true
+                    description: URI to next results page
+                    example: 1
+                  previous:
+                    type: string
+                    format: uri
+                    x-nullable: true
+                  results:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Citizen'
+                required:
+                  - count
+                  - results
+      security:
+        - apiKey: []
+  /data/cr/1.0/create:
+    post:
+      tags:
+        - Citizen registry data
+      description: API endpoint that allows to add citizen data to database
+      operationId: GDB-CR(1.0)-create
+      summary: GDB-CR(1.0)-create
+      parameters:
+        - $ref: '#/components/parameters/X-Road-Client'
+      requestBody:
+        description: ''
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                write:
+                  type: object
+                  properties:
+                    content:
+                      $ref: '#/components/schemas/Citizen'
+                  required:
+                    - content
+              required:
+                - write
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  content:
+                    $ref: '#/components/schemas/Citizen'
+      security:
+        - apiKey: []
+  /data/cr/1.0/exists:
+    post:
+      tags:
+        - Citizen registry data
+      description: API endpoint that allows to query if citizen data exists in database
+      operationId: GDB-CR(1.0)-exists
+      summary: GDB-CR(1.0)-exists
+      parameters:
+        - $ref: '#/components/parameters/X-Road-Client'
+      requestBody:
+        description: ''
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                query:
+                  type: object
+                  properties:
+                    content:
+                      $ref: '#/components/schemas/Citizen'
+                  required:
+                    - content
+              required:
+                - query
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  answer:
+                    type: object
+                    properties:
+                      status:
+                        type: boolean
+                        example: true
+                        description: Citizen object found in database
+                      message:
+                        type: string
+                        example: Object found from database
+                        description: More information about the object 
+                    required:
+                      - status
+                required:
+                  - answer
+      security:
+        - apiKey: []
+  /data/cr/1.0/read:
+    post:
+      tags:
+        - Citizen registry data
+      description: API endpoint that allows to query citizen data from database by sending query as an object
+      operationId: GDB-CR(1.0)-read
+      summary: GDB-CR(1.0)-read
+      parameters:
+        - $ref: '#/components/parameters/X-Road-Client'
+      requestBody:
+        description: ''
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                query:
+                  type: object
+                  properties:
+                    content:
+                      $ref: '#/components/schemas/Citizen'
+                  required:
+                    - content
+              required:
+                - query
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  content:
+                    $ref: '#/components/schemas/Citizen'
+      security:
+        - apiKey: []
+  /data/cr/1.0/update:
+    put:
+      tags:
+        - Citizen registry data
+      description: API endpoint that allows to update one citizen data at the time
+      operationId: GDB-CR(1.0)-update
+      summary: GDB-CR(1.0)-update
+      parameters:
+        - $ref: '#/components/parameters/X-Road-Client'
+      requestBody:
+        description: ''
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                query:
+                  type: object
+                  description: Search object that needs to be updated
+                  properties:
+                    content:
+                      $ref: '#/components/schemas/Citizen'
+                  required:
+                    - content
+                write:
+                  type: object
+                  description: Update found object with the following data
+                  properties:
+                    content:
+                      $ref: '#/components/schemas/Citizen'
+                  required:
+                    - content
+              required:
+                - write
+      responses:
+        '200':
+          description: ''
+      security:
+        - apiKey: []
+  /data/cr/1.0/update-entries:
+    put:
+      tags:
+        - Citizen registry data
+      description: API endpoint that allows to update multiple citizens data at the time
+      operationId: GDB-CR(1.0)-update-entries
+      summary: GDB-CR(1.0)-update-entries
+      parameters:
+        - $ref: '#/components/parameters/X-Road-Client'
+      requestBody:
+        description: ''
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                query:
+                  type: object
+                  description: Find objects that needs to be updated
+                  properties:
+                    content:
+                      $ref: '#/components/schemas/Citizen'
+                  required:
+                    - content
+                write:
+                  type: object
+                  description: Data that needs to be added to the found objects
+                  properties:
+                    content:
+                      $ref: '#/components/schemas/Citizen'
+                  required:
+                    - content
+              required:
+                - write
+      responses:
+        '200':
+          description: ''
+      security:
+        - apiKey: []
+  /data/cr/1.0/update-or-create:
+    post:
+      tags:
+        - Citizen registry data
+      description: API endpoint that allows to update and create citizen object athe same time
+      operationId: GDB-CR(1.0)-update-or-create
+      summary: GDB-CR(1.0)-update-or-create
+      parameters:
+        - $ref: '#/components/parameters/X-Road-Client'
+      requestBody:
+        description: ''
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                query:
+                  type: object
+                  description: Find object to update, if object not found, new will be created
+                  properties:
+                    content:
+                      $ref: '#/components/schemas/Citizen'
+                  required:
+                    - content
+                write:
+                  type: object
+                  description: Data that will be updated for found citizen object. If object not found new object with this data is created
+                  properties:
+                    content:
+                      $ref: '#/components/schemas/Citizen'
+                  required:
+                    - content
+              required:
+                - write
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  content:
+                    $ref: '#/components/schemas/Citizen'
+      security:
+        - apiKey: []
+  /data/cr/1.0/{ID}/delete:
+    delete:
+      tags:
+        - Citizen registry data
+      description: API endpoint that allows to delete citizen object from the database
+      operationId: GDB-CR(1.0)-delete
+      summary: GDB-CR(1.0)-delete
+      parameters:
+        - $ref: '#/components/parameters/X-Road-Client'
+        - name: ID
+          in: path
+          required: true
+          schema:
+            type: string
+            example: ID1
+            description: ID of the citizen that needs to be deleted from the citizen registry
+      responses:
+        '204':
+          description: ''
+      security:
+        - apiKey: []
+  /data/cr/1.0/{uuid}/read-value/{field}.{ext}:
+    get:
+      tags:
+        - Citizen registry data
+      description: API endpoint that allows to ??? - MAYBE WE SHOULD DELETE IT?
+      operationId: GDB-CR(1.0)-read-value
+      summary: GDB-CR(1.0)-read-value
+      parameters:
+        - $ref: '#/components/parameters/X-Road-Client'
+        - name: uuid
+          in: path
+          required: true
+          schema:
+            type: string
+            description: 'Primary key field'
+            example: 'DB-1'
+        - name: field
+          in: path
+          required: true
+          schema:
+            type: string
+            description: Field's path
+            example: 'First name'
+        - name: ext
+          in: path
+          required: true
+          schema:
+            type: string
+            description: 'Data format'
+            example: 'json'
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                anyOf:
+                  - type: string
+                  - type: object
+                    properties:
+                      value:
+                        anyOf:
+                          - type: array
+                            items:
+                              anyOf:
+                                - type: boolean
+                                - type: integer
+                                - type: number
+                                - type: object
+                                - type: string
+                          - type: boolean
+                          - type: integer
+                          - type: number
+                          - type: object
+                          - type: string
+      security:
+        - apiKey: []
+
+
+  #MyPersonalDataUsage APIs
+  /data/MyPersonalDataUsage/1.0:  
+    get:
+      tags:
+        - MyPersonalDataUsage API
+      description: API endpoint that allows anyone to see who has asked their data
+      operationId: DPU
+      parameters:
+        #General search results options
+        - $ref: '#/components/parameters/X-Road-Client'
+        - name: userID
+          in: query
+          description: Which user search information is requested
+          required: true
+          style: form
+          schema:
+            type: string
+            example: 
+        - name: DatabaseID
+          in: query
+          description: Which user search information is requested
+          required: true
+          style: form
+          schema:
+            type: string
+            example: ID1
+      responses:
+        '200':
+          description: Success Response
+          content:
+            application/json:
+              schema:
+                type: array
+                description: Array of found person data requests
+                items:
+                  $ref: '#/components/schemas/PersonalDataUsage'
+
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: Person requests not found
+
+components:
+  securitySchemes:
+    apiKey:
+      type: apiKey
+      name: Authorization
+      in: header
+      
+  parameters:
+    X-Road-Client:
+      in: header
+      name: X-Road-Client
+      example: 'eGovStack/GOV/90000009/eregistrations-dev'
+      description: 'Format is: INSTANCE/CLASS/MEMBER/SUBSYSTEM'
+      schema:
+        type: string
+      required: true
+  schemas:
+    #MCTS database general object
+    MCC:
+      type: object
+      properties:
+        ID:
+          type: string
+          description: Object ID in database
+          example: 'MCTS1'
+        Child:
+          $ref: '#/components/schemas/Child'
+        Registraion date:
+          type: string
+          format: date
+          description: Date of registration
+          example: "2021-01-30"
+        Expiry date:
+          type: string
+          format: date
+          description: The expiry date of the registration
+          example: "2021-01-30"
+        Caretaker:
+          $ref: '#/components/schemas/Caretaker'
+
+    #Child object:
+    Child:
+      type: object
+      properties:
+        ID:
+          type: string
+          description: Child ID in database
+          example: 'ID1'
+        Firstname:
+          type: string
+          description: Child first name
+          example: 'Usha'
+        Lastname:
+          type: string
+          description: Child last name
+          example: 'Bajaj'
+        Birthdate:
+          type: string
+          format: date
+          description: Birth date of the child
+          example: "2021-01-30"
+        Address:
+          type: string
+          description: Child address
+          example: 'Longroad 123, Big Village'
+        Birth_certificate:
+          $ref: '#/components/schemas/Birth_certificate'
+
+    #Birth certificate object:      
+    Birth_certificate:
+      anyOf:
+        - type: object
+          description: Birth certificate information
+          properties:
+            url:
+              type: string
+              description: URL to the birth certificate document
+              example: 'https://gdbs.dev.training.eregistrations.org/data/mcc/files/ID23.pdf'
+            originalName:
+              type: string
+              description: Document original name
+              example: Usha Bajaj birth certificate
+            type:
+              type: string
+              description: Document type
+              example: application/pdf
+              enum:
+                - application/pdf
+                - image/jpeg
+                - image/png
+                - image/gif
+                - image/tiff
+                - image/bmp
+                - image/x-ms-bmp
+                - application/rtf
+                - text/rtf
+                - >-
+                  application/vnd.openxmlformats-officedocument.wordprocessingml.document
+                - application/vnd.oasis.opendocument.text
+          required:
+            - url
+            - originalName
+            - type
+        - type: object
+          properties:
+            $documentId:
+              type: number
+          required:
+            - $documentId
+          
+    #Caretaker object
+    Caretaker:
+      type: object
+      properties:
+        ID:
+          type: string
+          description: Caretaker ID in database
+          example: 'ID2'
+        Firstname:
+          type: string
+          description: Caretaker first name
+          example: 'John'
+        Lastname:
+          type: string
+          description: Caretaker last name
+          example: 'Smith'
+        Birthdate:
+          type: string
+          format: date
+          description: Birth date of caretaker
+          example: "1980-01-30"
+        Phone:
+          type: string
+          description: Caretaker phone number
+          example: '+37258000000'
+        Email:
+          type: string
+          description: Cartaker email address
+          example: jonh.smith@email.com
+        Picture:
+          $ref: '#/components/schemas/Picture'
+        Document ID:
+          $ref: '#/components/schemas/Document_ID'
+
+    #Picture object
+    Picture:
+      anyOf:
+        - type: object
+          description: Caretaker picture object in database
+          properties:
+            url:
+              type: string
+              description: URL to the caretaker picture file
+              example: 'https://gdbs.dev.training.eregistrations.org/data/mcc/files/ID2243.pdf'
+            originalName:
+              type: string
+              description: Cartaker picture original name
+              example: John Smith avatar
+            type:
+              type: string
+              description: Picture type
+              example: image/jpeg
+              enum:
+                - application/pdf
+                - image/jpeg
+                - image/png
+                - image/gif
+                - image/tiff
+                - image/bmp
+                - image/x-ms-bmp
+                - application/rtf
+                - text/rtf
+                - >-
+                  application/vnd.openxmlformats-officedocument.wordprocessingml.document
+                - application/vnd.oasis.opendocument.text
+          required:
+            - url
+            - originalName
+            - type
+        - type: object
+          properties:
+            $documentId:
+              type: number
+          required:
+            - $documentId
+
+    #Document object
+    Document_ID:
+      anyOf:
+        - type: object
+          description: Cartaker identification document
+          properties:
+            url:
+              type: string
+              description: URL to the caretaker identification document copy 
+              example: 'https://gdbs.dev.training.eregistrations.org/data/mcc/files/ID223.pdf'
+            originalName:
+              type: string
+              description: Identification document original name
+              example: John Smith passport
+            type:
+              type: string
+              description: File type of identification document
+              example: application/pdf
+              enum:
+                - application/pdf
+                - image/jpeg
+                - image/png
+                - image/gif
+                - image/tiff
+                - image/bmp
+                - image/x-ms-bmp
+                - application/rtf
+                - text/rtf
+                - >-
+                  application/vnd.openxmlformats-officedocument.wordprocessingml.document
+                - application/vnd.oasis.opendocument.text
+          required:
+            - url
+            - originalName
+            - type
+        - type: object
+          properties:
+            $documentId:
+              type: number
+          required:
+            - $documentId
+          
+    #Personal data usage object
+    PersonalDataUsage:
+      type: object
+      properties:
+        ID:
+          type: string
+          description: Search ID in log
+          example: GDPR1
+        ReaderID:
+          type: string
+          description: Reader ID in log
+          example: ID2
+        ReaderInitials:
+          type: string
+          description: Reader initials in log
+          example: JD
+        ReaderInstitutionID:
+          type: string
+          description: Reader instituition ID in log
+          example: ID1
+        ReaderInstitutionName:
+          type: string
+          description: Reader institution in log
+          example: East Hospital
+        ReaderApplicationName:
+          type: string
+          description: Reader institution IS in log
+          example: East Hospital IS
+        SearchDateTime:
+          type: string
+          format: date-time
+          description: Date and time of registration
+          example: "2017-07-21T17:32:28Z"
+        Refrences:
+          type: array
+          description: Data that was requested
+          items:
+            properties:
+              ReferenceID:
+                type: string
+                description: Record ID in database
+                example: 'MCTS31'
+
+    #Citizen object
+    Citizen:
+      type: object
+      properties:
+        ID:
+          type: string
+          description: Citizen ID in database
+          example: 'ID1'
+        FirstName:
+          type: string
+          description: Citizen first name
+          example: 'John'
+        LastName:
+          type: string
+          description: Citizen last name
+          example: 'Smith'
+        BirthCertificateID:
+          type: string
+          description: Birth certificate ID in CR
+          example: ID135
