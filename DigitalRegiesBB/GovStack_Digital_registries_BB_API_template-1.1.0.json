@@ -1,8 +1,8 @@
 {
   "openapi" : "3.0.0",
   "info" : {
-    "title" : "GovStack Digital registries BB API template",
-    "description" : "This is a sample API\n",
+    "title" : "GovStack Digital Registries BB API examples",
+    "description" : "Digital Registries System contains multiple registries in one instance. For each registry same set of APIs is described. In this example two example registries have been described.\n",
     "contact" : {
       "email" : "tambetartma88@gmail.com"
     },
@@ -14,20 +14,20 @@
     }
   },
   "servers" : [ {
-    "description" : "Eregistrations API",
-    "url" : "http://ss2.egovstack.net/r1/eGovStack/COM/11222456/swaggerhub/creg/"
+    "description" : "Information Mediator BB Security server",
+    "url" : "http://ss2.egovstack.net/r1/eGovStack/COM/11222456/RegistrationBB/creg/"
   } ],
   "tags" : [ {
-    "name" : "Citizen registry data",
-    "description" : "API services for using the citizen registry"
+    "name" : "Citizen registry",
+    "description" : "Citizen registry"
   }, {
-    "name" : "MCTS Registry",
-    "description" : "API endpoint that allows to query MCTS data from database"
+    "name" : "Mother and Child Tracking System registry",
+    "description" : "MCTS registry data"
   } ],
   "paths" : {
     "/data/mcc/2.1" : {
       "get" : {
-        "tags" : [ "MCTS Registry" ],
+        "tags" : [ "Mother and Child Tracking System registry" ],
         "description" : "API endpoint that allows to query MCTS data from database",
         "operationId" : "GDB-MCC(2.1)-list",
         "summary" : "GDB-MCC(2.1)-list",
@@ -36,7 +36,7 @@
         }, {
           "name" : "search",
           "in" : "query",
-          "description" : "Field for searching random string type data from database",
+          "description" : "Field for searching free text string type data from the whole database",
           "required" : false,
           "schema" : {
             "type" : "string",
@@ -45,7 +45,7 @@
         }, {
           "name" : "filter",
           "in" : "query",
-          "description" : "Field name that user wishes to filter",
+          "description" : "Field name that user wishes to filter by",
           "required" : false,
           "schema" : {
             "type" : "string",
@@ -81,7 +81,7 @@
         }, {
           "name" : "query.ID",
           "in" : "query",
-          "description" : "Id of the query for identifying possible errors with the query",
+          "description" : "Unique record ID",
           "required" : false,
           "schema" : {
             "type" : "string",
@@ -99,16 +99,16 @@
         }, {
           "name" : "query.Child.ID",
           "in" : "query",
-          "description" : "Child ID in the database",
+          "description" : "Child ID",
           "required" : false,
           "schema" : {
             "type" : "string",
-            "example" : "ID1"
+            "example" : "xy-12345678910"
           }
         }, {
           "name" : "query.Child.Firstname",
           "in" : "query",
-          "description" : "Child first name in the database",
+          "description" : "Child first name",
           "required" : false,
           "schema" : {
             "type" : "string",
@@ -117,7 +117,7 @@
         }, {
           "name" : "query.Child.Lastname",
           "in" : "query",
-          "description" : "Child last name in the database",
+          "description" : "Child last name",
           "required" : false,
           "schema" : {
             "type" : "string",
@@ -126,7 +126,7 @@
         }, {
           "name" : "query.Child.Birthdate",
           "in" : "query",
-          "description" : "Child birth date in the database",
+          "description" : "Child birth date",
           "required" : false,
           "schema" : {
             "type" : "string",
@@ -136,7 +136,7 @@
         }, {
           "name" : "query.Child.Address",
           "in" : "query",
-          "description" : "Child address in the database",
+          "description" : "Child's address",
           "required" : false,
           "schema" : {
             "type" : "string",
@@ -145,7 +145,7 @@
         }, {
           "name" : "query.Child.Birth_certificate",
           "in" : "query",
-          "description" : "Child birth certificate data in the database",
+          "description" : "Child's birth certificate data",
           "required" : false,
           "schema" : {
             "$ref" : "#/components/schemas/Birth_certificate"
@@ -153,7 +153,7 @@
         }, {
           "name" : "query.Registration date",
           "in" : "query",
-          "description" : "Child registration date in the database",
+          "description" : "Record registration date",
           "required" : false,
           "schema" : {
             "type" : "string",
@@ -163,7 +163,7 @@
         }, {
           "name" : "query.Expiry date",
           "in" : "query",
-          "description" : "Child object expiry date in the database",
+          "description" : "Record expiry date",
           "required" : false,
           "schema" : {
             "type" : "string",
@@ -173,7 +173,7 @@
         }, {
           "name" : "query.Caretaker",
           "in" : "query",
-          "description" : "Child caretaker information in database",
+          "description" : "Caretaker's information",
           "required" : false,
           "schema" : {
             "$ref" : "#/components/schemas/Caretaker"
@@ -181,16 +181,16 @@
         }, {
           "name" : "query.Caretaker.ID",
           "in" : "query",
-          "description" : "Caretaker id in the database",
+          "description" : "Caretaker's ID",
           "required" : false,
           "schema" : {
             "type" : "string",
-            "example" : "ID2"
+            "example" : "EL125453643654"
           }
         }, {
           "name" : "query.Caretaker.Firstname",
           "in" : "query",
-          "description" : "Caretaker first name in the database",
+          "description" : "Caretaker's first name",
           "required" : false,
           "schema" : {
             "type" : "string",
@@ -199,7 +199,7 @@
         }, {
           "name" : "query.Caretaker.Lastname",
           "in" : "query",
-          "description" : "Caretaker last name in the database",
+          "description" : "Caretaker's last name",
           "required" : false,
           "schema" : {
             "type" : "string",
@@ -208,7 +208,7 @@
         }, {
           "name" : "query.Caretaker.Birthdate",
           "in" : "query",
-          "description" : "Caretaker birth date in the database",
+          "description" : "Caretaker's birth date",
           "required" : false,
           "schema" : {
             "type" : "string",
@@ -218,7 +218,7 @@
         }, {
           "name" : "query.Caretaker.Phone",
           "in" : "query",
-          "description" : "Caretaker phone number in the database",
+          "description" : "Caretaker's phone number",
           "required" : false,
           "schema" : {
             "type" : "string",
@@ -227,7 +227,7 @@
         }, {
           "name" : "query.Caretaker.Email",
           "in" : "query",
-          "description" : "Caretaker email in the database",
+          "description" : "Caretaker email",
           "required" : false,
           "schema" : {
             "type" : "string",
@@ -236,7 +236,7 @@
         }, {
           "name" : "query.Caretaker.Picture",
           "in" : "query",
-          "description" : "Caretaker picture in the database",
+          "description" : "Caretaker's picture",
           "required" : false,
           "schema" : {
             "$ref" : "#/components/schemas/Picture"
@@ -244,7 +244,7 @@
         }, {
           "name" : "query.Caretaker.Document_ID",
           "in" : "query",
-          "description" : "Caretaker document copy in the database",
+          "description" : "Caretaker's document",
           "required" : false,
           "schema" : {
             "$ref" : "#/components/schemas/Document_ID"
@@ -300,8 +300,8 @@
     },
     "/data/mcc/2.1/create" : {
       "post" : {
-        "tags" : [ "MCTS Registry" ],
-        "description" : "API endpoint that allows to add MCTS data to database",
+        "tags" : [ "Mother and Child Tracking System registry" ],
+        "description" : "Create endpoint allows to add MCTS records to database",
         "operationId" : "GDB-MCC(2.1)-create",
         "summary" : "GDB-MCC(2.1)-create",
         "parameters" : [ {
@@ -354,8 +354,8 @@
     },
     "/data/mcc/2.1/exists" : {
       "post" : {
-        "tags" : [ "MCTS Registry" ],
-        "description" : "API endpoint that allows to query if MCTS data exists in database",
+        "tags" : [ "Mother and Child Tracking System registry" ],
+        "description" : "Exists endpoint allows to query if data exists in the database",
         "operationId" : "GDB-MCC(2.1)-exists",
         "summary" : "GDB-MCC(2.1)-exists",
         "parameters" : [ {
@@ -418,8 +418,8 @@
     },
     "/data/mcc/2.1/read" : {
       "post" : {
-        "tags" : [ "MCTS Registry" ],
-        "description" : "API endpoint that allows to query MCTS data from database by sending query as an object",
+        "tags" : [ "Mother and Child Tracking System registry" ],
+        "description" : "Read endpoint allows to query data from database by sending query as an object",
         "operationId" : "GDB-MCC(2.1)-read",
         "summary" : "GDB-MCC(2.1)-read",
         "parameters" : [ {
@@ -472,8 +472,8 @@
     },
     "/data/mcc/2.1/update" : {
       "put" : {
-        "tags" : [ "MCTS Registry" ],
-        "description" : "API endpoint that allows to update one MCTS object data at the time",
+        "tags" : [ "Mother and Child Tracking System registry" ],
+        "description" : "Update endpoint allows to update database object data",
         "operationId" : "GDB-MCC(2.1)-update",
         "summary" : "GDB-MCC(2.1)-update",
         "parameters" : [ {
@@ -523,8 +523,8 @@
     },
     "/data/mcc/2.1/update-entries" : {
       "put" : {
-        "tags" : [ "MCTS Registry" ],
-        "description" : "API endpoint that allows to update multiple MCTS objects data at the time",
+        "tags" : [ "Mother and Child Tracking System registry" ],
+        "description" : "Update endpoint that allows to update multiple MCTS objects data",
         "operationId" : "GDB-MCC(2.1)-update-entries",
         "summary" : "GDB-MCC(2.1)-update-entries",
         "parameters" : [ {
@@ -574,8 +574,8 @@
     },
     "/data/mcc/2.1/update-or-create" : {
       "post" : {
-        "tags" : [ "MCTS Registry" ],
-        "description" : "API endpoint that allows to update and create mulitple MCTS object at he same time",
+        "tags" : [ "Mother and Child Tracking System registry" ],
+        "description" : "Update or Create endpoint allows to update or create MCTS object",
         "operationId" : "GDB-MCC(2.1)-update-or-create",
         "summary" : "GDB-MCC(2.1)-update-or-create",
         "parameters" : [ {
@@ -637,8 +637,8 @@
     },
     "/data/mcc/2.1/{ID}/delete" : {
       "delete" : {
-        "tags" : [ "MCTS Registry" ],
-        "description" : "API endpoint that allows to delete MCTS object from the database",
+        "tags" : [ "Mother and Child Tracking System registry" ],
+        "description" : "Delete endpoint allows to delete MCTS object from the database",
         "operationId" : "GDB-MCC(2.1)-delete",
         "summary" : "GDB-MCC(2.1)-delete",
         "parameters" : [ {
@@ -663,8 +663,8 @@
     },
     "/data/mcc/2.1/{uuid}/read-value/{field}.{ext}" : {
       "get" : {
-        "tags" : [ "MCTS Registry" ],
-        "description" : "API endpoint that allows to search for exact value in database",
+        "tags" : [ "Mother and Child Tracking System registry" ],
+        "description" : "Read value endpoint allows to read one record field value in the database",
         "operationId" : "GDB-MCC(2.1)-read-value",
         "summary" : "GDB-MCC(2.1)-read-value",
         "parameters" : [ {
@@ -750,7 +750,7 @@
     },
     "/data/cr/1.0" : {
       "get" : {
-        "tags" : [ "Citizen registry data" ],
+        "tags" : [ "Citizen registry" ],
         "description" : "API endpoint that allows to query citizen data from database",
         "operationId" : "GDB-CR(1.0)-list",
         "summary" : "GDB-CR(1.0)-list",
@@ -804,7 +804,7 @@
         }, {
           "name" : "query.ID",
           "in" : "query",
-          "description" : "Id of the query for identifying possible errors with the query",
+          "description" : "Unique record ID",
           "required" : false,
           "schema" : {
             "type" : "string",
@@ -884,7 +884,7 @@
     },
     "/data/cr/1.0/create" : {
       "post" : {
-        "tags" : [ "Citizen registry data" ],
+        "tags" : [ "Citizen registry" ],
         "description" : "API endpoint that allows to add citizen data to database",
         "operationId" : "GDB-CR(1.0)-create",
         "summary" : "GDB-CR(1.0)-create",
@@ -938,7 +938,7 @@
     },
     "/data/cr/1.0/exists" : {
       "post" : {
-        "tags" : [ "Citizen registry data" ],
+        "tags" : [ "Citizen registry" ],
         "description" : "API endpoint that allows to query if citizen data exists in database",
         "operationId" : "GDB-CR(1.0)-exists",
         "summary" : "GDB-CR(1.0)-exists",
@@ -1006,7 +1006,7 @@
     },
     "/data/cr/1.0/read" : {
       "post" : {
-        "tags" : [ "Citizen registry data" ],
+        "tags" : [ "Citizen registry" ],
         "description" : "API endpoint that allows to query citizen data from database by sending query as an object",
         "operationId" : "GDB-CR(1.0)-read",
         "summary" : "GDB-CR(1.0)-read",
@@ -1060,7 +1060,7 @@
     },
     "/data/cr/1.0/update" : {
       "put" : {
-        "tags" : [ "Citizen registry data" ],
+        "tags" : [ "Citizen registry" ],
         "description" : "API endpoint that allows to update one citizen data at the time",
         "operationId" : "GDB-CR(1.0)-update",
         "summary" : "GDB-CR(1.0)-update",
@@ -1113,7 +1113,7 @@
     },
     "/data/cr/1.0/update-entries" : {
       "put" : {
-        "tags" : [ "Citizen registry data" ],
+        "tags" : [ "Citizen registry" ],
         "description" : "API endpoint that allows to update multiple citizens data at the time",
         "operationId" : "GDB-CR(1.0)-update-entries",
         "summary" : "GDB-CR(1.0)-update-entries",
@@ -1166,7 +1166,7 @@
     },
     "/data/cr/1.0/update-or-create" : {
       "post" : {
-        "tags" : [ "Citizen registry data" ],
+        "tags" : [ "Citizen registry" ],
         "description" : "API endpoint that allows to update and create citizen object athe same time",
         "operationId" : "GDB-CR(1.0)-update-or-create",
         "summary" : "GDB-CR(1.0)-update-or-create",
@@ -1231,7 +1231,7 @@
     },
     "/data/cr/1.0/{ID}/delete" : {
       "delete" : {
-        "tags" : [ "Citizen registry data" ],
+        "tags" : [ "Citizen registry" ],
         "description" : "API endpoint that allows to delete citizen object from the database",
         "operationId" : "GDB-CR(1.0)-delete",
         "summary" : "GDB-CR(1.0)-delete",
@@ -1259,7 +1259,7 @@
     },
     "/data/cr/1.0/{uuid}/read-value/{field}.{ext}" : {
       "get" : {
-        "tags" : [ "Citizen registry data" ],
+        "tags" : [ "Citizen registry" ],
         "description" : "API endpoint that allows to ??? - MAYBE WE SHOULD DELETE IT?",
         "operationId" : "GDB-CR(1.0)-read-value",
         "summary" : "GDB-CR(1.0)-read-value",
@@ -1483,7 +1483,7 @@
       "Birth_certificate" : {
         "anyOf" : [ {
           "type" : "object",
-          "description" : "Birth certificate information",
+          "description" : "Birth certificate file",
           "properties" : {
             "url" : {
               "type" : "string",
@@ -1493,7 +1493,7 @@
             "originalName" : {
               "type" : "string",
               "description" : "Document original name",
-              "example" : "Usha Bajaj birth certificate"
+              "example" : "Birth certificate"
             },
             "type" : {
               "type" : "string",
@@ -1518,33 +1518,33 @@
         "properties" : {
           "ID" : {
             "type" : "string",
-            "description" : "Caretaker ID in database",
-            "example" : "ID2"
+            "description" : "Caretaker ID",
+            "example" : "EL129983773663"
           },
           "Firstname" : {
             "type" : "string",
-            "description" : "Caretaker first name",
+            "description" : "Caretaker's first name",
             "example" : "John"
           },
           "Lastname" : {
             "type" : "string",
-            "description" : "Caretaker last name",
+            "description" : "Caretaker's last name",
             "example" : "Smith"
           },
           "Birthdate" : {
             "type" : "string",
             "format" : "date",
-            "description" : "Birth date of caretaker",
+            "description" : "Caretaker's birth date",
             "example" : "1980-01-30"
           },
           "Phone" : {
             "type" : "string",
-            "description" : "Caretaker phone number",
+            "description" : "Caretaker's phone number",
             "example" : "+37258000000"
           },
           "Email" : {
             "type" : "string",
-            "description" : "Cartaker email address",
+            "description" : "Caretaker's email",
             "example" : "jonh.smith@email.com"
           },
           "Picture" : {
@@ -1558,16 +1558,16 @@
       "Picture" : {
         "anyOf" : [ {
           "type" : "object",
-          "description" : "Caretaker picture object in database",
+          "description" : "Caretaker's picture object in database",
           "properties" : {
             "url" : {
               "type" : "string",
-              "description" : "URL to the caretaker picture file",
+              "description" : "URL to the Caretaker's picture file",
               "example" : "https://gdbs.dev.training.eregistrations.org/data/mcc/files/ID2243.pdf"
             },
             "originalName" : {
               "type" : "string",
-              "description" : "Cartaker picture original name",
+              "description" : "Caretaker's picture original file name",
               "example" : "John Smith avatar"
             },
             "type" : {
@@ -1591,11 +1591,11 @@
       "Document_ID" : {
         "anyOf" : [ {
           "type" : "object",
-          "description" : "Cartaker identification document",
+          "description" : "Caretaker's identification document",
           "properties" : {
             "url" : {
               "type" : "string",
-              "description" : "URL to the caretaker identification document copy",
+              "description" : "URL to the Caretaker's identification document",
               "example" : "https://gdbs.dev.training.eregistrations.org/data/mcc/files/ID223.pdf"
             },
             "originalName" : {
