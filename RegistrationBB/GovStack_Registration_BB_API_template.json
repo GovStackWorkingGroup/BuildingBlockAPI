@@ -1,0 +1,168 @@
+openapi: 3.0.0
+info:
+  title: GovStack Registration BB API template
+  description: |
+    This is a sample API
+  contact:
+    email: tambetartma88@gmail.com
+  version: 1.0.0
+  termsOfService: '#'
+  license:
+    name: Apache 2.0
+    url: 'http://www.apache.org/licenses/LICENSE-2.0.html'
+
+#Define servers
+servers:
+  # Added by API Auto Mocking Plugin
+  - description: Eregistrations API
+    url: https://gdbs.dev.training.eregistrations.org/
+
+#Security block is not important in example context    
+#Apply the API key globally to all operations
+#security:
+#  - ApiKeyAuth: []     # use the same name as under securitySchemes
+
+#Define paths
+paths:
+
+  #Statistics API
+  /data/statistics/1.0:  
+    get:
+      tags:
+        - Statistics API
+      description: API endpoint that allows anyone to see service statistics
+      operationId: Statistics
+      parameters:
+        #General search results options
+        - $ref: '#/components/parameters/X-Road-Client'
+        - name: startDate
+          in: query
+          description: Start date of statistics
+          schema:
+            type: string
+            format: date
+            example: "2021-01-30"
+        - name: endDate
+          in: query
+          description: End date of statistics
+          schema:
+            type: string
+            format: date
+            example: "2021-01-30"
+        - name: registrationName
+          in: query
+          description: Name of registration
+          schema:
+            type: string
+            example: "MCTS"
+        - name: operator
+          in: query
+          description: Name of operator
+          schema:
+            type: string
+            example: Ingmar Vali
+        - name: role
+          in: query
+          description: Role of the operator
+          schema:
+            type: string
+            example: Handler
+        - name: timeframe
+          in: query
+          schema:
+            type: string
+            enum: [day, week, month, year]
+          description: >
+            Timerame:
+              * `day` - timeframe value = day
+              * `week` - timeframe value = week
+              * `month` - timeframe value = month
+              * `year` - timeframe value = year
+            
+      responses:
+        '200':
+          description: Success Response
+          content:
+            application/json:
+              schema:
+                type: array
+                description: Array of found person data requests
+                items:
+                  properties:
+                    #operator:
+                    #  type: string
+                    #  description: Operator that was selected
+                    #  example: Ingmar Vali
+                    #role:
+                    #  type: string
+                    #  description: Role that was selected
+                    #  example: handler
+                    processed:
+                      type: integer
+                      description: How many applications was processed
+                      example: 100
+                    approved:
+                      type: integer
+                      description: How many applications was approved
+                      example: 90
+                    sentBack:
+                      type: integer
+                      description: How many applications was sent back
+                      example: 3
+                    rejected:
+                      type: integer
+                      description: How many applications was rejected
+                      example: 7
+                    references:
+                      type: object
+                      description: Data that was requested
+                      properties:
+                          startDate:
+                            type: string
+                            format: date
+                            example: "2021-01-30"
+                          endDate:
+                            type: string
+                            format: date
+                            example: "2021-01-30"
+                          registrationName:
+                            type: string
+                            example: "MCTS"
+                          operator:
+                            type: string
+                            example: Ingmar Vali
+                          role:
+                            type: string
+                            example: Handler
+                          timeframeDay:
+                            type: boolean
+                            example: true
+                          timeframeWeek:
+                            type: boolean
+                            example: false
+                          timeframeMonth:
+                            type: boolean
+                            example: false
+                          timeframeYear:
+                            type: boolean
+                            example: false
+
+        '400':
+          description: Invalid input supplied
+        '404':
+          description: Requests not found
+
+components:
+  #securitySchemes:     #Define the key name and location
+  #  ApiKeyAuth:        # arbitrary name for the security scheme
+  #    type: apiKey
+  #    in: header       # can be "header", "query" or "cookie"
+  #    name: AuthenticationKey  # name of the header, query parameter or cookie
+  parameters:
+    X-Road-Client:
+      in: header
+      name: X-Road-Client
+      example: INSTANCE/CLASS/MEMBER/SUBSYSTEM
+      schema:
+        type: string
+      required: true
