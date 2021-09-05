@@ -28,7 +28,7 @@
     "/data/mcc/2.1" : {
       "get" : {
         "tags" : [ "Mother and Child Tracking System registry" ],
-        "description" : "API endpoint that allows to query MCTS data from database",
+        "description" : "Searches (Regex supported) and returns multiple records as an array-list.",
         "operationId" : "GDB-MCC(2.1)-list",
         "summary" : "GDB-MCC(2.1)-list",
         "parameters" : [ {
@@ -58,7 +58,7 @@
           "required" : false,
           "schema" : {
             "type" : "string",
-            "example" : "decending"
+            "example" : "descending"
           }
         }, {
           "name" : "page",
@@ -81,11 +81,11 @@
         }, {
           "name" : "query.ID",
           "in" : "query",
-          "description" : "Unique record ID",
+          "description" : "Registration ID",
           "required" : false,
           "schema" : {
             "type" : "string",
-            "example" : "2b14dc1057db0acf9d67c15c65422851n",
+            "example" : "MCTS123",
             "readOnly" : true
           }
         }, {
@@ -301,7 +301,7 @@
     "/data/mcc/2.1/create" : {
       "post" : {
         "tags" : [ "Mother and Child Tracking System registry" ],
-        "description" : "Create endpoint allows to add MCTS records to database",
+        "description" : "Creates a new record in the registry database.",
         "operationId" : "GDB-MCC(2.1)-create",
         "summary" : "GDB-MCC(2.1)-create",
         "parameters" : [ {
@@ -355,7 +355,7 @@
     "/data/mcc/2.1/exists" : {
       "post" : {
         "tags" : [ "Mother and Child Tracking System registry" ],
-        "description" : "Exists endpoint allows to query if data exists in the database",
+        "description" : "Searches records based on input parameters and returns boolean answer (true/false).",
         "operationId" : "GDB-MCC(2.1)-exists",
         "summary" : "GDB-MCC(2.1)-exists",
         "parameters" : [ {
@@ -419,7 +419,7 @@
     "/data/mcc/2.1/read" : {
       "post" : {
         "tags" : [ "Mother and Child Tracking System registry" ],
-        "description" : "Read endpoint allows to query data from database by sending query as an object",
+        "description" : "Searches and returns one record.",
         "operationId" : "GDB-MCC(2.1)-read",
         "summary" : "GDB-MCC(2.1)-read",
         "parameters" : [ {
@@ -473,7 +473,7 @@
     "/data/mcc/2.1/update" : {
       "put" : {
         "tags" : [ "Mother and Child Tracking System registry" ],
-        "description" : "Update endpoint allows to update database object data",
+        "description" : "Updates one existing record in the registry database.",
         "operationId" : "GDB-MCC(2.1)-update",
         "summary" : "GDB-MCC(2.1)-update",
         "parameters" : [ {
@@ -524,7 +524,7 @@
     "/data/mcc/2.1/update-entries" : {
       "put" : {
         "tags" : [ "Mother and Child Tracking System registry" ],
-        "description" : "Update endpoint that allows to update multiple MCTS objects data",
+        "description" : "Updates multiple records in the registry database that match the input query.",
         "operationId" : "GDB-MCC(2.1)-update-entries",
         "summary" : "GDB-MCC(2.1)-update-entries",
         "parameters" : [ {
@@ -575,7 +575,7 @@
     "/data/mcc/2.1/update-or-create" : {
       "post" : {
         "tags" : [ "Mother and Child Tracking System registry" ],
-        "description" : "Update or Create endpoint allows to update or create MCTS object",
+        "description" : "API updates existing record if matching with input parameters is successful. If record is not found the API will create a new record.",
         "operationId" : "GDB-MCC(2.1)-update-or-create",
         "summary" : "GDB-MCC(2.1)-update-or-create",
         "parameters" : [ {
@@ -638,7 +638,7 @@
     "/data/mcc/2.1/{ID}/delete" : {
       "delete" : {
         "tags" : [ "Mother and Child Tracking System registry" ],
-        "description" : "Delete endpoint allows to delete MCTS object from the database",
+        "description" : "Delete record.",
         "operationId" : "GDB-MCC(2.1)-delete",
         "summary" : "GDB-MCC(2.1)-delete",
         "parameters" : [ {
@@ -664,7 +664,7 @@
     "/data/mcc/2.1/{uuid}/read-value/{field}.{ext}" : {
       "get" : {
         "tags" : [ "Mother and Child Tracking System registry" ],
-        "description" : "Read value endpoint allows to read one record field value in the database",
+        "description" : "Searches and returns one record’s one field value.",
         "operationId" : "GDB-MCC(2.1)-read-value",
         "summary" : "GDB-MCC(2.1)-read-value",
         "parameters" : [ {
@@ -684,7 +684,7 @@
           "required" : true,
           "schema" : {
             "type" : "string",
-            "description" : "Field's path",
+            "description" : "Data format. Endpoint: /data/DB/1.0/DB-1/read-value/First%20name.json",
             "example" : "First name"
           }
         }, {
@@ -693,7 +693,7 @@
           "required" : true,
           "schema" : {
             "type" : "string",
-            "description" : "Data format",
+            "description" : "Data format. Endpoint: /data/DB/1.0/DB-1/read-value/First%20name.json",
             "example" : "json"
           }
         } ],
@@ -751,7 +751,7 @@
     "/data/cr/1.0" : {
       "get" : {
         "tags" : [ "Citizen registry" ],
-        "description" : "API endpoint that allows to query citizen data from database",
+        "description" : "Searches (Regex supported) and returns multiple records as an array-list. ",
         "operationId" : "GDB-CR(1.0)-list",
         "summary" : "GDB-CR(1.0)-list",
         "parameters" : [ {
@@ -781,7 +781,7 @@
           "required" : false,
           "schema" : {
             "type" : "string",
-            "example" : "decending"
+            "example" : "descending"
           }
         }, {
           "name" : "page",
@@ -804,17 +804,17 @@
         }, {
           "name" : "query.ID",
           "in" : "query",
-          "description" : "Unique record ID",
+          "description" : "Registration ID",
           "required" : false,
           "schema" : {
             "type" : "string",
-            "example" : "2b14dc1057db0acf9d67c15c65422851n",
+            "example" : "EE378627348834",
             "readOnly" : true
           }
         }, {
           "name" : "query.FirstName",
           "in" : "query",
-          "description" : "Citizen first name",
+          "description" : "Citizen's first name",
           "required" : false,
           "schema" : {
             "type" : "string",
@@ -823,7 +823,7 @@
         }, {
           "name" : "query.LastName",
           "in" : "query",
-          "description" : "Citizen last name",
+          "description" : "Citizen's last name",
           "required" : false,
           "schema" : {
             "type" : "string",
@@ -832,11 +832,11 @@
         }, {
           "name" : "query.BirthCertificateID",
           "in" : "query",
-          "description" : "Citizen birthcertificate ID",
+          "description" : "Citizen's birth certificate ID",
           "required" : false,
           "schema" : {
             "type" : "string",
-            "example" : "ID135"
+            "example" : "ID13575987358934-98"
           }
         } ],
         "responses" : {
@@ -885,7 +885,7 @@
     "/data/cr/1.0/create" : {
       "post" : {
         "tags" : [ "Citizen registry" ],
-        "description" : "API endpoint that allows to add citizen data to database",
+        "description" : "Creates a new record in the registry database.",
         "operationId" : "GDB-CR(1.0)-create",
         "summary" : "GDB-CR(1.0)-create",
         "parameters" : [ {
@@ -939,7 +939,7 @@
     "/data/cr/1.0/exists" : {
       "post" : {
         "tags" : [ "Citizen registry" ],
-        "description" : "API endpoint that allows to query if citizen data exists in database",
+        "description" : "Searches records based on input parameters and returns boolean answer (true/false).",
         "operationId" : "GDB-CR(1.0)-exists",
         "summary" : "GDB-CR(1.0)-exists",
         "parameters" : [ {
@@ -1007,7 +1007,7 @@
     "/data/cr/1.0/read" : {
       "post" : {
         "tags" : [ "Citizen registry" ],
-        "description" : "API endpoint that allows to query citizen data from database by sending query as an object",
+        "description" : "Searches and returns one record.",
         "operationId" : "GDB-CR(1.0)-read",
         "summary" : "GDB-CR(1.0)-read",
         "parameters" : [ {
@@ -1061,7 +1061,7 @@
     "/data/cr/1.0/update" : {
       "put" : {
         "tags" : [ "Citizen registry" ],
-        "description" : "API endpoint that allows to update one citizen data at the time",
+        "description" : "Updates one existing record in the registry database.",
         "operationId" : "GDB-CR(1.0)-update",
         "summary" : "GDB-CR(1.0)-update",
         "parameters" : [ {
@@ -1114,7 +1114,7 @@
     "/data/cr/1.0/update-entries" : {
       "put" : {
         "tags" : [ "Citizen registry" ],
-        "description" : "API endpoint that allows to update multiple citizens data at the time",
+        "description" : "Updates multiple records in the registry database that match the input query.",
         "operationId" : "GDB-CR(1.0)-update-entries",
         "summary" : "GDB-CR(1.0)-update-entries",
         "parameters" : [ {
@@ -1167,7 +1167,7 @@
     "/data/cr/1.0/update-or-create" : {
       "post" : {
         "tags" : [ "Citizen registry" ],
-        "description" : "API endpoint that allows to update and create citizen object athe same time",
+        "description" : "API updates existing record if matching with input parameters is successful. If record is not found the API will create a new record. ",
         "operationId" : "GDB-CR(1.0)-update-or-create",
         "summary" : "GDB-CR(1.0)-update-or-create",
         "parameters" : [ {
@@ -1232,7 +1232,7 @@
     "/data/cr/1.0/{ID}/delete" : {
       "delete" : {
         "tags" : [ "Citizen registry" ],
-        "description" : "API endpoint that allows to delete citizen object from the database",
+        "description" : "Delete record.",
         "operationId" : "GDB-CR(1.0)-delete",
         "summary" : "GDB-CR(1.0)-delete",
         "parameters" : [ {
@@ -1260,7 +1260,7 @@
     "/data/cr/1.0/{uuid}/read-value/{field}.{ext}" : {
       "get" : {
         "tags" : [ "Citizen registry" ],
-        "description" : "API endpoint that allows to ??? - MAYBE WE SHOULD DELETE IT?",
+        "description" : "Searches and returns one record’s one field value.",
         "operationId" : "GDB-CR(1.0)-read-value",
         "summary" : "GDB-CR(1.0)-read-value",
         "parameters" : [ {
@@ -1280,7 +1280,7 @@
           "required" : true,
           "schema" : {
             "type" : "string",
-            "description" : "Field's path",
+            "description" : "Data format. Endpoint: /data/DB/1.0/DB-1/read-value/First%20name.json",
             "example" : "First name"
           }
         }, {
@@ -1289,7 +1289,7 @@
           "required" : true,
           "schema" : {
             "type" : "string",
-            "description" : "Data format",
+            "description" : "Data format. Endpoint: /data/DB/1.0/DB-1/read-value/First%20name.json",
             "example" : "json"
           }
         } ],
@@ -1347,29 +1347,29 @@
     "/data/MyPersonalDataUsage/1.0" : {
       "get" : {
         "tags" : [ "MyPersonalDataUsage API" ],
-        "description" : "API endpoint that allows anyone to see who has asked their data",
+        "description" : "Allows a user to see who has read their personal data.",
         "operationId" : "DPU",
         "parameters" : [ {
           "$ref" : "#/components/parameters/X-Road-Client"
         }, {
           "name" : "userID",
           "in" : "query",
-          "description" : "Which user search information is requested",
+          "description" : "User's personal unique identifier",
           "required" : true,
           "style" : "form",
           "schema" : {
             "type" : "string",
-            "example" : null
+            "example" : "EE378129277266"
           }
         }, {
           "name" : "DatabaseID",
           "in" : "query",
-          "description" : "Which user search information is requested",
+          "description" : "Database acronym",
           "required" : true,
           "style" : "form",
           "schema" : {
             "type" : "string",
-            "example" : "ID1"
+            "example" : "MCTS"
           }
         } ],
         "responses" : {
@@ -1379,7 +1379,7 @@
               "application/json" : {
                 "schema" : {
                   "type" : "array",
-                  "description" : "Array of found person data requests",
+                  "description" : "Array of found data processign logs",
                   "items" : {
                     "$ref" : "#/components/schemas/PersonalDataUsage"
                   }
@@ -1423,7 +1423,7 @@
         "properties" : {
           "ID" : {
             "type" : "string",
-            "description" : "Object ID in database",
+            "description" : "Object ID in the database",
             "example" : "MCTS1"
           },
           "Child" : {
@@ -1451,28 +1451,28 @@
         "properties" : {
           "ID" : {
             "type" : "string",
-            "description" : "Child ID in database",
-            "example" : "ID1"
+            "description" : "Child's identifier",
+            "example" : "xyz-12345678910"
           },
           "Firstname" : {
             "type" : "string",
-            "description" : "Child first name",
+            "description" : "Child's first name",
             "example" : "Usha"
           },
           "Lastname" : {
             "type" : "string",
-            "description" : "Child last name",
+            "description" : "Child's last name",
             "example" : "Bajaj"
           },
           "Birthdate" : {
             "type" : "string",
             "format" : "date",
-            "description" : "Birth date of the child",
+            "description" : "Child's birth date",
             "example" : "2021-01-30"
           },
           "Address" : {
             "type" : "string",
-            "description" : "Child address",
+            "description" : "Child's address",
             "example" : "Longroad 123, Big Village"
           },
           "Birth_certificate" : {
@@ -1518,7 +1518,7 @@
         "properties" : {
           "ID" : {
             "type" : "string",
-            "description" : "Caretaker ID",
+            "description" : "Caretaker's identifier",
             "example" : "EL129983773663"
           },
           "Firstname" : {
@@ -1626,33 +1626,33 @@
         "properties" : {
           "ID" : {
             "type" : "string",
-            "description" : "Search ID in log",
-            "example" : "GDPR1"
+            "description" : "Log record ID",
+            "example" : "1234567"
           },
           "ReaderID" : {
             "type" : "string",
-            "description" : "Reader ID in log",
-            "example" : "ID2"
+            "description" : "Identifier of a reader who looked at personal data",
+            "example" : "EE37819285773"
           },
           "ReaderInitials" : {
             "type" : "string",
-            "description" : "Reader initials in log",
+            "description" : "Reader's initials",
             "example" : "JD"
           },
           "ReaderInstitutionID" : {
             "type" : "string",
-            "description" : "Reader instituition ID in log",
-            "example" : "ID1"
+            "description" : "Reader's instituition ID",
+            "example" : "EE70049837"
           },
           "ReaderInstitutionName" : {
             "type" : "string",
-            "description" : "Reader institution in log",
+            "description" : "Reader's institution name",
             "example" : "East Hospital"
           },
           "ReaderApplicationName" : {
             "type" : "string",
-            "description" : "Reader institution IS in log",
-            "example" : "East Hospital IS"
+            "description" : "Reader's institution system name",
+            "example" : "East Hospital healthcare back office"
           },
           "SearchDateTime" : {
             "type" : "string",
@@ -1662,12 +1662,12 @@
           },
           "Refrences" : {
             "type" : "array",
-            "description" : "Data that was requested",
+            "description" : "Personal Data reference",
             "items" : {
               "properties" : {
                 "ReferenceID" : {
                   "type" : "string",
-                  "description" : "Record ID in database",
+                  "description" : "Registration ID",
                   "example" : "MCTS31"
                 }
               }
@@ -1680,23 +1680,23 @@
         "properties" : {
           "ID" : {
             "type" : "string",
-            "description" : "Citizen ID in database",
-            "example" : "ID1"
+            "description" : "Citizen's identifier",
+            "example" : "EE378627348834"
           },
           "FirstName" : {
             "type" : "string",
-            "description" : "Citizen first name",
-            "example" : "John"
+            "description" : "Citizen's first name",
+            "example" : "John Helmut"
           },
           "LastName" : {
             "type" : "string",
-            "description" : "Citizen last name",
-            "example" : "Smith"
+            "description" : "Citizen's last name",
+            "example" : "Smith Carry"
           },
           "BirthCertificateID" : {
             "type" : "string",
             "description" : "Birth certificate ID in CR",
-            "example" : "ID135"
+            "example" : "RR-1234567889"
           }
         }
       }
