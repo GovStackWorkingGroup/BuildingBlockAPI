@@ -2,7 +2,7 @@
   "openapi": "3.0.0",
   "info": {
     "title": "GovStack Registration BB API template",
-    "description": "This is a sample API\n",
+    "description": "API from Registration BB",
     "termsOfService": "#",
     "contact": {
       "email": "tambetartma88@gmail.com"
@@ -15,8 +15,8 @@
   },
   "servers": [
     {
-      "url": "https://gdbs.dev.training.eregistrations.org/",
-      "description": "Eregistrations API"
+      "url": "http://ss2.egovstack.net/r1/eGovStack/COM/11222456/RegistrationBB/creg/",
+      "description": "Information Mediator BB Security server"
     }
   ],
   "paths": {
