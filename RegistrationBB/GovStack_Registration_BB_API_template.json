@@ -2,7 +2,7 @@ openapi: 3.0.0
 info:
   title: GovStack Registration BB API template
   description: |
-    This is a sample API
+    This is API from Registration BB
   contact:
     email: tambetartma88@gmail.com
   version: 1.0.0
@@ -14,8 +14,8 @@ info:
 #Define servers
 servers:
   # Added by API Auto Mocking Plugin
-  - description: Eregistrations API
-    url: https://gdbs.dev.training.eregistrations.org/
+  - description: "Information Mediator BB Security server"
+    url: http://ss2.egovstack.net/r1/eGovStack/COM/11222456/RegistrationBB/creg/
 
 #Security block is not important in example context    
 #Apply the API key globally to all operations
