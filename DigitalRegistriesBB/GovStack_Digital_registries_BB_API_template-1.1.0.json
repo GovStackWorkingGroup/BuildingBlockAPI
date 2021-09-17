@@ -1409,7 +1409,7 @@
       "X-Road-Client" : {
         "in" : "header",
         "name" : "X-Road-Client",
-        "example" : "eGovStack/GOV/90000009/eregistrations-dev",
+        "example" : "eGovStack/GOV/90000009/digitalregistries",
         "description" : "Format is: INSTANCE/CLASS/MEMBER/SUBSYSTEM",
         "schema" : {
           "type" : "string"
