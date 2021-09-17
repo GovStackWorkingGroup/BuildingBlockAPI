@@ -1,7 +1,7 @@
 {
   "openapi": "3.0.0",
   "info": {
-    "title": "GovStack Registration BB API template",
+    "title": "GovStack Registration BB API",
     "description": "API from Registration BB",
     "termsOfService": "#",
     "contact": {
@@ -37,7 +37,7 @@
             "schema": {
               "type": "string"
             },
-            "example": "INSTANCE/CLASS/MEMBER/SUBSYSTEM"
+            "example": " eGovStack/GOV/90000009/eregistrations-dev (INSTANCE/CLASS/MEMBER/SUBSYSTEM)"
           },
           {
             "name": "startDate",
