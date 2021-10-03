@@ -1,0 +1,214 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Generic Database",
+    "description": "",
+    "version": "1.96.12"
+  },
+  "servers": [
+    {
+      "url": "https://gdb.training.eregistrations.org/"
+    }
+  ],
+  "tags": [
+    {
+      "name": "Database",
+      "description": ""
+    }
+  ],
+  "paths": {
+    "/api/v1/database/modify": {
+      "post": {
+        "tags": [
+          "Database"
+        ],
+        "description": "API endpoint that allows to make changes in database structure",
+        "requestBody": {
+          "description": "",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "$ref": "#/components/schemas/DCO"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "content": {
+                      "$ref": "#/components/schemas/DCO"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "apiKey": []
+          }
+        ]
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "apiKey": {
+        "type": "apiKey",
+        "name": "Authorization",
+        "in": "header"
+      }
+    },
+    "parameters": {
+      "X-Road-Client": {
+        "in": "header",
+        "name": "X-Road-Client",
+        "example": "eGovStack/GOV/90000009/eregistrations-dev",
+        "description": "Format is: INSTANCE/CLASS/MEMBER/SUBSYSTEM",
+        "schema": {
+          "type": "string"
+        },
+        "required": true
+      }
+    },
+    "schemas": {
+      "DCO": {
+        "type": "object",
+        "properties": {
+          "catalog_name": {
+            "type": "string",
+            "example": "Ingmars test"
+          },
+          "clone_id": {
+            "type": "number",
+            "example": 355
+          },
+          "code": {
+            "type": "string",
+            "example": "ING"
+          },
+          "description": {
+            "type": "string",
+            "example": ""
+          },
+          "fields_uniques": {
+            "type": "array",
+            "items": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "example": ""
+              }
+            }
+          },
+          "goup_id": {
+            "type": "number",
+            "example": 10
+          },
+          "indexNo": {
+            "type": "number",
+            "example": 3
+          },
+          "indexNoByCode": {
+            "type": "number",
+            "example": 3
+          },
+          "institution": {
+            "type": "string",
+            "example": ""
+          },
+          "isDraft": {
+            "type": "boolean",
+            "example": false
+          },
+          "logo": {
+            "type": "string",
+            "nullable": true,
+            "default": null
+          },
+          "name": {
+            "type": "string",
+            "example": ""
+          },
+          "numberFormat": {
+            "type": "string",
+            "example": "{code}{indexNoByCode}"
+          },
+          "schema": {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "example": "object"
+              },
+              "properties": {
+                "type": "object",
+                "example": ""
+              },
+              "$incrementIndex": {
+                "type": "number",
+                "example": 14
+              },
+              "required": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "example": "ID"
+                }
+              }
+            }
+          },
+          "schemaFlags": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string",
+                  "example": "unique"
+                },
+                "path": {
+                  "type": "string",
+                  "example": "/ID"
+                }
+              }
+            }
+          },
+          "schemaTags": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string",
+                  "example": ""
+                },
+                "path": {
+                  "type": "string",
+                  "example": "/ID"
+                },
+                "is_fulltext": {
+                  "type": "boolean",
+                  "example": true
+                }
+              }
+            }
+          },
+          "version": {
+            "type": "string",
+            "example": "1.0"
+          }
+        }
+      }
+    }
+  }
+}
