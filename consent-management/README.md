@@ -28,9 +28,20 @@ This repository contains the deliverables from Consent Management BB team, as pa
 
 Working Group Representative: Ramkumar ([psramkumar2@gmail.com](psramkumar2@gmail.com))
 
+## Deliverables
+
+The key deliverables are as summarised below:
+
+| Milestone    	| Date             	| Deliverables                                                                                                                                	|
+|:--------------	|:------------------|:---------------------------------------------------------------------------------------------------------------------------------------------	|
+| Milestone 01 	| 31 November 2021      	| **Draft version ready:** <br>1. Use case specifications <br>2. Functional requirements <br>3. Technical requirements                          	|
+| Milestone 02 	| 31 January 2022      	| **Release version 1.0:** <br>1. Use case specifications <br>2. Functional requirements <br>3. Technical requirements                          	|
+| Milestone 03 	| 28 February 2022      	| **Release version 2.0:** <br>1. Use case specifications <br>2. Functional requirements <br>3. Technical requirements                          	|
+
+
 ## Release Status
 
-Work ongoing, target release February 2022.
+Work ongoing, target release 28-February-2022.
 
 ## Contributing
 
