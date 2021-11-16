@@ -1,0 +1,237 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "GovStack Registration BB API",
+    "description": "API from Registration BB",
+    "termsOfService": "#",
+    "contact": {
+      "email": "tambetartma88@gmail.com"
+    },
+    "license": {
+      "name": "Apache 2.0",
+      "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+    },
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "http://ss2.egovstack.net/r1/eGovStack/COM/11222456/RegistrationBB/creg/",
+      "description": "Information Mediator BB Security server"
+    }
+  ],
+  "paths": {
+    "/data/statistics/1.0": {
+      "get": {
+        "tags": [
+          "Statistics API"
+        ],
+        "description": "API endpoint that allows anyone to see service statistics",
+        "operationId": "Statistics",
+        "parameters": [
+          {
+            "name": "Information-Mediator-Client",
+            "in": "header",
+            "required": true,
+            "style": "simple",
+            "explode": false,
+            "schema": {
+              "type": "string"
+            },
+            "example" : "eGovStack/GOV/90000009/eregistrations-dev",
+            "description" : "Format is: INSTANCE/CLASS/MEMBER/SUBSYSTEM",
+            
+          },
+          {
+            "name": "startDate",
+            "in": "query",
+            "description": "Start date of statistics",
+            "required": false,
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "type": "string",
+              "format": "date",
+              "example": "2021-01-30"
+            }
+          },
+          {
+            "name": "endDate",
+            "in": "query",
+            "description": "End date of statistics",
+            "required": false,
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "type": "string",
+              "format": "date",
+              "example": "2021-01-30"
+            }
+          },
+          {
+            "name": "registrationName",
+            "in": "query",
+            "description": "Name of registration",
+            "required": false,
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "type": "string",
+              "example": "MCTS"
+            }
+          },
+          {
+            "name": "operator",
+            "in": "query",
+            "description": "Name of operator",
+            "required": false,
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "type": "string",
+              "example": "Ingmar Vali"
+            }
+          },
+          {
+            "name": "role",
+            "in": "query",
+            "description": "Role of the operator",
+            "required": false,
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "type": "string",
+              "example": "Handler"
+            }
+          },
+          {
+            "name": "timeframe",
+            "in": "query",
+            "description": "Timerame:\n  * `day` - timeframe value = day\n  * `week` - timeframe value = week\n  * `month` - timeframe value = month\n  * `year` - timeframe value = year\n",
+            "required": false,
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "day",
+                "week",
+                "month",
+                "year"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "description": "Array of found person data requests",
+                  "items": {
+                    "$ref": "#/components/schemas/inline_response_200"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input supplied"
+          },
+          "404": {
+            "description": "Requests not found"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "datastatistics1.0_references": {
+        "type": "object",
+        "properties": {
+          "startDate": {
+            "type": "string",
+            "format": "date",
+            "example": "2021-01-30"
+          },
+          "endDate": {
+            "type": "string",
+            "format": "date",
+            "example": "2021-01-30"
+          },
+          "registrationName": {
+            "type": "string",
+            "example": "MCTS"
+          },
+          "operator": {
+            "type": "string",
+            "example": "Ingmar Vali"
+          },
+          "role": {
+            "type": "string",
+            "example": "Handler"
+          },
+          "timeframeDay": {
+            "type": "boolean",
+            "example": true
+          },
+          "timeframeWeek": {
+            "type": "boolean",
+            "example": false
+          },
+          "timeframeMonth": {
+            "type": "boolean",
+            "example": false
+          },
+          "timeframeYear": {
+            "type": "boolean",
+            "example": false
+          }
+        },
+        "description": "Data that was requested"
+      },
+      "inline_response_200": {
+        "properties": {
+          "processed": {
+            "type": "integer",
+            "description": "How many applications was processed",
+            "example": 100
+          },
+          "approved": {
+            "type": "integer",
+            "description": "How many applications was approved",
+            "example": 90
+          },
+          "sentBack": {
+            "type": "integer",
+            "description": "How many applications was sent back",
+            "example": 3
+          },
+          "rejected": {
+            "type": "integer",
+            "description": "How many applications was rejected",
+            "example": 7
+          },
+          "references": {
+            "$ref": "#/components/schemas/datastatistics1.0_references"
+          }
+        }
+      }
+    },
+    "parameters": {
+      "Information-Mediator-Client": {
+        "name": "Information-Mediator-Client",
+        "in": "header",
+        "required": true,
+        "style": "simple",
+        "explode": false,
+        "schema": {
+          "type": "string"
+        },
+        "example": "INSTANCE/CLASS/MEMBER/SUBSYSTEM"
+      }
+    }
+  }
+}
