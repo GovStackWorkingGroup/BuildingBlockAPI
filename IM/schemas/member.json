@@ -1,0 +1,71 @@
+{
+  "$id": "http://govstack.global/schemas/IM/member.json",
+  "$schema": "http://json-schema.org/draft-07/schema",
+  "default": {},
+  "description": "The schema describing Member in GovStack Information Mediator Building Block",
+  "examples": [
+    {
+      "memberClass": "GOV",
+      "memberCode": "Ministry-of-Health",
+      "signingKey": {
+        "Token": "Soft",
+        "Name": "Key01",
+        "CA": "Letsencrypt CA"
+      }
+    }
+  ],
+  "required": ["memberClass", "memberCode"],
+  "title": "Member",
+  "type": "object",
+  "properties": {
+    "memberClass": {
+      "description": "Type of the member (company, government institution, private person, etc.)",
+      "examples": "GOV",
+      "title": "Type",
+      "type": {
+        "enum" : ["GOV", "COM", "PRI"],
+        "description": "Exact list is defined at GovStack instance level."
+      }
+    },
+    "memberCode": {
+      "description": "Code that uniquely identifies a member of given member type."
+      "examples": ["Ministry-Of-Health"],
+      "title": "Name",
+      "type": "string"
+    },
+    "signingKey": {
+      "default": {},
+      "description": "Signing Key used by Member",
+      "title": "Signing Key",
+      "type": "object",
+      "properties": {
+	"Token": {
+          "description": "Type of security container for storing keys.",
+          "examples": "Soft",
+          "title": "Keyring",
+          "type": {
+            "enum" : ["Soft", "USB-01", "HSM"],
+            "description": "Exact list depends on configuration of server."
+          }
+        },
+	"Name": {
+          "description": "Name of the key.",
+          "examples": "Key01",
+          "title": "Key",
+          "type": "string"
+        },
+	"CA": {
+          "description": "Name of the CA",
+          "examples": "",
+          "title": "CA",
+          "type": {
+            "enum" : ["Letsencrypt CA"],
+            "description": "Exact list depends on configuration of GovStack."
+          }
+        }
+      },
+      "additionalProperties": true
+    }
+  },
+  "additionalProperties": true
+}
