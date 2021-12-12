@@ -8,7 +8,7 @@
     "url" : "https://{securityserver}/r1",
     "variables" : {
       "securityserver" : {
-        "default" : "",
+        "default" : "SECURITYSERVER",
         "description" : "security server address"
       }
     }
