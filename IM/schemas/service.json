@@ -1,0 +1,39 @@
+{
+  "$id": "http://govstack.global/schemas/IM/service.json",
+  "$schema": "http://json-schema.org/draft-07/schema",
+  "default": {},
+  "description": "The schema describing Service in GovStack Information Mediator Building Block",
+  "examples": [
+    {
+      "serviceCode": "RegistrationAPI",
+      "descriptionURL": "in.example.com/some/path/to/spec",
+      "serviceURL": "in.example.com/some/path/to/execution"
+    }
+  ],
+  "required": ["serviceCode"],
+  "title": "Service",
+  "type": "object",
+  "properties": {
+    "serviceCode": {
+      "description": "Code that uniquely identifies a service offered by given member or application."
+      "examples": ["RegistrationAPI"],
+      "title": "Code",
+      "type": "string"
+    },
+    "descriptionURL": {
+      "default": "",
+      "description": "OpenAPI spec URL."
+      "examples": ["in.example.com/some/path/to/spec"],
+      "title": "API",
+      "type": "string"
+    },
+    "serviceURL": {
+      "default": "",
+      "description": "Location of API endpoints."
+      "examples": ["in.example.com/some/path/to/execution"],
+      "title": "path",
+      "type": "string"
+    }
+  },
+  "additionalProperties": true
+}
