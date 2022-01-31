@@ -32,10 +32,9 @@ Working Group Representative: Ramkumar ([psramkumar2@gmail.com](psramkumar2@gmai
 
 The key deliverables are as summarised below:
 
-
 1. Use case specifications
-2. Functional requirements
-3. Technical requirements                          	|
+2. Functional and technical requirements
+3. Draft APIs
 
 ## Release Status
 
