@@ -1,7 +1,15 @@
-Short Description: Records identifiers and other general information about a person, place or other entity, typically for the purpose of registration or enrollment in specific services or programmes and tracking of that entity over time.
+Registration Building Block API Definitions
+This repository holds OpenAPI definitions for Registration BB - one of the building blocks that have been developed by the GovStack expert working groups.
 
-Full Description: Registration services attribute a unique functional ID to a person, place or other entity to identify and access information about it. According to the World Bank, functional IDs are those that evolve out of a single use-case, such as voter IDs, health records, or bank cards, and are created with a specific purpose in mind, differing from foundational IDs which are created with a general purpose in mind. Registration services can also use the foundational ID or map it to the functional ID where such an identity exists. Examples of specific registration services include immunization, disease and citizenship records, as well as birth and death registration. The ensemble of utilities for capturing, recording, profiling, searching, retrieving and verifying this identity information is encapsulated as registration services. The information itself will be deposited into and retrieved from corresponding functional registries (see the Registries ICT Building Blocks). Registration services help profile entities by enabling the registration of different categories or groups and documenting their access to various services. These services also onboard users into a programme or service offered by an organization (eg rural advisory service), capturing related demography, profile and citizen ID information.
+Each building block API definition must be stored in a json file that is compatible with the OpenAPI 3.0 standard
 
-Other Names: Enrollment services
+Acknowledgement
+This specification was prepared by a team comprising Frank Grozel (UNCTAD), Ingmar Vali (UNCTAD), Tambet Artma (Centre of Registers and Information Systems), Saurav Bhattarai (GIZ), Dr Ramkumar (ITU), Rauno Kulla (UNCTAD).
 
-https://solutions.dial.community/building_blocks/registration
+Status
+Current status of the specification is v.1.0 Currently under review.
+
+Reference
+UNCTAD eRegistrations: https://digitalgovernment.world/  
+UNCTAD https://unctad.org/
+Use Cases: https://solutions.dial.community/building_blocks/registration
