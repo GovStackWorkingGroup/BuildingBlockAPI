@@ -1,0 +1,58 @@
+Name,Type,FK,Description,Required
+Model: Individual,,,,
+id,string,,,TRUE
+registry_bb_reference,string,,,TRUE
+,,,,FALSE
+Model: Agreement,,,,
+id,string,,,TRUE
+version,string,,The version of this specification to which a receipt conforms,TRUE
+jurisdiction,string,,The jurisdictions applicable to this transaction,TRUE
+piiPrincipalId,string,,PII principal-provided identifier. Consent is not possible without an identifier. This field must contain a non-empty string,TRUE
+piiControllers,array,,An array that contains one or more items where each item represents one PII controller. It is only required for the JSON encoding of a consent receipt.,TRUE
+pii Controller,string,,"Name of the first PII controller who collects the data. This entity is accountable for compliance with the management of PII. The PII Controller determines the purpose(s) and type(s) of PII processing. There may be more thanone PII Controller for the same set(s) of operations performed on the PII, in whichcase the different PII Controllers SHOULD be listed. For Sensitive PII, the PIIController MUST be specified with legally required explicit notice to the PII Principal. This field MUST contain a non-empty string.",TRUE
+contact,string,,Contact name of the PII controller. This field must contain a non-empty string,TRUE
+address,object,,The physical address of the PII controller. Postal address for contacting the PII controller. The JSON value must follow the schema at: https://schema.org/PostalAddress.,TRUE
+email,string,,contact email address of the PII controller. The direct email to contact the PII controller regarding the consent or privacy contract. This field must contain a non-empty string,TRUE
+phone,string,,Contact phone number of the PII controller. The business phone number to contact the PII Controller regarding the consent. The field must follow RFC 3966 {RFC 5341],TRUE
+policyURL,string,,"A link to the PII Controller’s privacy statement/policy and applicable terms of use in effect when the consent was obtained, and the receipt was issued. If a privacy policy changes, the link SHOULD continue to point to the old policy until there is evidence of an updated consent from the PII Principal. This field MUST contain a non-empty string.",TRUE
+purposeCategory,string,,The reason the PII Controller is collecting the PII. Example Purpose Categories currently in use are available on the Kantara Consent & Information Sharing Work Group (CISWG) Wiki page (https://kantarainitiative.org/confluence/x/74K-BQ). This field MUST contain a non-empty string.,TRUE
+,,,,
+,,,,
+,,,,
+,,,,
+,,,,
+,,,,
+,,,,
+Model: AgreementChoice,,,,
+id,string,,,TRUE
+agreement,fk,Agreement,,TRUE
+,,,,
+Model: Policy,,,,
+id,string,,,TRUE
+name,string,,,TRUE
+,,,,
+Model: ConsentRecord,,,,
+id,string,,,TRUE
+name,string,,,TRUE
+,,,,
+Model: Revision,,,,
+id,string,,,TRUE
+schema,string,,,TRUE
+object_id,string,,,FALSE
+serialized_snapshot,string,,,FALSE
+,,,,
+Model: AgreementFilter,,,,
+id,string,,,TRUE
+name,string,,,TRUE
+,,,,
+Model: ConsentRecordFilter,,,,
+id,string,,,TRUE
+name,string,,,TRUE
+,,,,
+Model: PolicyFilter,,,,
+id,string,,,TRUE
+name,string,,,TRUE
+,,,,
+Model: RegistryReference,,,,
+id,string,,,TRUE
+name,string,,,TRUE
