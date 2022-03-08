@@ -42,7 +42,10 @@ storage_location,string,,,FALSE
 ,,,,
 Model: ConsentRecord,,,,
 id,string,,,TRUE
-name,string,,,TRUE
+agreement,fk,Agreement,The agreement to which consent has been given,TRUE
+individual,fk,Individual,The individual who has signed this consent record,TRUE
+opt_in,boolean,,True: The individual has positively opted in. False: The individual has explicitly said no or withdrawn a previous consent.,FALSE
+signature,string,,TBD: Relation to a Signature schema?,TRUE
 ,,,,
 Model: Revision,,,,
 id,string,,,TRUE

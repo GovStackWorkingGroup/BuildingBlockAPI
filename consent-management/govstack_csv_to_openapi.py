@@ -46,6 +46,12 @@ tags:
     description: Secured operations available to organization API integration
   - name: individual
     description: Individual operations
+  - name: auditor
+    description: Operations for external auditing systems to query detailed data from the system and subscribe to notifications.
+  - name: notification
+    description: Subscribe/unsubscribe notifications for data processors, consumers and frontend systems for individuals.
+  - name: callback
+    description: Callback API for other Building Blocks, especially relevant for asynchronous processes.
 paths:
 {paths}
 
