@@ -9,6 +9,11 @@ import sys
 
 if len(sys.argv) != 3:
     print("USAGE: govstack_csv_to_openapi.py <path_to_endpoint_spec.csv> <path_to_schema_spec.csv>")
+    print("")
+    print("Tip: On Linux, pipe command to `xclip -selection clipboard` to direct outputs straight into X's clipboard and then paste it.")
+    print("")
+    print("Example:")
+    print("./govstack_csv_to_openapi.py GovStack\ Consent\ BB\ API\ endpoints\ -\ endpoints.csv GovStack\ Consent\ BB\ API\ endpoints\ -\ schema.csv | xclip -selection clipboard")
     sys.exit(1)
 
 
