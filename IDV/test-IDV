@@ -33,6 +33,16 @@
         "operationId": "post-authenticate",
         "parameters": [
           {
+                        "in": "header",
+                        "name": "X-Road-Client",
+                        "example": "egovstack/GOV/7002/Registration",
+                        "description": "Format is: INSTANCE/CLASS/MEMBER/SUBSYSTEM",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required": true
+          },
+          {
             "name": "Signature",
             "in": "header",
             "description": "JWS signature of the entire http body of the body header..signature",
