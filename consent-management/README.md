@@ -40,7 +40,7 @@ The key deliverables are as summarised below:
 1. [Consent BB definition](https://docs.google.com/document/d/1e4HbGN-3iskIvZnzKzWwiW9YnBLo0-4c/edit?usp=sharing&ouid=106785504742865552721&rtpof=true&sd=true)
 2. [Use case specifications](https://github.com/lalc/BuildingBlockAPI/tree/main/consent-management/usecases)
 3. Functional and technical requirements
-4. Draft APIs
+4. Draft APIs - Current version: [0.7](https://app.swaggerhub.com/apis/benjaminbalder/ConsentManagementBB/0.7.0)
 
 ## Release Status
 
