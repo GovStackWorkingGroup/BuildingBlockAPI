@@ -24,8 +24,7 @@ class SafeDict(dict):
     def __missing__(self, key):
         return '{' + key + '}'
 
-template = """
-openapi: 3.0.0
+template = """openapi: 3.0.0
 servers:
   # Added by API Auto Mocking Plugin
   - description: SwaggerHub API Auto Mocking
@@ -40,10 +39,10 @@ info:
     name: Apache 2.0
     url: 'http://www.apache.org/licenses/LICENSE-2.0.html'
 tags:
-  - name: admin
-    description: Secured Admin-only calls
   - name: org
     description: Secured operations available to organization API integration
+  - name: dataconsumer
+    description: Secured operations for data consumers and applications to verify consent
   - name: individual
     description: Individual operations
   - name: auditor
@@ -58,6 +57,22 @@ paths:
 components:
   schemas:
 {schemas}
+
+  securitySchemes:
+    OAuth2:
+      type: oauth2
+      flows:
+        authorizationCode:
+          authorizationUrl: https://example.com/oauth/authorize
+          tokenUrl: https://example.com/oauth/token
+          scopes:
+            read: Grants read access
+            write: Grants write access
+            admin: Grants access to admin operations
+
+security:
+  - OAuth2:
+      - read
 """
 
 path_spec_template = """
