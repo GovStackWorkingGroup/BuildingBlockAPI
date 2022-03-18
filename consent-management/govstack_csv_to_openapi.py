@@ -66,9 +66,12 @@ components:
           authorizationUrl: https://example.com/oauth/authorize
           tokenUrl: https://example.com/oauth/token
           scopes:
-            read: Grants read access
-            write: Grants write access
-            admin: Grants access to admin operations
+            read: Grants global read access
+            write: Grants global write access
+            org: Grants access to org operations
+            consumer: Grants access to data consumer operations
+            individual: Grants access to specific individual read/write operations
+            auditor: Grants access to specific auditor read operations
 
 security:
   - OAuth2:
@@ -94,6 +97,8 @@ path_spec_template = """
                   $ref: '#/components/schemas/Policy'
         '400':
           description: bad input parameter
+      security:
+        - OAuth2: [{security}]
 """
 
 path_spec_template_post = path_spec_template + """
@@ -155,13 +160,20 @@ def get_api_spec_from_row(row, current_tag):
 
     url = row[0]
     method = row[1].lower()
+
+    description = row[6].replace("\n", "\\n").replace("\"", "\\\"")
     
     # YAML quotation friendlyness: Use \n as newline characters
     # See: https://stackoverflow.com/questions/3790454/how-do-i-break-a-string-in-yaml-over-multiple-lines
-    summary = row[8].replace("\n", "\\n").replace("\"", "\\\"")
+    summary = row[8].replace("\n", "\\n").replace("\"", "\\\"") or description
     parameters = ""
 
     pattern_url_parameters = re.compile("{(\w+)}")
+
+
+    operation_id = row[9]
+    response_ok = row[10]
+    security = row[11]
 
     for parameter in pattern_url_parameters.findall(url):
         parameters += parameter_template.format(
@@ -181,16 +193,34 @@ def get_api_spec_from_row(row, current_tag):
             description="An object of type {}".format(query_parameter),
         )
 
+    if "List" in operation_id:
+        parameters += parameter_template.format(
+            where="query",
+            name="offset",
+            required="false",
+            description="Requested index for start of resources to be provided in response requested by client",
+            schema_type="integer",
+        )
+        parameters += parameter_template.format(
+            where="query",
+            name="limit",
+            required="false",
+            description="Requested number of resources to be provided in response requested by client",
+            schema_type="integer",
+        )
+    
+
     return {
         "url": url,
         "tag": current_tag,
         "method": method,
-        "summary": "",
-        "operationId": "",
-        "description": "",
+        "summary": summary,
+        "operationId": operation_id,
+        "description": description,
         "url_parameters": parameters or "[]",
         "request_parameter": "",
-        "responseOK": "",
+        "responseOK": response_ok,
+        "security": security,
     }
 
 
