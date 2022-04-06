@@ -31,7 +31,7 @@ servers:
     url: https://virtserver.swaggerhub.com/GovStack/consent_bb/0.7.0
 info:
   description: A basic API reflecting requirements of the Consent BB (WIP)
-  version: 0.7.0
+  version: 0.8.0
   title: Consent Management BB API (WIP)
   contact:
     email: you@your-company.com
@@ -134,6 +134,7 @@ parameter_template_schema = """
 schema_template = """
     {schema}:
       type: {schema_type}
+      description: "{description}"
       required:
 {required}
       properties:
@@ -151,8 +152,6 @@ schema_property_template = """
 schema_property_fk_template = """
         {name}:
           $ref: '#/components/schemas/{fk_model}'
-          example: "{example}"
-          description: "{description}"
 """
 
 
@@ -304,12 +303,14 @@ current_model = None
 output_schemas = ""
 schema_fields = {}
 schema_field_names = {}
+schema_descriptions = {}
 
 with open(schema_csv_file, newline='') as csvfile:
     spamreader = csv.reader(csvfile, delimiter=',', quotechar='"')
     for row in spamreader:
         if is_row_with_model_name(row):
             current_model = row[0].split(": ")[-1]
+            schema_descriptions[current_model] = row[3].replace("\n", "\\n").replace("\"", "\\\"")
 
         if current_model:
             schema_fields.setdefault(current_model, "")
@@ -322,21 +323,20 @@ with open(schema_csv_file, newline='') as csvfile:
                 property_type=row[1],
                 format="",
                 example="",
-                description=row[3],
+                description=row[3].replace("\n", "\\n").replace("\"", "\\\""),
             )
         elif current_model and is_row_with_schema_fk(row):
             schema_field_names[current_model].append(row[0])
             schema_fields[current_model] += schema_property_fk_template.format(
                 name=row[0],
                 fk_model=row[2],
-                example="",
-                description=row[3],
             )
         
 
 for schema_name, properties in schema_fields.items():
     output_schemas += schema_template.format(
         schema=schema_name,
+        description=schema_descriptions[schema_name],
         schema_type="object",
         properties=properties,
         required="\n".join("           - {}".format(name) for name in schema_field_names[schema_name])

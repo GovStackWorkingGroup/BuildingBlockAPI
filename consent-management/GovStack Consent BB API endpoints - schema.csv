@@ -1,70 +1,112 @@
-Name,Type,FK,Description,Required
-Model: Individual,,,,
-id,string,,,TRUE
-registry_bb_reference,string,,,TRUE
-,,,,FALSE
-Model: Agreement,,,,
-id,string,,,TRUE
-version,string,,The version of this specification to which a receipt conforms,TRUE
-data_controller_name,string,,Name of data controller (may be omitted if no data involved) - TBD: Split into separate DataController model?,TRUE
-data_controller_url,string,,URL of data controller (may be omitted if no data involved) - TBD: Split into separate DataController model?,TRUE
-policy,,Policy,Reference to the policy under which this Agreement shall be governed,TRUE
-purpose,string,,Purpose of data processing or purpose of consent. Displayed to the user.,TRUE
-purpose_description,string,,Long description of purpose of data processing or purpose of consent. Displayed to the user.,TRUE
-lawful_basis,string,,Lawful basis of the agreement - consent / legal_obligation / contract / vital_interest / public_task / legitimate_interest,TRUE
-data_use,string,,null/data-source/data-using-service,FALSE
-personal_data,string,,TBD: Should be external relation,TRUE
-dpia,string,,Data Protection Impact Assessment,TRUE
-lifecycle,string,,TBD: Replace with an external FK relationship to some AgreementLifecycle or AgreementState model,TRUE
-signatures,string,,"TBD: Replace with a Signature or Proof model whereby we can capture hash signatures of authentic party behind this contract. This is NOT the same as a Consent Record, which models the individual's signature to an Agreement.",FALSE
-,,,,
-,,,,
-,,,,
-,,,,
-,,,,
-,,,,
-Model: AgreementData,,,,
-id,string,,,TRUE
-agreement,fk,Agreement,,TRUE
-sensitivity,string,,TBD: categories of sensitivity from som ISO,
-category,string,,,
-,,,,
-Model: Policy,,,,
-id,string,,,TRUE
-name,string,,,TRUE
-version,string,,,FALSE
-url,string,,"Permanent URL at which this very version of the Policy can be read, should not be allowed to change over time.",FALSE
-jurisdiction,string,,,FALSE
-industry_sector,string,,,FALSE
-data_retention_period_days,integer,,,FALSE
-geographic_restriction,string,,,FALSE
-storage_location,string,,,FALSE
-,,,,
-Model: ConsentRecord,,,,
-id,string,,,TRUE
-agreement,fk,Agreement,The agreement to which consent has been given,TRUE
-individual,fk,Individual,The individual who has signed this consent record,TRUE
-opt_in,boolean,,True: The individual has positively opted in. False: The individual has explicitly said no or withdrawn a previous consent.,FALSE
-signature,string,,TBD: Relation to a Signature schema?,TRUE
-,,,,
-Model: Revision,,,,
-id,string,,,TRUE
-schema,string,,,TRUE
-object_id,string,,,FALSE
-serialized_snapshot,string,,,FALSE
-,,,,
-Model: AgreementFilter,,,,
-id,string,,,TRUE
-name,string,,,TRUE
-,,,,
-Model: ConsentRecordFilter,,,,
-id,string,,,TRUE
-name,string,,,TRUE
-,,,,
-Model: PolicyFilter,,,,
-id,string,,,TRUE
-name,string,,,TRUE
-,,,,
-Model: RegistryReference,,,,
-id,string,,,TRUE
-name,string,,,TRUE
+Name,Type,FK,Description,Required,Flagged for further discussion
+Model: Individual,,,"Models an individual, with details referenced from an external system (registration system, functional ID, foundational ID etc)",,
+id,string,,"The unique ID of a Individual row, not to be mistaken with a unique natural individual.",TRUE,FALSE
+functional_id,string,,"Non-mandatory reference to a functional ID, which is likely PII",FALSE,TRUE
+foundational_id,string,,Non-mandatory (natural) ID and PII,FALSE,TRUE
+session_id,string,,"An ""individual"" may simply be mapped to a temporary session?",FALSE,TRUE
+,,,,,
+Model: Agreement,,,An agreement contains the specification of a single purpose that can be consented to. An Agreement is universal and can be consented to by *many* individuals through a ConsentRecord,,
+id,string,,,TRUE,FALSE
+version,string,,The version of this specification to which a receipt conforms,TRUE,FALSE
+controller,fk,Controller,Data controller (may be omitted if no data involved),FALSE,FALSE
+policy,fk,Policy,Reference to the policy under which this Agreement shall be governed,TRUE,FALSE
+purpose,fk,AgreementPurpose,Purpose of data processing or purpose of consent. Displayed to the user.,TRUE,FALSE
+lawful_basis,string,,Lawful basis of the agreement - consent / legal_obligation / contract / vital_interest / public_task / legitimate_interest,TRUE,FALSE
+data_use,string,,null/data-source/data-using-service,FALSE,FALSE
+dpia,string,,Data Protection Impact Assessment,TRUE,FALSE
+lifecycle,fk,AgreementLifecycle,Current Lifecycle state of the Agreement,TRUE,TRUE
+signature,fk,Signature,Signature of authorizing party of Agreement. Note: Signatures may be chained in case of multiple signatures.,FALSE,FALSE
+active,boolean,,Agreement is active and new ConsentRecords can be created.,FALSE,FALSE
+,,,,,
+Model: AgreementData,,,Agreement data contains specifications of exactly what is collected.,,
+id,string,,,TRUE,FALSE
+agreement,fk,Agreement,,TRUE,FALSE
+name,string,,"Name of the attribute, for instance ""name"" or ""age""",TRUE,FALSE
+sensitivity,string,,TBD: categories of sensitivity from som ISO,TRUE,FALSE
+category,string,,,TRUE,FALSE
+hash,string,,"In order to sign an Agreement, this relation needs to have a cryptopgraphic hash to be included in the Signature of the Agreement.",TRUE,TRUE
+,,,,,
+Model: Policy,,,"A policy governs the processing and use of data in the organization that is ""data controller"" and owner of Agreement.",,
+id,string,,,TRUE,FALSE
+name,string,,Name of the policy,TRUE,FALSE
+version,string,,Version of the policy,TRUE,FALSE
+url,string,,"Permanent URL at which this very version of the Policy can be read, should not be allowed to change over time.",TRUE,FALSE
+jurisdiction,string,,,FALSE,FALSE
+industry_sector,string,,,FALSE,FALSE
+data_retention_period_days,integer,,,FALSE,FALSE
+geographic_restriction,string,,,FALSE,FALSE
+storage_location,string,,,FALSE,FALSE
+,,,,,
+Model: ConsentRecord,,,A consent record expresses consent (as defined in this building block's specification) to a single Agreement.,,
+id,string,,,TRUE,FALSE
+agreement,fk,Agreement,The agreement to which consent has been given,TRUE,FALSE
+individual,fk,Individual,The individual who has signed this consent record,TRUE,FALSE
+opt_in,boolean,,True: The individual has positively opted in. False: The individual has explicitly said no (or withdrawn a previous consent).,FALSE,FALSE
+state,string,,unsigned/pending more signatures/signed,TRUE,FALSE
+signature,string,,"A signature that hashes all the values of the consent record and has signed it with the key of the Invidiual, making it verifiable and tamper-proof. TBD: Relation to a Signature schema?",TRUE,FALSE
+,,,,,
+Model: Revision,,,"A *generic* revision model captures the serialized contents of any shema's single row. This is then subject to 1) cryptographic signature and 2) auditing.
+
+Aside from ""successor"" column, a revision should be considered locked.",,
+id,string,,,TRUE,FALSE
+schema,string,,,TRUE,FALSE
+object_id,string,,,TRUE,FALSE
+serialized_snapshot,string,,,TRUE,FALSE
+timestamp,string,,,TRUE,FALSE
+authorized_by_individual,fk,Individual,,FALSE,TRUE
+authorized_by_other,string,,Reference to an admin user that has created this revision,FALSE,TRUE
+successor,fk,Revision,"This revision is no longer the latest revision, refer to its successor.",FALSE,FALSE
+,,,,,
+Model: AgreementFilter,,,Query filter for API endpoint listing Agreement objects,,
+id,string,,,TRUE,FALSE
+name,string,,,TRUE,FALSE
+,,,,,
+Model: ConsentRecordFilter,,,Query filter for API endpoint listing ConsentRecord objects,,
+id,string,,,TRUE,FALSE
+name,string,,,TRUE,FALSE
+,,,,,
+Model: PolicyFilter,,,Query filter for API endpoint listing Policy objects,,
+id,string,,,TRUE,FALSE
+name,string,,,TRUE,FALSE
+revision,fk,Revision,,FALSE,FALSE
+,,,,,
+Model: Controller,,,Details of a data controller.,,
+id,string,,,TRUE,FALSE
+name,string,,Name of data controller (may be omitted if no data involved),TRUE,FALSE
+url,string,,URL of data controller (may be omitted if no data involved),TRUE,FALSE
+,,,,,
+Model: Signature,,,"A generic signature contains a cryptographic hash of some value, together with a signature created by some private key in another system. Required signing methods: Revision object or another Signature object.",,
+id,string,,,TRUE,FALSE
+verification_method,string,,,TRUE,FALSE
+verification_hash,string,,Internally generated cryptographic hash of the value to be signed.,TRUE,FALSE
+verification_signature,string,,Signature of verification_hash,TRUE,FALSE
+signed_by,string,,"Identifier information may change over time. This field could contain a natural individual's names, personal number, email addresses - store a snapshot that binds to the signature at the time of signing.",TRUE,TRUE
+timestamp,string,,Timestamp of signature,TRUE,TRUE
+object_type,string,,signature/revision,FALSE,TRUE
+object_reference,string,,"A symmetric relation / back reference to the object_type that was signed. We are currently just modelling signing another signature (a chain) or signing a Revision (which can be a revision of an agreement, policy etc)",FALSE,TRUE
+,,,,,
+Model: AgreementPurpose,,,TBD: Models the purpose of an agreement,,
+id,string,,,TRUE,TRUE
+name,string,,Name of purpose,TRUE,TRUE
+description,string,,Description of purpose,TRUE,TRUE
+,,,,,
+Model: AgreementLifecycle,,,TBD: Models the valid lifecycle states of an Agreement,,
+id,string,,,TRUE,TRUE
+name,string,,Definition / Preparation / Capture / Use / Proof,TRUE,TRUE
+,,,,,
+Model: RegistryReference,,,"TBD: When creating an Invidiual, we need some input that refers to a functional or foundational ID in an external system",,
+id,string,,,TRUE,TRUE
+foundational_id,string,,,FALSE,FALSE
+functional_id,string,,,FALSE,FALSE
+,,,,,
+Model: AuditTracker,,,TBD: An external tracker receiving information from the system that can be subject to external auditing and verification of correct behavior,,
+id,string,,,TRUE,TRUE
+name,string,,Name of the auditing system,TRUE,TRUE
+public_key,string,,The auditing system's public key for encrypting data sent to callback functions,TRUE,TRUE
+callback_agreement,string,,A URL receiving a callback with the Agreement object + Revision + AuditEventType,TRUE,TRUE
+callback_consent_record,string,,A URL receiving a callback with the ConsentRecord object + Revision + AuditEventType,TRUE,TRUE
+callback_policy,string,,A URL receiving a callback with the Policy object + Revision + AuditEventType,TRUE,TRUE
+,,,,,
+Model: AuditEventType,,,TBD: Model for the possible events pertaining a change to an object subject to auditing.,,
+id,string,,,TRUE,TRUE
+event_name,string,,What happened - create/update/delete,,
