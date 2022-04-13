@@ -1,0 +1,27 @@
+title P2G Mobile Money Payment with QR code
+
+Registration BB->Payments BB: Send Transaction details
+Payments BB --> Registration BB: Generates payment reference
+
+Registration BB -> Registration BB: Generate QR code
+
+Registration BB -> Payer: QR code is reads Payment reference
+Payer --> FSP: Invoke Bill Payment service
+
+FSP -> FSP: Debit Payer
+
+FSP -> FSP: Credit Gov
+
+FSP -> Payments BB: Payment notification
+Payments BB --> FSP: Confirm payment
+
+Payments BB --> Registration BB: Payment success notification
+Registration BB --> Payer: Payment success notification
+
+alt Error 401: Incorrect Payment Reference
+    FSP -> FSP: Rollback Payer Debit
+    FSP -> FSP: Rollback Gov Credit
+    FSP --> Payments BB: Rollback successful
+    Payments BB --> Registration BB: Payment failure notification
+    Registration BB --> Payer: Payment failure notification    
+end

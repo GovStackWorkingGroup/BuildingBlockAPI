@@ -1,0 +1,34 @@
+title Voucher Activation v3
+
+Source BB->Payment BB: Activate voucher
+Payment BB-->Source BB: Voucher successfully Activated
+
+alt Error 400
+    Payment BB-->Source BB: Invalid request
+end
+
+alt Error 456
+    Payment BB-->Source BB: Invalid voucher serial number
+end
+
+alt Error 460
+    Payment BB-->Source BB: Gov Stack Building Block does not exist
+end
+
+alt Error 455
+    Payment BB-->Source BB: Voucher group exhausted
+end
+
+alt Error 500
+    Payment BB-->Source BB: Internal Server error
+end
+
+alt Error 503
+    Payment BB-->Source BB: Service Unavailable
+end
+
+alt Error 599
+    Payment BB-->Source BB: Network connection timeout error
+end
+
+

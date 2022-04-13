@@ -1,0 +1,1323 @@
+---
+openapi: 3.0.0
+info:
+  title: GovStack Payment BB Voucher Management APIs for external BB
+  description: |
+    This schema is part of the Govstack Payments Building Block.
+  contact:
+    email: oscar.correia@maarifaeducation.com
+  version: 1.0.3
+servers:
+- url: https://virtserver.swaggerhub.com/VMS-API2/VMS-API2-GS_P_VMS_API-1.0.2/1.0.3
+  description: SwaggerHub API Auto Mocking
+- url: https://virtserver.swaggerhub.com/GovStack/PaymentBuildingBlock/v1.0.1
+security:
+- app_id: []
+tags:
+- name: VoucherPreactivation
+  description: |
+    The **VoucherPreactivation** API is used by a non Payment Building Blocks in the GovStack Framework to request for a voucher to be used. This call reserves the voucher (for a period of time, which is to be implemented). This API requests a single voucher from the voucher server that can be used for a future redemption process. The caller sends an amount, a voucher group (depending on the use case), the currency and the name of the calling GovStack Building Block. If the API call is successful, the Payment Building Block will respond with a voucher number, a voucher serial number and an expiry date.
+- name: VoucherActivation
+  description: |
+    The **VoucherActivation** API is used by a non Payment Building Blocks in the GovStack Framework to activate a pre-activated voucher. This is second function call is intended to ensure that the voucher is only activated when it is disbursed. This API requests for the activation of a voucher when the caller sends the voucher number to be activated. If the API call is successful, the activation is confirmed and the voucher can now be used by the beneficiary.
+- name: VoucherRedemption
+  description: |
+    The **VoucherRedemption** API is used by a non Payment Building Blocks in the GovStack Framework to redeem a voucher. The calling Building Block will capture the voucher number and the voucher serial number from the merchant point. The external Building Block will also acquire the merchant name and payment details from the merchant registry. The calling Building Block will then send the voucher number, the voucher serial number, the merchant name and payment details. The Payment Building Block will verify that the voucher has been activated and has not been used or blocked or cancelled. If so, the Payment Building Block will then send a payment request to the funding agency / FSP. The Payment Gateway of the Payments Building Block will facilitate the debit of the funding account, and the credit of the merchant as well as handle any intermediary fees. Once the payment has been successfully done the Payment Building Block will mark the voucher as consumed and notify the merchant (and beneficiary if possible).
+- name: VoucherStatusCheck
+  description: |
+    The **VoucherStatus** API is used by a non Payment Building Blocks in the GovStack Framework to check the status of a voucher. The calling Building Block will capture the voucher number and send it to the Payments Building Block to determine the status of a voucher. The Payments Building will respond with one of the status of Pre-Activated, Activated,  Suspended, Blocked or Not Existing.
+- name: VoucherCancellation
+  description: "The **VocuherCancellation** API is used by a non Payment Building Blocks in the GovStack Framework to cancel a voucher. The calling Building Block will capture the voucher number and send it to the Payments Building Block to canel the voucher. The Payments Building Block will respond with a status of Cancelled, Already Cancelled or Not existing. The VoucherCancellation will override the Blocked status and render the voucher permanently unusable. \n"
+paths:
+  /vouchers/voucher_preactivation:
+    post:
+      tags:
+      - VoucherPreactivation
+      description: Requests for voucher number, voucher serial number and expiry date by sending voucher group, amount and currency
+      operationId: VoucherPreactivationPOST
+      parameters:
+      - name: X-Callback-URL
+        in: header
+        description: The URL supplied by the client that will be used to return the callback in the form of a HTTP PUT.
+        required: false
+        style: simple
+        explode: false
+        schema:
+          type: string
+          format: uri
+          example: https://myserver.com/send/callback/here
+      - name: X-Date
+        in: header
+        description: Header parameter to indicate the date and time that the message was originated. It is used for basic message integrity checks, to ensure the request is not stale. Note that the header was previously referenced as 'Date' in version 1.0 of the Mobile Money API.
+        required: false
+        style: simple
+        explode: false
+        schema:
+          type: string
+          format: date-time
+      - name: X-CorrelationID
+        in: header
+        description: Header parameter to uniquely identify the request. Must be supplied as a UUID.
+        required: false
+        style: simple
+        explode: false
+        schema:
+          pattern: ^[0-9A-Fa-f]{8}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{12}$
+          type: string
+      - name: X-API-Key
+        in: header
+        description: Used to pass pre-shared client's API key to the server.
+        required: false
+        style: simple
+        explode: false
+        schema:
+          type: string
+      - name: X-User-Bearer
+        in: header
+        description: Used to pass user’s access token when OAuth 2.0/OIDC authorisation framework is used for end-user authentication.
+        required: false
+        style: simple
+        explode: false
+        schema:
+          type: string
+      - name: X-Client-Id
+        in: header
+        description: Used to pass pre-shared client's identifier to the server.
+        required: false
+        style: simple
+        explode: false
+        schema:
+          maxLength: 256
+          type: string
+      - name: X-Content-Hash
+        in: header
+        description: SHA-256 hex digest of the request content (encrypted or plain). Applicable only if basic data integrity checking is to be performed.
+        required: false
+        style: simple
+        explode: false
+        schema:
+          type: string
+      - name: X-User-Credential-1
+        in: header
+        description: The end-users encrypted security credential. Should only be used when OAuth 2.0/OIDC authorisation framework has not been implemented by the API Provider.
+        required: false
+        style: simple
+        explode: false
+        schema:
+          type: string
+      - name: X-User-Credential-2
+        in: header
+        description: The end-users encrypted security credential Should only be used when OAuth 2.0/OIDC authorisation framework has not been implemented by the API Provider.
+        required: false
+        style: simple
+        explode: false
+        schema:
+          type: string
+      - name: X-Channel
+        in: header
+        description: String containing the channel that was used to originate the request. For example USSD, Web, App.
+        required: false
+        style: simple
+        explode: false
+        schema:
+          maxLength: 256
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/voucher_preactivation_request'
+        required: true
+      responses:
+        "200":
+          description: Successfully pre-activated voucher
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/preactivation_response'
+        "400":
+          description: Invalid resquest
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/invalid_preactivation_request'
+        "452":
+          description: Invalid amount
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/invalid_amount'
+        "453":
+          description: Invalid currency
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/invalid_currency'
+        "454":
+          description: Invalid voucher group
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/invalid_voucher_group'
+        "455":
+          description: Voucher group exhausted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/voucher_group_exhausted'
+        "460":
+          description: Gov Stack Building Block does not exist
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GovStack_BB_does_not_exist'
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/internal_server_error'
+        "503":
+          description: Service Unavailable
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/service_unavailable'
+        "599":
+          description: Network connection timeout error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/network_timeout_error'
+  /vouchers/voucher_activation:
+    patch:
+      tags:
+      - VoucherActivation
+      description: Request for voucher activation by sending the voucher serial number
+      operationId: VoucherActivationPATCH
+      parameters:
+      - name: X-Callback-URL
+        in: header
+        description: The URL supplied by the client that will be used to return the callback in the form of a HTTP PUT.
+        required: false
+        style: simple
+        explode: false
+        schema:
+          type: string
+          format: uri
+          example: https://myserver.com/send/callback/here
+      - name: X-Date
+        in: header
+        description: Header parameter to indicate the date and time that the message was originated. It is used for basic message integrity checks, to ensure the request is not stale. Note that the header was previously referenced as 'Date' in version 1.0 of the Mobile Money API.
+        required: false
+        style: simple
+        explode: false
+        schema:
+          type: string
+          format: date-time
+      - name: X-CorrelationID
+        in: header
+        description: Header parameter to uniquely identify the request. Must be supplied as a UUID.
+        required: false
+        style: simple
+        explode: false
+        schema:
+          pattern: ^[0-9A-Fa-f]{8}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{12}$
+          type: string
+      - name: X-API-Key
+        in: header
+        description: Used to pass pre-shared client's API key to the server.
+        required: false
+        style: simple
+        explode: false
+        schema:
+          type: string
+      - name: X-User-Bearer
+        in: header
+        description: Used to pass user’s access token when OAuth 2.0/OIDC authorisation framework is used for end-user authentication.
+        required: false
+        style: simple
+        explode: false
+        schema:
+          type: string
+      - name: X-Client-Id
+        in: header
+        description: Used to pass pre-shared client's identifier to the server.
+        required: false
+        style: simple
+        explode: false
+        schema:
+          maxLength: 256
+          type: string
+      - name: X-Content-Hash
+        in: header
+        description: SHA-256 hex digest of the request content (encrypted or plain). Applicable only if basic data integrity checking is to be performed.
+        required: false
+        style: simple
+        explode: false
+        schema:
+          type: string
+      - name: X-User-Credential-1
+        in: header
+        description: The end-users encrypted security credential. Should only be used when OAuth 2.0/OIDC authorisation framework has not been implemented by the API Provider.
+        required: false
+        style: simple
+        explode: false
+        schema:
+          type: string
+      - name: X-User-Credential-2
+        in: header
+        description: The end-users encrypted security credential Should only be used when OAuth 2.0/OIDC authorisation framework has not been implemented by the API Provider.
+        required: false
+        style: simple
+        explode: false
+        schema:
+          type: string
+      - name: X-Channel
+        in: header
+        description: String containing the channel that was used to originate the request. For example USSD, Web, App.
+        required: false
+        style: simple
+        explode: false
+        schema:
+          maxLength: 256
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Voucher_activate_request'
+        required: true
+      responses:
+        "200":
+          description: Successfully activated voucher
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/activation_response'
+        "400":
+          description: Invalid resquest
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/invalid_activation_request'
+        "456":
+          description: Invalid voucher serial number
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/invalid_voucher_serial_number'
+        "460":
+          description: Gov Stack Building Block does not exist
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GovStack_BB_does_not_exist'
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/internal_server_error'
+        "503":
+          description: Service Unavailable
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/service_unavailable'
+        "599":
+          description: Network connection timeout error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/network_timeout_error'
+  /vouchers/voucher_redeemption:
+    post:
+      tags:
+      - VoucherRedemption
+      description: Request for voucher redemption by sending the voucher number, the merchant name and merchant payment details
+      operationId: VoucherRedemptionPOST
+      parameters:
+      - name: X-Callback-URL
+        in: header
+        description: The URL supplied by the client that will be used to return the callback in the form of a HTTP PUT.
+        required: false
+        style: simple
+        explode: false
+        schema:
+          type: string
+          format: uri
+          example: https://myserver.com/send/callback/here
+      - name: X-Date
+        in: header
+        description: Header parameter to indicate the date and time that the message was originated. It is used for basic message integrity checks, to ensure the request is not stale. Note that the header was previously referenced as 'Date' in version 1.0 of the Mobile Money API.
+        required: false
+        style: simple
+        explode: false
+        schema:
+          type: string
+          format: date-time
+      - name: X-CorrelationID
+        in: header
+        description: Header parameter to uniquely identify the request. Must be supplied as a UUID.
+        required: false
+        style: simple
+        explode: false
+        schema:
+          pattern: ^[0-9A-Fa-f]{8}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{12}$
+          type: string
+      - name: X-API-Key
+        in: header
+        description: Used to pass pre-shared client's API key to the server.
+        required: false
+        style: simple
+        explode: false
+        schema:
+          type: string
+      - name: X-User-Bearer
+        in: header
+        description: Used to pass user’s access token when OAuth 2.0/OIDC authorisation framework is used for end-user authentication.
+        required: false
+        style: simple
+        explode: false
+        schema:
+          type: string
+      - name: X-Client-Id
+        in: header
+        description: Used to pass pre-shared client's identifier to the server.
+        required: false
+        style: simple
+        explode: false
+        schema:
+          maxLength: 256
+          type: string
+      - name: X-Content-Hash
+        in: header
+        description: SHA-256 hex digest of the request content (encrypted or plain). Applicable only if basic data integrity checking is to be performed.
+        required: false
+        style: simple
+        explode: false
+        schema:
+          type: string
+      - name: X-User-Credential-1
+        in: header
+        description: The end-users encrypted security credential. Should only be used when OAuth 2.0/OIDC authorisation framework has not been implemented by the API Provider.
+        required: false
+        style: simple
+        explode: false
+        schema:
+          type: string
+      - name: X-User-Credential-2
+        in: header
+        description: The end-users encrypted security credential Should only be used when OAuth 2.0/OIDC authorisation framework has not been implemented by the API Provider.
+        required: false
+        style: simple
+        explode: false
+        schema:
+          type: string
+      - name: X-Channel
+        in: header
+        description: String containing the channel that was used to originate the request. For example USSD, Web, App.
+        required: false
+        style: simple
+        explode: false
+        schema:
+          maxLength: 256
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Voucher_redeem_request'
+        required: true
+      responses:
+        "200":
+          description: Voucher is successfully redeemed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/redemption_response'
+        "400":
+          description: Invalid resquest
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/invalid_redemption_request'
+        "460":
+          description: Gov Stack Building Block does not exist
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GovStack_BB_does_not_exist'
+        "461":
+          description: Invalid voucher number
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/invalid_voucher_number'
+        "462":
+          description: Insufficient funds in funding a/c
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/insufficient_funds'
+        "463":
+          description: Cannot credit merchant
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/cannot_credit_merchant'
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/internal_server_error'
+        "503":
+          description: Service Unavailable
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/service_unavailable'
+        "599":
+          description: Network connection timeout error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/network_timeout_error'
+  /vouchers/voucherstatuscheck/{voucherserialnumber}:
+    get:
+      tags:
+      - VoucherStatusCheck
+      description: Check the status of the Voucher. The API will respond with Not Preactivated, Preactivated, Activated, Active, Consumed, Blocked, Suspended and Purged.
+      operationId: VoucherStatusCheckGET
+      parameters:
+      - name: X-Callback-URL
+        in: header
+        description: The URL supplied by the client that will be used to return the callback in the form of a HTTP PUT.
+        required: false
+        style: simple
+        explode: false
+        schema:
+          type: string
+          format: uri
+          example: https://myserver.com/send/callback/here
+      - name: voucherserialnumber
+        in: path
+        description: Voucher serial number to check status of
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      - name: X-Date
+        in: header
+        description: Header parameter to indicate the date and time that the message was originated. It is used for basic message integrity checks, to ensure the request is not stale. Note that the header was previously referenced as 'Date' in version 1.0 of the Mobile Money API.
+        required: false
+        style: simple
+        explode: false
+        schema:
+          type: string
+          format: date-time
+      - name: X-CorrelationID
+        in: header
+        description: Header parameter to uniquely identify the request. Must be supplied as a UUID.
+        required: false
+        style: simple
+        explode: false
+        schema:
+          pattern: ^[0-9A-Fa-f]{8}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{12}$
+          type: string
+      - name: X-API-Key
+        in: header
+        description: Used to pass pre-shared client's API key to the server.
+        required: false
+        style: simple
+        explode: false
+        schema:
+          type: string
+      - name: X-User-Bearer
+        in: header
+        description: Used to pass user’s access token when OAuth 2.0/OIDC authorisation framework is used for end-user authentication.
+        required: false
+        style: simple
+        explode: false
+        schema:
+          type: string
+      - name: X-Client-Id
+        in: header
+        description: Used to pass pre-shared client's identifier to the server.
+        required: false
+        style: simple
+        explode: false
+        schema:
+          maxLength: 256
+          type: string
+      - name: X-Content-Hash
+        in: header
+        description: SHA-256 hex digest of the request content (encrypted or plain). Applicable only if basic data integrity checking is to be performed.
+        required: false
+        style: simple
+        explode: false
+        schema:
+          type: string
+      - name: X-User-Credential-1
+        in: header
+        description: The end-users encrypted security credential. Should only be used when OAuth 2.0/OIDC authorisation framework has not been implemented by the API Provider.
+        required: false
+        style: simple
+        explode: false
+        schema:
+          type: string
+      - name: X-User-Credential-2
+        in: header
+        description: The end-users encrypted security credential Should only be used when OAuth 2.0/OIDC authorisation framework has not been implemented by the API Provider.
+        required: false
+        style: simple
+        explode: false
+        schema:
+          type: string
+      - name: X-Channel
+        in: header
+        description: String containing the channel that was used to originate the request. For example USSD, Web, App.
+        required: false
+        style: simple
+        explode: false
+        schema:
+          maxLength: 256
+          type: string
+      responses:
+        "200":
+          description: Voucher status
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/voucher_status'
+        "400":
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/invalid_validation_request'
+        "456":
+          description: Invalid voucher number
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/invalid_voucher_number'
+        "458":
+          description: Voucher number already used
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/voucher_already_used'
+        "459":
+          description: Voucher has expired
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/voucher_expired'
+        "460":
+          description: Gov Stack Building Block does not exist
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GovStack_BB_does_not_exist'
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/internal_server_error'
+        "503":
+          description: Service Unavailable
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/service_unavailable'
+        "599":
+          description: Network connection timeout error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/network_timeout_error'
+    patch:
+      tags:
+      - VoucherCancellation
+      description: This operation cancels a specific voucher number.
+      operationId: VoucherCancelPATCH
+      parameters:
+      - name: X-Callback-URL
+        in: header
+        description: The URL supplied by the client that will be used to return the callback in the form of a HTTP PUT.
+        required: false
+        style: simple
+        explode: false
+        schema:
+          type: string
+          format: uri
+          example: https://myserver.com/send/callback/here
+      - name: voucherserialnumber
+        in: path
+        description: Voucher serial number to check status of
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      - name: X-Date
+        in: header
+        description: Header parameter to indicate the date and time that the message was originated. It is used for basic message integrity checks, to ensure the request is not stale. Note that the header was previously referenced as 'Date' in version 1.0 of the Mobile Money API.
+        required: false
+        style: simple
+        explode: false
+        schema:
+          type: string
+          format: date-time
+      - name: X-CorrelationID
+        in: header
+        description: Header parameter to uniquely identify the request. Must be supplied as a UUID.
+        required: false
+        style: simple
+        explode: false
+        schema:
+          pattern: ^[0-9A-Fa-f]{8}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{12}$
+          type: string
+      - name: X-API-Key
+        in: header
+        description: Used to pass pre-shared client's API key to the server.
+        required: false
+        style: simple
+        explode: false
+        schema:
+          type: string
+      - name: X-User-Bearer
+        in: header
+        description: Used to pass user’s access token when OAuth 2.0/OIDC authorisation framework is used for end-user authentication.
+        required: false
+        style: simple
+        explode: false
+        schema:
+          type: string
+      - name: X-Client-Id
+        in: header
+        description: Used to pass pre-shared client's identifier to the server.
+        required: false
+        style: simple
+        explode: false
+        schema:
+          maxLength: 256
+          type: string
+      - name: X-Content-Hash
+        in: header
+        description: SHA-256 hex digest of the request content (encrypted or plain). Applicable only if basic data integrity checking is to be performed.
+        required: false
+        style: simple
+        explode: false
+        schema:
+          type: string
+      - name: X-User-Credential-1
+        in: header
+        description: The end-users encrypted security credential. Should only be used when OAuth 2.0/OIDC authorisation framework has not been implemented by the API Provider.
+        required: false
+        style: simple
+        explode: false
+        schema:
+          type: string
+      - name: X-User-Credential-2
+        in: header
+        description: The end-users encrypted security credential Should only be used when OAuth 2.0/OIDC authorisation framework has not been implemented by the API Provider.
+        required: false
+        style: simple
+        explode: false
+        schema:
+          type: string
+      - name: X-Channel
+        in: header
+        description: String containing the channel that was used to originate the request. For example USSD, Web, App.
+        required: false
+        style: simple
+        explode: false
+        schema:
+          maxLength: 256
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/voucher_cancel_request'
+        required: true
+      responses:
+        "200":
+          description: Voucher cancelled
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/voucher_cancelled'
+        "400":
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/invalid_validation_request'
+        "463":
+          description: Invalid voucher
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/invalid_voucher'
+        "464":
+          description: Voucher is already cancelled
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/already_cancelled'
+components:
+  schemas:
+    voucher_preactivation_request:
+      required:
+      - Gov_Stack_BB
+      - voucher_amount
+      - voucher_currency
+      - voucher_group
+      type: object
+      properties:
+        voucher_amount:
+          maxLength: 23
+          minLength: 1
+          pattern: ^([0]|([1-9][0-9]{0,17}))([.][0-9]{0,3}[0-9])?$
+          type: string
+          example: "15.21"
+        voucher_currency:
+          type: string
+          enum:
+          - AED
+          - AFN
+          - ALL
+          - AMD
+          - ANG
+          - AOA
+          - ARS
+          - AUD
+          - AWG
+          - AZN
+          - BAM
+          - BBD
+          - BDT
+          - BGN
+          - BHD
+          - BIF
+          - BMD
+          - BND
+          - BOB
+          - BOV
+          - BRL
+          - BSD
+          - BTN
+          - BWP
+          - BYN
+          - BZD
+          - CAD
+          - CDF
+          - CHE
+          - CHF
+          - CHW
+          - CLF
+          - CLP
+          - CNY
+          - COP
+          - COU
+          - CRC
+          - CUC
+          - CUP
+          - CVE
+          - CZK
+          - DJF
+          - DKK
+          - DOP
+          - DZD
+          - EGP
+          - ERN
+          - ETB
+          - EUR
+          - FJD
+          - FKP
+          - GBP
+          - GEL
+          - GHS
+          - GIP
+          - GMD
+          - GNF
+          - GTQ
+          - GYD
+          - HKD
+          - HNL
+          - HRK
+          - HTG
+          - HUF
+          - IDR
+          - ILS
+          - INR
+          - IQD
+          - IRR
+          - ISK
+          - JMD
+          - JOD
+          - JPY
+          - KES
+          - KGS
+          - KHR
+          - KMF
+          - KPW
+          - KRW
+          - KWD
+          - KYD
+          - KZT
+          - LAK
+          - LBP
+          - LKR
+          - LRD
+          - LSL
+          - LYD
+          - MAD
+          - MDL
+          - MGA
+          - MKD
+          - MMK
+          - MNT
+          - MOP
+          - MRO
+          - MUR
+          - MVR
+          - MWK
+          - MXN
+          - MXV
+          - MYR
+          - MZN
+          - NAD
+          - NGN
+          - NIO
+          - NOK
+          - NPR
+          - NZD
+          - OMR
+          - PAB
+          - PEN
+          - PGK
+          - PHP
+          - PKR
+          - PLN
+          - PYG
+          - QAR
+          - RON
+          - RSD
+          - RUB
+          - RWF
+          - SAR
+          - SBD
+          - SCR
+          - SDG
+          - SEK
+          - SGD
+          - SHP
+          - SLL
+          - SOS
+          - SRD
+          - SSP
+          - STD
+          - SVC
+          - SYP
+          - SZL
+          - THB
+          - TJS
+          - TMT
+          - TND
+          - TOP
+          - TRY
+          - TTD
+          - TWD
+          - TZS
+          - UAH
+          - UGX
+          - USD
+          - USN
+          - UYI
+          - UYU
+          - UZS
+          - VEF
+          - VND
+          - VUV
+          - WST
+          - XAF
+          - XAG
+          - XAU
+          - XBA
+          - XBB
+          - XBC
+          - XBD
+          - XCD
+          - XDR
+          - XOF
+          - XPD
+          - XPF
+          - XPT
+          - XSU
+          - XTS
+          - XUA
+          - XXX
+          - YER
+          - ZAR
+          - ZMW
+          - ZWL
+        voucher_group:
+          type: string
+        Gov_Stack_BB:
+          type: string
+        voucher_comment:
+          type: string
+    preactivation_response:
+      required:
+      - expiry_date_time
+      - voucher_number
+      - voucher_serial_number
+      properties:
+        voucher_number:
+          maxLength: 25
+          minLength: 16
+          type: string
+          description: This is a random secret number that uniquely identifies the value and validity of the voucher.
+        voucher_serial_number:
+          maxLength: 25
+          minLength: 16
+          type: string
+          description: This is a sequential number that is used to identify a voucher without necessarily revealing the voucher secret number. There is no relationship between the voucher serial number and the voucher number.
+        expiry_date_time:
+          type: string
+          format: date-time
+    invalid_preactivation_request:
+      required:
+      - message
+      type: object
+      properties:
+        message:
+          type: string
+    invalid_amount:
+      required:
+      - message
+      type: object
+      properties:
+        message:
+          type: string
+    invalid_currency:
+      required:
+      - message
+      type: object
+      properties:
+        message:
+          type: string
+    invalid_voucher_group:
+      required:
+      - message
+      type: object
+      properties:
+        message:
+          type: string
+    voucher_group_exhausted:
+      required:
+      - message
+      type: object
+      properties:
+        message:
+          type: string
+    GovStack_BB_does_not_exist:
+      required:
+      - message
+      type: object
+      properties:
+        message:
+          type: string
+    internal_server_error:
+      required:
+      - message
+      type: object
+      properties:
+        message:
+          type: string
+    service_unavailable:
+      required:
+      - message
+      type: object
+      properties:
+        message:
+          type: string
+    network_timeout_error:
+      required:
+      - message
+      type: object
+      properties:
+        message:
+          type: string
+    Voucher_activate_request:
+      required:
+      - Gov_Stack_BB
+      - voucher_serial_number
+      type: object
+      properties:
+        voucher_serial_number:
+          type: integer
+          format: int64
+        Gov_Stack_BB:
+          type: string
+    activation_response:
+      required:
+      - result_status
+      properties:
+        result_status:
+          type: string
+    invalid_activation_request:
+      required:
+      - message
+      type: object
+      properties:
+        message:
+          type: string
+    invalid_voucher_serial_number:
+      required:
+      - message
+      type: object
+      properties:
+        message:
+          type: string
+    Voucher_redeem_request:
+      required:
+      - Gov_Stack_BB
+      - merchant_bank_details
+      - merchant_name
+      - merchant_voucher_group
+      - override
+      - voucher_number
+      type: object
+      properties:
+        voucher_number:
+          type: integer
+          format: int64
+        Gov_Stack_BB:
+          type: string
+        merchant_name:
+          type: string
+        merchant_bank_details:
+          type: string
+        merchant_voucher_group:
+          type: string
+        override:
+          type: boolean
+    redemption_response:
+      required:
+      - result_status
+      properties:
+        result_status:
+          type: string
+    invalid_redemption_request:
+      required:
+      - message
+      type: object
+      properties:
+        message:
+          type: string
+    invalid_voucher_number:
+      required:
+      - message
+      type: object
+      properties:
+        message:
+          type: string
+    cannot_credit_merchant:
+      required:
+      - message
+      type: object
+      properties:
+        message:
+          type: string
+    insufficient_funds:
+      required:
+      - message
+      type: object
+      properties:
+        message:
+          type: string
+    voucher_status:
+      properties:
+        voucher_status:
+          type: string
+          enum:
+          - Not Pre-Activated
+          - Pre-Activated
+          - Activated
+          - Suspended
+          - Blocked
+          - Purged
+          - Not Existing
+        voucher_amount:
+          type: string
+    invalid_validation_request:
+      type: object
+      properties:
+        message:
+          type: string
+    voucher_already_used:
+      required:
+      - message
+      type: object
+      properties:
+        message:
+          type: string
+    voucher_expired:
+      required:
+      - message
+      type: object
+      properties:
+        message:
+          type: string
+    invalid_voucher:
+      required:
+      - message
+      type: object
+      properties:
+        message:
+          type: string
+    already_cancelled:
+      required:
+      - message
+      type: object
+      properties:
+        message:
+          type: string
+    voucher_cancel_request:
+      required:
+      - Gov_Stack_BB
+      - voucherserialnumber
+      type: object
+      properties:
+        voucherserialnumber:
+          type: string
+        Gov_Stack_BB:
+          type: string
+    voucher_cancelled:
+      required:
+      - message
+      type: object
+      properties:
+        message:
+          type: string
+  parameters:
+    voucherserialnumber:
+      name: voucherserialnumber
+      in: path
+      description: Voucher serial number to check status of
+      required: true
+      style: simple
+      explode: false
+      schema:
+        type: string
+    X-CorrelationID:
+      name: X-CorrelationID
+      in: header
+      description: Header parameter to uniquely identify the request. Must be supplied as a UUID.
+      required: false
+      style: simple
+      explode: false
+      schema:
+        pattern: ^[0-9A-Fa-f]{8}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{12}$
+        type: string
+    X-Date:
+      name: X-Date
+      in: header
+      description: Header parameter to indicate the date and time that the message was originated. It is used for basic message integrity checks, to ensure the request is not stale. Note that the header was previously referenced as 'Date' in version 1.0 of the Mobile Money API.
+      required: false
+      style: simple
+      explode: false
+      schema:
+        type: string
+        format: date-time
+    X-API-Key:
+      name: X-API-Key
+      in: header
+      description: Used to pass pre-shared client's API key to the server.
+      required: false
+      style: simple
+      explode: false
+      schema:
+        type: string
+    X-User-Bearer:
+      name: X-User-Bearer
+      in: header
+      description: Used to pass user’s access token when OAuth 2.0/OIDC authorisation framework is used for end-user authentication.
+      required: false
+      style: simple
+      explode: false
+      schema:
+        type: string
+    X-Client-Id:
+      name: X-Client-Id
+      in: header
+      description: Used to pass pre-shared client's identifier to the server.
+      required: false
+      style: simple
+      explode: false
+      schema:
+        maxLength: 256
+        type: string
+    X-Content-Hash:
+      name: X-Content-Hash
+      in: header
+      description: SHA-256 hex digest of the request content (encrypted or plain). Applicable only if basic data integrity checking is to be performed.
+      required: false
+      style: simple
+      explode: false
+      schema:
+        type: string
+    X-User-Credential-1:
+      name: X-User-Credential-1
+      in: header
+      description: The end-users encrypted security credential. Should only be used when OAuth 2.0/OIDC authorisation framework has not been implemented by the API Provider.
+      required: false
+      style: simple
+      explode: false
+      schema:
+        type: string
+    X-User-Credential-2:
+      name: X-User-Credential-2
+      in: header
+      description: The end-users encrypted security credential Should only be used when OAuth 2.0/OIDC authorisation framework has not been implemented by the API Provider.
+      required: false
+      style: simple
+      explode: false
+      schema:
+        type: string
+    X-Channel:
+      name: X-Channel
+      in: header
+      description: String containing the channel that was used to originate the request. For example USSD, Web, App.
+      required: false
+      style: simple
+      explode: false
+      schema:
+        maxLength: 256
+        type: string
+    X-Callback-URL:
+      name: X-Callback-URL
+      in: header
+      description: The URL supplied by the client that will be used to return the callback in the form of a HTTP PUT.
+      required: false
+      style: simple
+      explode: false
+      schema:
+        type: string
+        format: uri
+        example: https://myserver.com/send/callback/here
+  securitySchemes:
+    app_id:
+      type: apiKey
+      description: API key to authorize request
+      name: appid
+      in: query
