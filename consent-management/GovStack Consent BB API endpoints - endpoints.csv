@@ -27,13 +27,13 @@ API tag: dataconsumer,,,,,,,,,,,
 /dataconsumer/config/agreement/,GET,,1.1,AgreementFilter,Agreement<List>,LIST - Fetch agreements,FALSE,,,,consumer
 /dataconsumer/consent/,GET,,"3.1, 1.2",ConsentRecordFilter,ConsentRecord<List>,"LIST - Fetch consent records. For a given Agreement and Individual, query if consent exists",TRUE,,,,consumer
 /dataconsumer/agreement/{id}/,GET,,1.2,,Agreement,READ - Fetch a specific agreement,FALSE,,,,consumer
-/dataconsumer/agreementchoice/{id}/,GET,,,,AgreementChoice,READ - Fetch an AgreementChoice,FALSE,,,,consumer
 ,,,,,,,,,,,consumer
 API tag: individual,,,,,,,,,,,
 /individual/{id}/agreement/{agreementId}/,POST,UC-C-PIC-I-002,1.2,"Individual, Agreement, Revision","ConsentRecord, Revision","CREATE - For a particular Individual and a particular Agreement, create a new Consent Record pointing to the current Revision of a given Agreement",TRUE,,,,individual
-/individual/{id}/consentrecord/{consentRecordId}/,PUT,UC-C-PIC-I-003,,"Individual, Agreement, Revision","ConsentRecord, Revision",UPDATE,TRUE,,,,individual
-/individual/{id}/consentrecord/{consentRecordId}/withdraw/,PUT,UC-C-PIC-I-003,,Individual,"ConsentRecord, Revision",UPDATE,TRUE,,,,individual
+/individual/{id}/consentrecord/{consentRecordId}/,PUT,UC-C-PIC-I-003,,"Individual, Agreement, Revision","ConsentRecord, Revision",UPDATE*,TRUE,,,,individual
+/individual/{id}/agreement/{agreementId}/withdraw/,PUT,UC-C-PIC-I-003,,Individual,"ConsentRecord, Revision",UPDATE*,TRUE,,,,individual
 /individual/{id}/agreement/,GET,UC-C-PIC-I-001,,,"ConsentRecord<list>, Agreement<list>",LIST,TRUE,,,,individual
+/individual/{id}/agreement/{agreementId}/,GET,UC-C-PIC-I-001,,,"ConsentRecord, Revision<list>",LIST,TRUE,,,,individual
 /individual/{id}/,DELETE,,,,,"DELETE - Cascading delete operation for Right To Be Forgotten, deletes all Consent Records that shall not be retained and have a ""forgettable"" Agreement.",TRUE,,,,individual
 ,,,,,,,,,,,
 API tag: auditor,,,,,,,,,,,

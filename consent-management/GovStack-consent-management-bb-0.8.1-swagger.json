@@ -1,0 +1,2133 @@
+{
+  "openapi" : "3.0.0",
+  "servers" : [ {
+    "description" : "SwaggerHub API Auto Mocking",
+    "url" : "https://virtserver.swaggerhub.com/GovStack/consent-management-bb/0.8.1"
+  }, {
+    "description" : "SwaggerHub API Auto Mocking",
+    "url" : "https://app.swaggerhub.com/apis/GovStack/consent-management-bb/"
+  } ],
+  "info" : {
+    "description" : "This is a basic API for GovStack's Consent Management Building Block. It reflects the basic requirements of the Consent Management BB specification, which is versioned .",
+    "version" : "0.8.1",
+    "title" : "Consent Management BB API",
+    "contact" : {
+      "email" : "balder@overtag.dk"
+    },
+    "license" : {
+      "name" : "Apache 2.0",
+      "url" : "http://www.apache.org/licenses/LICENSE-2.0.html"
+    }
+  },
+  "tags" : [ {
+    "name" : "org",
+    "description" : "Secured operations available to organization API integration"
+  }, {
+    "name" : "dataconsumer",
+    "description" : "Secured operations for data consumers and applications to verify consent"
+  }, {
+    "name" : "individual",
+    "description" : "Individual operations"
+  }, {
+    "name" : "auditor",
+    "description" : "Operations for external auditing systems to query detailed data from the system and subscribe to notifications."
+  }, {
+    "name" : "notification",
+    "description" : "Subscribe/unsubscribe notifications for data processors, consumers and frontend systems for individuals."
+  }, {
+    "name" : "callback",
+    "description" : "Callback API for other Building Blocks, especially relevant for asynchronous processes."
+  } ],
+  "paths" : {
+    "/org/policy/" : {
+      "get" : {
+        "tags" : [ "org" ],
+        "summary" : "Returns a list of readable Policy objects",
+        "operationId" : "orgListPolicy",
+        "description" : "LIST - Fetches list of readable Policy objects",
+        "parameters" : [ {
+          "in" : "query",
+          "name" : "PolicyFilter",
+          "description" : "An object of type PolicyFilter",
+          "required" : true,
+          "schema" : {
+            "$ref" : "#/components/schemas/PolicyFilter"
+          }
+        }, {
+          "in" : "query",
+          "name" : "offset",
+          "description" : "Requested index for start of resources to be provided in response requested by client",
+          "required" : false,
+          "schema" : {
+            "type" : "integer"
+          }
+        }, {
+          "in" : "query",
+          "name" : "limit",
+          "description" : "Requested number of resources to be provided in response requested by client",
+          "required" : false,
+          "schema" : {
+            "type" : "integer"
+          }
+        } ],
+        "x-specification-usecase" : "UC-C-PIC-A-001, UC-C-PIC-A-002",
+        "x-specification-scenario" : "",
+        "x-specification-pii-or-sensitive" : "False",
+        "responses" : {
+          "200" : {
+            "description" : "A list of Policy objects readable for the current session's credentials.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/components/schemas/Policy"
+                  }
+                }
+              }
+            }
+          },
+          "400" : {
+            "description" : "bad input parameter"
+          }
+        },
+        "security" : [ {
+          "OAuth2" : [ "admin" ]
+        } ]
+      },
+      "post" : {
+        "tags" : [ "org" ],
+        "summary" : "CREATE - Creates a new Policy object and returns the new object and a PolicyRevision",
+        "operationId" : "orgCreatePolicy",
+        "description" : "CREATE - Creates a new Policy object and returns the new object and a PolicyRevision",
+        "parameters" : [ {
+          "in" : "query",
+          "name" : "Policy",
+          "description" : "An object of type Policy",
+          "required" : true,
+          "schema" : {
+            "$ref" : "#/components/schemas/Policy"
+          }
+        } ],
+        "x-specification-usecase" : "UC-C-PIC-A-001",
+        "x-specification-scenario" : "",
+        "x-specification-pii-or-sensitive" : "False",
+        "responses" : {
+          "200" : {
+            "description" : "A set consisting of the new Policy object created, together with the initial Revision object.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/components/schemas/Policy"
+                  }
+                }
+              }
+            }
+          },
+          "400" : {
+            "description" : "bad input parameter"
+          }
+        },
+        "security" : [ {
+          "OAuth2" : [ "org" ]
+        } ]
+      }
+    },
+    "/org/policy/{id}/" : {
+      "get" : {
+        "tags" : [ "org" ],
+        "summary" : "READ - get a Policy object + latest Revision. If a PolicyFilter is supplied and contains a revision_id, then this specific revision is returned.",
+        "operationId" : "orgReadPolicy",
+        "description" : "READ - get a Policy object + latest Revision. If a PolicyFilter is supplied and contains a revision_id, then this specific revision is returned.",
+        "parameters" : [ {
+          "in" : "path",
+          "name" : "id",
+          "description" : "Unique ID of an object",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "in" : "query",
+          "name" : "PolicyFilter",
+          "description" : "An object of type PolicyFilter",
+          "required" : true,
+          "schema" : {
+            "$ref" : "#/components/schemas/PolicyFilter"
+          }
+        } ],
+        "x-specification-usecase" : "UC-C-PIC-A-003",
+        "x-specification-scenario" : "",
+        "x-specification-pii-or-sensitive" : "False",
+        "responses" : {
+          "200" : {
+            "description" : "",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/components/schemas/Policy"
+                  }
+                }
+              }
+            }
+          },
+          "400" : {
+            "description" : "bad input parameter"
+          }
+        },
+        "security" : [ {
+          "OAuth2" : [ "org" ]
+        } ]
+      },
+      "put" : {
+        "tags" : [ "org" ],
+        "summary" : "UPDATE - Updates an existing Policy object, returning the updated version and a new revision. Updating a Policy does not affect existing references in Agreement, the new revision should be specified for Agreement.",
+        "operationId" : "orgUpdatePolicy",
+        "description" : "UPDATE - Updates an existing Policy object, returning the updated version and a new revision. Updating a Policy does not affect existing references in Agreement, the new revision should be specified for Agreement.",
+        "parameters" : [ {
+          "in" : "path",
+          "name" : "id",
+          "description" : "Unique ID of an object",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "in" : "query",
+          "name" : "Policy",
+          "description" : "An object of type Policy",
+          "required" : true,
+          "schema" : {
+            "$ref" : "#/components/schemas/Policy"
+          }
+        } ],
+        "x-specification-usecase" : "UC-C-PIC-A-002",
+        "x-specification-scenario" : "",
+        "x-specification-pii-or-sensitive" : "False",
+        "responses" : {
+          "200" : {
+            "description" : "",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/components/schemas/Policy"
+                  }
+                }
+              }
+            }
+          },
+          "400" : {
+            "description" : "bad input parameter"
+          }
+        },
+        "security" : [ {
+          "OAuth2" : [ "org" ]
+        } ]
+      },
+      "delete" : {
+        "tags" : [ "org" ],
+        "summary" : "DELETE - Deletes an existing Policy object, returning the updated version and a new revision. Deleting a Policy is not possible if it's associated with active Agreement.",
+        "operationId" : "orgDeletePolicy",
+        "description" : "DELETE - Deletes an existing Policy object, returning the updated version and a new revision. Deleting a Policy is not possible if it's associated with active Agreement.",
+        "parameters" : [ {
+          "in" : "path",
+          "name" : "id",
+          "description" : "Unique ID of an object",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "x-specification-usecase" : "UC-C-PIC-A-004",
+        "x-specification-scenario" : "",
+        "x-specification-pii-or-sensitive" : "False",
+        "responses" : {
+          "200" : {
+            "description" : "",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/components/schemas/Policy"
+                  }
+                }
+              }
+            }
+          },
+          "400" : {
+            "description" : "bad input parameter"
+          }
+        },
+        "security" : [ {
+          "OAuth2" : [ "org" ]
+        } ]
+      }
+    },
+    "/org/policy/{id}/revisions/" : {
+      "get" : {
+        "tags" : [ "org" ],
+        "summary" : "LIST - returns a Policy object with a list of all Revisions",
+        "operationId" : "orgListPolicyRevisions",
+        "description" : "LIST - returns a Policy object with a list of all Revisions",
+        "parameters" : [ {
+          "in" : "path",
+          "name" : "id",
+          "description" : "Unique ID of an object",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "in" : "query",
+          "name" : "offset",
+          "description" : "Requested index for start of resources to be provided in response requested by client",
+          "required" : false,
+          "schema" : {
+            "type" : "integer"
+          }
+        }, {
+          "in" : "query",
+          "name" : "limit",
+          "description" : "Requested number of resources to be provided in response requested by client",
+          "required" : false,
+          "schema" : {
+            "type" : "integer"
+          }
+        } ],
+        "x-specification-usecase" : "UC-C-PIC-A-003",
+        "x-specification-scenario" : "",
+        "x-specification-pii-or-sensitive" : "False",
+        "responses" : {
+          "200" : {
+            "description" : "",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/components/schemas/Policy"
+                  }
+                }
+              }
+            }
+          },
+          "400" : {
+            "description" : "bad input parameter"
+          }
+        },
+        "security" : [ {
+          "OAuth2" : [ "org" ]
+        } ]
+      }
+    },
+    "/org/agreement/" : {
+      "get" : {
+        "tags" : [ "org" ],
+        "summary" : "",
+        "operationId" : "orgListAgreement",
+        "description" : "",
+        "parameters" : [ {
+          "in" : "query",
+          "name" : "AgreementFilter",
+          "description" : "An object of type AgreementFilter",
+          "required" : true,
+          "schema" : {
+            "$ref" : "#/components/schemas/AgreementFilter"
+          }
+        }, {
+          "in" : "query",
+          "name" : "offset",
+          "description" : "Requested index for start of resources to be provided in response requested by client",
+          "required" : false,
+          "schema" : {
+            "type" : "integer"
+          }
+        }, {
+          "in" : "query",
+          "name" : "limit",
+          "description" : "Requested number of resources to be provided in response requested by client",
+          "required" : false,
+          "schema" : {
+            "type" : "integer"
+          }
+        } ],
+        "x-specification-usecase" : "UC-C-PIC-A-003",
+        "x-specification-scenario" : "",
+        "x-specification-pii-or-sensitive" : "False",
+        "responses" : {
+          "200" : {
+            "description" : "",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/components/schemas/Policy"
+                  }
+                }
+              }
+            }
+          },
+          "400" : {
+            "description" : "bad input parameter"
+          }
+        },
+        "security" : [ {
+          "OAuth2" : [ "org" ]
+        } ]
+      },
+      "post" : {
+        "tags" : [ "org" ],
+        "summary" : "CREATE - A new Agreement object is created and returned together with AgreementRevision",
+        "operationId" : "orgCreateAgreement",
+        "description" : "CREATE - A new Agreement object is created and returned together with AgreementRevision",
+        "parameters" : [ {
+          "in" : "query",
+          "name" : "Agreement",
+          "description" : "An object of type Agreement",
+          "required" : true,
+          "schema" : {
+            "$ref" : "#/components/schemas/Agreement"
+          }
+        } ],
+        "x-specification-usecase" : "UC-C-PIC-A-001",
+        "x-specification-scenario" : "",
+        "x-specification-pii-or-sensitive" : "False",
+        "responses" : {
+          "200" : {
+            "description" : "",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/components/schemas/Policy"
+                  }
+                }
+              }
+            }
+          },
+          "400" : {
+            "description" : "bad input parameter"
+          }
+        },
+        "security" : [ {
+          "OAuth2" : [ "org" ]
+        } ]
+      },
+      "delete" : {
+        "tags" : [ "org" ],
+        "summary" : "",
+        "operationId" : "orgDeleteAgreement",
+        "description" : "",
+        "parameters" : [ ],
+        "x-specification-usecase" : "UC-C-PIC-A-004",
+        "x-specification-scenario" : "",
+        "x-specification-pii-or-sensitive" : "False",
+        "responses" : {
+          "200" : {
+            "description" : "",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/components/schemas/Policy"
+                  }
+                }
+              }
+            }
+          },
+          "400" : {
+            "description" : "bad input parameter"
+          }
+        },
+        "security" : [ {
+          "OAuth2" : [ "org" ]
+        } ]
+      }
+    },
+    "/org/agreement/{id}/" : {
+      "get" : {
+        "tags" : [ "org" ],
+        "summary" : "READ - fetches the latest version of an Agreement",
+        "operationId" : "orgReadAgreement",
+        "description" : "READ - fetches the latest version of an Agreement",
+        "parameters" : [ {
+          "in" : "path",
+          "name" : "id",
+          "description" : "Unique ID of an object",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "x-specification-usecase" : "UC-C-PIC-A-003",
+        "x-specification-scenario" : "",
+        "x-specification-pii-or-sensitive" : "False",
+        "responses" : {
+          "200" : {
+            "description" : "",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/components/schemas/Policy"
+                  }
+                }
+              }
+            }
+          },
+          "400" : {
+            "description" : "bad input parameter"
+          }
+        },
+        "security" : [ {
+          "OAuth2" : [ "org" ]
+        } ]
+      },
+      "put" : {
+        "tags" : [ "org" ],
+        "summary" : "UPDATE - An existing Agreement object is created and returned together with AgreementRevision",
+        "operationId" : "orgUpdateAgreement",
+        "description" : "UPDATE - An existing Agreement object is created and returned together with AgreementRevision",
+        "parameters" : [ {
+          "in" : "path",
+          "name" : "id",
+          "description" : "Unique ID of an object",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "in" : "query",
+          "name" : "Agreement",
+          "description" : "An object of type Agreement",
+          "required" : true,
+          "schema" : {
+            "$ref" : "#/components/schemas/Agreement"
+          }
+        } ],
+        "x-specification-usecase" : "UC-C-PIC-A-002",
+        "x-specification-scenario" : "",
+        "x-specification-pii-or-sensitive" : "False",
+        "responses" : {
+          "200" : {
+            "description" : "",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/components/schemas/Policy"
+                  }
+                }
+              }
+            }
+          },
+          "400" : {
+            "description" : "bad input parameter"
+          }
+        },
+        "security" : [ {
+          "OAuth2" : [ "org" ]
+        } ]
+      }
+    },
+    "/org/record/{id}/" : {
+      "get" : {
+        "tags" : [ "org" ],
+        "summary" : "READ - fetches a ConsentRecord",
+        "operationId" : "orgReadConsentRecord",
+        "description" : "READ - fetches a ConsentRecord",
+        "parameters" : [ {
+          "in" : "path",
+          "name" : "id",
+          "description" : "Unique ID of an object",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "x-specification-usecase" : "",
+        "x-specification-scenario" : "",
+        "x-specification-pii-or-sensitive" : "True",
+        "responses" : {
+          "200" : {
+            "description" : "",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/components/schemas/Policy"
+                  }
+                }
+              }
+            }
+          },
+          "400" : {
+            "description" : "bad input parameter"
+          }
+        },
+        "security" : [ {
+          "OAuth2" : [ "org" ]
+        } ]
+      }
+    },
+    "/org/record/{id}/withdraw/" : {
+      "put" : {
+        "tags" : [ "org" ],
+        "summary" : "UPDATE - invalidates/withdraws a ConsentRecord, for usage in unconventional withdrawal of consent, for instance if withdrawal happens through an email or phone call.",
+        "operationId" : "orgUpdateConsentRecord",
+        "description" : "UPDATE - invalidates/withdraws a ConsentRecord, for usage in unconventional withdrawal of consent, for instance if withdrawal happens through an email or phone call.",
+        "parameters" : [ {
+          "in" : "path",
+          "name" : "id",
+          "description" : "Unique ID of an object",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "x-specification-usecase" : "",
+        "x-specification-scenario" : "",
+        "x-specification-pii-or-sensitive" : "True",
+        "responses" : {
+          "200" : {
+            "description" : "",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/components/schemas/Policy"
+                  }
+                }
+              }
+            }
+          },
+          "400" : {
+            "description" : "bad input parameter"
+          }
+        },
+        "security" : [ {
+          "OAuth2" : [ "org" ]
+        } ]
+      }
+    },
+    "/org/individual/" : {
+      "post" : {
+        "tags" : [ "org" ],
+        "summary" : "CREATE - Creates an Individual in the Consent system",
+        "operationId" : "orgIndividualCreate",
+        "description" : "CREATE - Creates an Individual in the Consent system",
+        "parameters" : [ {
+          "in" : "query",
+          "name" : "RegistryReference",
+          "description" : "An object of type RegistryReference",
+          "required" : true,
+          "schema" : {
+            "$ref" : "#/components/schemas/RegistryReference"
+          }
+        } ],
+        "x-specification-usecase" : "",
+        "x-specification-scenario" : "",
+        "x-specification-pii-or-sensitive" : "True",
+        "responses" : {
+          "200" : {
+            "description" : "",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/components/schemas/Policy"
+                  }
+                }
+              }
+            }
+          },
+          "400" : {
+            "description" : "bad input parameter"
+          }
+        },
+        "security" : [ {
+          "OAuth2" : [ "org" ]
+        } ]
+      }
+    },
+    "/org/individual/{id}/" : {
+      "get" : {
+        "tags" : [ "org" ],
+        "summary" : "READ - Fetch an Individual in the Consent system",
+        "operationId" : "orgIndividualRead",
+        "description" : "READ - Fetch an Individual in the Consent system",
+        "parameters" : [ {
+          "in" : "path",
+          "name" : "id",
+          "description" : "Unique ID of an object",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "x-specification-usecase" : "",
+        "x-specification-scenario" : "",
+        "x-specification-pii-or-sensitive" : "True",
+        "responses" : {
+          "200" : {
+            "description" : "",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/components/schemas/Policy"
+                  }
+                }
+              }
+            }
+          },
+          "400" : {
+            "description" : "bad input parameter"
+          }
+        },
+        "security" : [ {
+          "OAuth2" : [ "org" ]
+        } ]
+      },
+      "put" : {
+        "tags" : [ "org" ],
+        "summary" : "UPDATE - Updates an Individual in the Consent system",
+        "operationId" : "orgIndividualUpdate",
+        "description" : "UPDATE - Updates an Individual in the Consent system",
+        "parameters" : [ {
+          "in" : "path",
+          "name" : "id",
+          "description" : "Unique ID of an object",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "x-specification-usecase" : "",
+        "x-specification-scenario" : "",
+        "x-specification-pii-or-sensitive" : "True",
+        "responses" : {
+          "200" : {
+            "description" : "",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/components/schemas/Policy"
+                  }
+                }
+              }
+            }
+          },
+          "400" : {
+            "description" : "bad input parameter"
+          }
+        },
+        "security" : [ {
+          "OAuth2" : [ "org" ]
+        } ]
+      },
+      "delete" : {
+        "tags" : [ "org" ],
+        "summary" : "DELETE - entirely removes an individual from the system and cascades necessary actions to related ConsentRecord objects",
+        "operationId" : "orgIndividualDelete",
+        "description" : "DELETE - entirely removes an individual from the system and cascades necessary actions to related ConsentRecord objects",
+        "parameters" : [ {
+          "in" : "path",
+          "name" : "id",
+          "description" : "Unique ID of an object",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "x-specification-usecase" : "",
+        "x-specification-scenario" : "",
+        "x-specification-pii-or-sensitive" : "True",
+        "responses" : {
+          "200" : {
+            "description" : "",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/components/schemas/Policy"
+                  }
+                }
+              }
+            }
+          },
+          "400" : {
+            "description" : "bad input parameter"
+          }
+        },
+        "security" : [ {
+          "OAuth2" : [ "org" ]
+        } ]
+      }
+    },
+    "/dataconsumer/config/agreement/" : {
+      "get" : {
+        "tags" : [ "dataconsumer" ],
+        "summary" : "LIST - Fetch agreements",
+        "operationId" : "",
+        "description" : "LIST - Fetch agreements",
+        "parameters" : [ {
+          "in" : "query",
+          "name" : "AgreementFilter",
+          "description" : "An object of type AgreementFilter",
+          "required" : true,
+          "schema" : {
+            "$ref" : "#/components/schemas/AgreementFilter"
+          }
+        } ],
+        "x-specification-usecase" : "",
+        "x-specification-scenario" : "1.1",
+        "x-specification-pii-or-sensitive" : "False",
+        "responses" : {
+          "200" : {
+            "description" : "",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/components/schemas/Policy"
+                  }
+                }
+              }
+            }
+          },
+          "400" : {
+            "description" : "bad input parameter"
+          }
+        },
+        "security" : [ {
+          "OAuth2" : [ "consumer" ]
+        } ]
+      }
+    },
+    "/dataconsumer/consent/" : {
+      "get" : {
+        "tags" : [ "dataconsumer" ],
+        "summary" : "LIST - Fetch consent records. For a given Agreement and Individual, query if consent exists",
+        "operationId" : "",
+        "description" : "LIST - Fetch consent records. For a given Agreement and Individual, query if consent exists",
+        "parameters" : [ {
+          "in" : "query",
+          "name" : "ConsentRecordFilter",
+          "description" : "An object of type ConsentRecordFilter",
+          "required" : true,
+          "schema" : {
+            "$ref" : "#/components/schemas/ConsentRecordFilter"
+          }
+        } ],
+        "x-specification-usecase" : "",
+        "x-specification-scenario" : "3.1, 1.2",
+        "x-specification-pii-or-sensitive" : "True",
+        "responses" : {
+          "200" : {
+            "description" : "",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/components/schemas/Policy"
+                  }
+                }
+              }
+            }
+          },
+          "400" : {
+            "description" : "bad input parameter"
+          }
+        },
+        "security" : [ {
+          "OAuth2" : [ "consumer" ]
+        } ]
+      }
+    },
+    "/dataconsumer/agreement/{id}/" : {
+      "get" : {
+        "tags" : [ "dataconsumer" ],
+        "summary" : "READ - Fetch a specific agreement",
+        "operationId" : "",
+        "description" : "READ - Fetch a specific agreement",
+        "parameters" : [ {
+          "in" : "path",
+          "name" : "id",
+          "description" : "Unique ID of an object",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "x-specification-usecase" : "",
+        "x-specification-scenario" : "1.2",
+        "x-specification-pii-or-sensitive" : "False",
+        "responses" : {
+          "200" : {
+            "description" : "",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/components/schemas/Policy"
+                  }
+                }
+              }
+            }
+          },
+          "400" : {
+            "description" : "bad input parameter"
+          }
+        },
+        "security" : [ {
+          "OAuth2" : [ "consumer" ]
+        } ]
+      }
+    },
+    "/individual/{id}/agreement/{agreementId}/" : {
+      "post" : {
+        "tags" : [ "individual" ],
+        "summary" : "CREATE - For a particular Individual and a particular Agreement, create a new Consent Record pointing to the current Revision of a given Agreement",
+        "operationId" : "",
+        "description" : "CREATE - For a particular Individual and a particular Agreement, create a new Consent Record pointing to the current Revision of a given Agreement",
+        "parameters" : [ {
+          "in" : "path",
+          "name" : "id",
+          "description" : "Unique ID of an object",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "in" : "path",
+          "name" : "agreementId",
+          "description" : "Unique ID of an object",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "in" : "query",
+          "name" : "Individual",
+          "description" : "An object of type Individual",
+          "required" : true,
+          "schema" : {
+            "$ref" : "#/components/schemas/Individual"
+          }
+        }, {
+          "in" : "query",
+          "name" : "Agreement",
+          "description" : "An object of type Agreement",
+          "required" : true,
+          "schema" : {
+            "$ref" : "#/components/schemas/Agreement"
+          }
+        }, {
+          "in" : "query",
+          "name" : "Revision",
+          "description" : "An object of type Revision",
+          "required" : true,
+          "schema" : {
+            "$ref" : "#/components/schemas/Revision"
+          }
+        } ],
+        "x-specification-usecase" : "UC-C-PIC-I-002",
+        "x-specification-scenario" : "1.2",
+        "x-specification-pii-or-sensitive" : "True",
+        "responses" : {
+          "200" : {
+            "description" : "",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/components/schemas/Policy"
+                  }
+                }
+              }
+            }
+          },
+          "400" : {
+            "description" : "bad input parameter"
+          }
+        },
+        "security" : [ {
+          "OAuth2" : [ "individual" ]
+        } ]
+      },
+      "get" : {
+        "tags" : [ "individual" ],
+        "summary" : "LIST",
+        "operationId" : "",
+        "description" : "LIST",
+        "parameters" : [ {
+          "in" : "path",
+          "name" : "id",
+          "description" : "Unique ID of an object",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "in" : "path",
+          "name" : "agreementId",
+          "description" : "Unique ID of an object",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "x-specification-usecase" : "UC-C-PIC-I-001",
+        "x-specification-scenario" : "",
+        "x-specification-pii-or-sensitive" : "True",
+        "responses" : {
+          "200" : {
+            "description" : "",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/components/schemas/Policy"
+                  }
+                }
+              }
+            }
+          },
+          "400" : {
+            "description" : "bad input parameter"
+          }
+        },
+        "security" : [ {
+          "OAuth2" : [ "individual" ]
+        } ]
+      }
+    },
+    "/individual/{id}/consentrecord/{consentRecordId}/" : {
+      "put" : {
+        "tags" : [ "individual" ],
+        "summary" : "UPDATE*",
+        "operationId" : "",
+        "description" : "UPDATE*",
+        "parameters" : [ {
+          "in" : "path",
+          "name" : "id",
+          "description" : "Unique ID of an object",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "in" : "path",
+          "name" : "consentRecordId",
+          "description" : "Unique ID of an object",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "in" : "query",
+          "name" : "Individual",
+          "description" : "An object of type Individual",
+          "required" : true,
+          "schema" : {
+            "$ref" : "#/components/schemas/Individual"
+          }
+        }, {
+          "in" : "query",
+          "name" : "Agreement",
+          "description" : "An object of type Agreement",
+          "required" : true,
+          "schema" : {
+            "$ref" : "#/components/schemas/Agreement"
+          }
+        }, {
+          "in" : "query",
+          "name" : "Revision",
+          "description" : "An object of type Revision",
+          "required" : true,
+          "schema" : {
+            "$ref" : "#/components/schemas/Revision"
+          }
+        } ],
+        "x-specification-usecase" : "UC-C-PIC-I-003",
+        "x-specification-scenario" : "",
+        "x-specification-pii-or-sensitive" : "True",
+        "responses" : {
+          "200" : {
+            "description" : "",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/components/schemas/Policy"
+                  }
+                }
+              }
+            }
+          },
+          "400" : {
+            "description" : "bad input parameter"
+          }
+        },
+        "security" : [ {
+          "OAuth2" : [ "individual" ]
+        } ]
+      }
+    },
+    "/individual/{id}/agreement/{agreementId}/withdraw/" : {
+      "put" : {
+        "tags" : [ "individual" ],
+        "summary" : "UPDATE*",
+        "operationId" : "",
+        "description" : "UPDATE*",
+        "parameters" : [ {
+          "in" : "path",
+          "name" : "id",
+          "description" : "Unique ID of an object",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "in" : "path",
+          "name" : "agreementId",
+          "description" : "Unique ID of an object",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "in" : "query",
+          "name" : "Individual",
+          "description" : "An object of type Individual",
+          "required" : true,
+          "schema" : {
+            "$ref" : "#/components/schemas/Individual"
+          }
+        } ],
+        "x-specification-usecase" : "UC-C-PIC-I-003",
+        "x-specification-scenario" : "",
+        "x-specification-pii-or-sensitive" : "True",
+        "responses" : {
+          "200" : {
+            "description" : "",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/components/schemas/Policy"
+                  }
+                }
+              }
+            }
+          },
+          "400" : {
+            "description" : "bad input parameter"
+          }
+        },
+        "security" : [ {
+          "OAuth2" : [ "individual" ]
+        } ]
+      }
+    },
+    "/individual/{id}/agreement/" : {
+      "get" : {
+        "tags" : [ "individual" ],
+        "summary" : "LIST",
+        "operationId" : "",
+        "description" : "LIST",
+        "parameters" : [ {
+          "in" : "path",
+          "name" : "id",
+          "description" : "Unique ID of an object",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "x-specification-usecase" : "UC-C-PIC-I-001",
+        "x-specification-scenario" : "",
+        "x-specification-pii-or-sensitive" : "True",
+        "responses" : {
+          "200" : {
+            "description" : "",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/components/schemas/Policy"
+                  }
+                }
+              }
+            }
+          },
+          "400" : {
+            "description" : "bad input parameter"
+          }
+        },
+        "security" : [ {
+          "OAuth2" : [ "individual" ]
+        } ]
+      }
+    },
+    "/individual/{id}/" : {
+      "delete" : {
+        "tags" : [ "individual" ],
+        "summary" : "DELETE - Cascading delete operation for Right To Be Forgotten, deletes all Consent Records that shall not be retained and have a \"forgettable\" Agreement.",
+        "operationId" : "",
+        "description" : "DELETE - Cascading delete operation for Right To Be Forgotten, deletes all Consent Records that shall not be retained and have a \"forgettable\" Agreement.",
+        "parameters" : [ {
+          "in" : "path",
+          "name" : "id",
+          "description" : "Unique ID of an object",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "x-specification-usecase" : "",
+        "x-specification-scenario" : "",
+        "x-specification-pii-or-sensitive" : "True",
+        "responses" : {
+          "200" : {
+            "description" : "",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/components/schemas/Policy"
+                  }
+                }
+              }
+            }
+          },
+          "400" : {
+            "description" : "bad input parameter"
+          }
+        },
+        "security" : [ {
+          "OAuth2" : [ "individual" ]
+        } ]
+      }
+    },
+    "/auditor/tracker/" : {
+      "get" : {
+        "tags" : [ "auditor" ],
+        "summary" : "LIST - show available AuditTracker objects",
+        "operationId" : "",
+        "description" : "LIST - show available AuditTracker objects",
+        "parameters" : [ ],
+        "x-specification-usecase" : "UC-C-PIC-AT-001, UC-C-PIC-AT-002",
+        "x-specification-scenario" : "",
+        "x-specification-pii-or-sensitive" : "False",
+        "responses" : {
+          "200" : {
+            "description" : "",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/components/schemas/Policy"
+                  }
+                }
+              }
+            }
+          },
+          "400" : {
+            "description" : "bad input parameter"
+          }
+        },
+        "security" : [ {
+          "OAuth2" : [ ]
+        } ]
+      },
+      "post" : {
+        "tags" : [ "auditor" ],
+        "summary" : "CREATE - A new AuditTracker is set up",
+        "operationId" : "",
+        "description" : "CREATE - A new AuditTracker is set up",
+        "parameters" : [ {
+          "in" : "query",
+          "name" : "AuditTracker",
+          "description" : "An object of type AuditTracker",
+          "required" : true,
+          "schema" : {
+            "$ref" : "#/components/schemas/AuditTracker"
+          }
+        } ],
+        "x-specification-usecase" : "UC-C-PIC-AT-001, UC-C-PIC-AT-002",
+        "x-specification-scenario" : "",
+        "x-specification-pii-or-sensitive" : "False",
+        "responses" : {
+          "200" : {
+            "description" : "",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/components/schemas/Policy"
+                  }
+                }
+              }
+            }
+          },
+          "400" : {
+            "description" : "bad input parameter"
+          }
+        },
+        "security" : [ {
+          "OAuth2" : [ ]
+        } ]
+      }
+    },
+    "/auditor/tracker/{id}/" : {
+      "get" : {
+        "tags" : [ "auditor" ],
+        "summary" : "READ - get the details of an AuditTracker",
+        "operationId" : "",
+        "description" : "READ - get the details of an AuditTracker",
+        "parameters" : [ {
+          "in" : "path",
+          "name" : "id",
+          "description" : "Unique ID of an object",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "x-specification-usecase" : "UC-C-PIC-AT-001, UC-C-PIC-AT-002",
+        "x-specification-scenario" : "",
+        "x-specification-pii-or-sensitive" : "False",
+        "responses" : {
+          "200" : {
+            "description" : "",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/components/schemas/Policy"
+                  }
+                }
+              }
+            }
+          },
+          "400" : {
+            "description" : "bad input parameter"
+          }
+        },
+        "security" : [ {
+          "OAuth2" : [ ]
+        } ]
+      },
+      "put" : {
+        "tags" : [ "auditor" ],
+        "summary" : "UPDATE - get the details of an AuditTracker",
+        "operationId" : "",
+        "description" : "UPDATE - get the details of an AuditTracker",
+        "parameters" : [ {
+          "in" : "path",
+          "name" : "id",
+          "description" : "Unique ID of an object",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "in" : "query",
+          "name" : "AuditTracker",
+          "description" : "An object of type AuditTracker",
+          "required" : true,
+          "schema" : {
+            "$ref" : "#/components/schemas/AuditTracker"
+          }
+        } ],
+        "x-specification-usecase" : "UC-C-PIC-AT-001, UC-C-PIC-AT-002",
+        "x-specification-scenario" : "",
+        "x-specification-pii-or-sensitive" : "False",
+        "responses" : {
+          "200" : {
+            "description" : "",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/components/schemas/Policy"
+                  }
+                }
+              }
+            }
+          },
+          "400" : {
+            "description" : "bad input parameter"
+          }
+        },
+        "security" : [ {
+          "OAuth2" : [ ]
+        } ]
+      },
+      "delete" : {
+        "tags" : [ "auditor" ],
+        "summary" : "DELETE - removes an AuditTracker",
+        "operationId" : "",
+        "description" : "DELETE - removes an AuditTracker",
+        "parameters" : [ {
+          "in" : "path",
+          "name" : "id",
+          "description" : "Unique ID of an object",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "x-specification-usecase" : "UC-C-PIC-AT-001, UC-C-PIC-AT-002",
+        "x-specification-scenario" : "",
+        "x-specification-pii-or-sensitive" : "False",
+        "responses" : {
+          "200" : {
+            "description" : "",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/components/schemas/Policy"
+                  }
+                }
+              }
+            }
+          },
+          "400" : {
+            "description" : "bad input parameter"
+          }
+        },
+        "security" : [ {
+          "OAuth2" : [ ]
+        } ]
+      }
+    },
+    "/auditor/consentrecord/" : {
+      "get" : {
+        "tags" : [ "auditor" ],
+        "summary" : "LIST - fetch ConsentRecord objects",
+        "operationId" : "",
+        "description" : "LIST - fetch ConsentRecord objects",
+        "parameters" : [ {
+          "in" : "query",
+          "name" : "ConsentRecordFilter",
+          "description" : "An object of type ConsentRecordFilter",
+          "required" : true,
+          "schema" : {
+            "$ref" : "#/components/schemas/ConsentRecordFilter"
+          }
+        } ],
+        "x-specification-usecase" : "UC-C-PIC-AT-003",
+        "x-specification-scenario" : "",
+        "x-specification-pii-or-sensitive" : "False",
+        "responses" : {
+          "200" : {
+            "description" : "",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/components/schemas/Policy"
+                  }
+                }
+              }
+            }
+          },
+          "400" : {
+            "description" : "bad input parameter"
+          }
+        },
+        "security" : [ {
+          "OAuth2" : [ ]
+        } ]
+      }
+    },
+    "/auditor/agreement/" : {
+      "get" : {
+        "tags" : [ "auditor" ],
+        "summary" : "LIST - fetch configured Agreement objects",
+        "operationId" : "",
+        "description" : "LIST - fetch configured Agreement objects",
+        "parameters" : [ {
+          "in" : "query",
+          "name" : "AgreementFilter",
+          "description" : "An object of type AgreementFilter",
+          "required" : true,
+          "schema" : {
+            "$ref" : "#/components/schemas/AgreementFilter"
+          }
+        } ],
+        "x-specification-usecase" : "UC-C-PIC-AT-003",
+        "x-specification-scenario" : "",
+        "x-specification-pii-or-sensitive" : "False",
+        "responses" : {
+          "200" : {
+            "description" : "",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/components/schemas/Policy"
+                  }
+                }
+              }
+            }
+          },
+          "400" : {
+            "description" : "bad input parameter"
+          }
+        },
+        "security" : [ {
+          "OAuth2" : [ ]
+        } ]
+      }
+    }
+  },
+  "components" : {
+    "schemas" : {
+      "Individual" : {
+        "type" : "object",
+        "description" : "Models an individual, with details referenced from an external system (registration system, functional ID, foundational ID etc). A unique entry in this model is not to be mistaken with a unique natural individual. It is up to the system owner to decide if this record permits mapping to a natural individual and/or if a single Individual row can map to several consent agreements.",
+        "required" : [ "id", "functional_id", "foundational_id", "session_id" ],
+        "properties" : {
+          "id" : {
+            "type" : "string",
+            "format" : "",
+            "example" : "",
+            "description" : "The unique ID of a Individual row."
+          },
+          "functional_id" : {
+            "type" : "string",
+            "format" : "",
+            "example" : "",
+            "description" : "Non-mandatory reference to a functional ID, which is likely PII"
+          },
+          "foundational_id" : {
+            "type" : "string",
+            "format" : "",
+            "example" : "",
+            "description" : "Non-mandatory (natural) ID and PII"
+          },
+          "session_id" : {
+            "type" : "string",
+            "format" : "",
+            "example" : "",
+            "description" : "An \"individual\" may simply be mapped to a temporary session?"
+          }
+        }
+      },
+      "Agreement" : {
+        "type" : "object",
+        "description" : "An agreement contains the specification of a single purpose that can be consented to. An Agreement is universal and can be consented to by *many* individuals through a ConsentRecord",
+        "required" : [ "id", "version", "controller", "policy", "purpose", "lawful_basis", "data_use", "dpia", "lifecycle", "signature", "active", "forgettable" ],
+        "properties" : {
+          "id" : {
+            "type" : "string",
+            "format" : "",
+            "example" : "",
+            "description" : ""
+          },
+          "version" : {
+            "type" : "string",
+            "format" : "",
+            "example" : "",
+            "description" : "The version of this specification to which a receipt conforms"
+          },
+          "controller" : {
+            "$ref" : "#/components/schemas/Controller"
+          },
+          "policy" : {
+            "$ref" : "#/components/schemas/Policy"
+          },
+          "purpose" : {
+            "$ref" : "#/components/schemas/AgreementPurpose"
+          },
+          "lawful_basis" : {
+            "type" : "string",
+            "format" : "",
+            "example" : "",
+            "description" : "Lawful basis of the agreement - consent / legal_obligation / contract / vital_interest / public_task / legitimate_interest"
+          },
+          "data_use" : {
+            "type" : "string",
+            "format" : "",
+            "example" : "",
+            "description" : "null/data-source/data-using-service"
+          },
+          "dpia" : {
+            "type" : "string",
+            "format" : "",
+            "example" : "",
+            "description" : "Data Protection Impact Assessment"
+          },
+          "lifecycle" : {
+            "$ref" : "#/components/schemas/AgreementLifecycle"
+          },
+          "signature" : {
+            "$ref" : "#/components/schemas/Signature"
+          },
+          "active" : {
+            "type" : "boolean",
+            "format" : "",
+            "example" : "",
+            "description" : "Agreement is active and new ConsentRecords can be created."
+          },
+          "forgettable" : {
+            "type" : "boolean",
+            "format" : "",
+            "example" : "",
+            "description" : "Agreement may be deleted when consent is withdrawn, as its existence is not necessary for auditability."
+          }
+        }
+      },
+      "AgreementData" : {
+        "type" : "object",
+        "description" : "Agreement data contains specifications of exactly what is collected.",
+        "required" : [ "id", "agreement", "name", "sensitivity", "category", "hash" ],
+        "properties" : {
+          "id" : {
+            "type" : "string",
+            "format" : "",
+            "example" : "",
+            "description" : ""
+          },
+          "agreement" : {
+            "$ref" : "#/components/schemas/Agreement"
+          },
+          "name" : {
+            "type" : "string",
+            "format" : "",
+            "example" : "",
+            "description" : "Name of the attribute, for instance \"name\" or \"age\""
+          },
+          "sensitivity" : {
+            "type" : "string",
+            "format" : "",
+            "example" : "",
+            "description" : "TBD: categories of sensitivity from som ISO"
+          },
+          "category" : {
+            "type" : "string",
+            "format" : "",
+            "example" : "",
+            "description" : ""
+          },
+          "hash" : {
+            "type" : "string",
+            "format" : "",
+            "example" : "",
+            "description" : "In order to sign an Agreement, this relation needs to have a cryptopgraphic hash to be included in the Signature of the Agreement."
+          }
+        }
+      },
+      "Policy" : {
+        "type" : "object",
+        "description" : "A policy governs the processing and use of data in the organization that is \"data controller\" and owner of Agreement.",
+        "required" : [ "id", "name", "version", "url", "jurisdiction", "industry_sector", "data_retention_period_days", "geographic_restriction", "storage_location" ],
+        "properties" : {
+          "id" : {
+            "type" : "string",
+            "format" : "",
+            "example" : "",
+            "description" : ""
+          },
+          "name" : {
+            "type" : "string",
+            "format" : "",
+            "example" : "",
+            "description" : "Name of the policy"
+          },
+          "version" : {
+            "type" : "string",
+            "format" : "",
+            "example" : "",
+            "description" : "Version of the policy"
+          },
+          "url" : {
+            "type" : "string",
+            "format" : "",
+            "example" : "",
+            "description" : "Permanent URL at which this very version of the Policy can be read, should not be allowed to change over time."
+          },
+          "jurisdiction" : {
+            "type" : "string",
+            "format" : "",
+            "example" : "",
+            "description" : ""
+          },
+          "industry_sector" : {
+            "type" : "string",
+            "format" : "",
+            "example" : "",
+            "description" : ""
+          },
+          "data_retention_period_days" : {
+            "type" : "integer",
+            "format" : "",
+            "example" : "",
+            "description" : ""
+          },
+          "geographic_restriction" : {
+            "type" : "string",
+            "format" : "",
+            "example" : "",
+            "description" : ""
+          },
+          "storage_location" : {
+            "type" : "string",
+            "format" : "",
+            "example" : "",
+            "description" : ""
+          }
+        }
+      },
+      "ConsentRecord" : {
+        "type" : "object",
+        "description" : "A consent record expresses consent (as defined in this building block's specification) to a single Agreement.",
+        "required" : [ "id", "agreement", "agreement_revision", "individual", "opt_in", "state", "signature" ],
+        "properties" : {
+          "id" : {
+            "type" : "string",
+            "format" : "",
+            "example" : "",
+            "description" : ""
+          },
+          "agreement" : {
+            "$ref" : "#/components/schemas/Agreement"
+          },
+          "agreement_revision" : {
+            "$ref" : "#/components/schemas/Revision"
+          },
+          "individual" : {
+            "$ref" : "#/components/schemas/Individual"
+          },
+          "opt_in" : {
+            "type" : "boolean",
+            "format" : "",
+            "example" : "",
+            "description" : "True: The individual has positively opted in. False: The individual has explicitly said no (or withdrawn a previous consent)."
+          },
+          "state" : {
+            "type" : "string",
+            "format" : "",
+            "example" : "",
+            "description" : "unsigned/pending more signatures/signed"
+          },
+          "signature" : {
+            "$ref" : "#/components/schemas/Signature"
+          }
+        }
+      },
+      "Revision" : {
+        "type" : "object",
+        "description" : "A *generic* revision model captures the serialized contents of any shema's single row. This is then subject to 1) cryptographic signature and 2) auditing.\n\nAside from \"successor\" column, a revision should be considered locked.",
+        "required" : [ "id", "schema", "object_id", "serialized_snapshot", "timestamp", "authorized_by_individual", "authorized_by_other", "successor", "predecessor_hash", "predecessor_signature" ],
+        "properties" : {
+          "id" : {
+            "type" : "string",
+            "format" : "",
+            "example" : "",
+            "description" : ""
+          },
+          "schema" : {
+            "type" : "string",
+            "format" : "",
+            "example" : "",
+            "description" : ""
+          },
+          "object_id" : {
+            "type" : "string",
+            "format" : "",
+            "example" : "",
+            "description" : ""
+          },
+          "serialized_snapshot" : {
+            "type" : "string",
+            "format" : "",
+            "example" : "",
+            "description" : ""
+          },
+          "timestamp" : {
+            "type" : "string",
+            "format" : "",
+            "example" : "",
+            "description" : ""
+          },
+          "authorized_by_individual" : {
+            "$ref" : "#/components/schemas/Individual"
+          },
+          "authorized_by_other" : {
+            "type" : "string",
+            "format" : "",
+            "example" : "",
+            "description" : "Reference to an admin user that has created this revision"
+          },
+          "successor" : {
+            "$ref" : "#/components/schemas/Revision"
+          },
+          "predecessor_hash" : {
+            "type" : "string",
+            "format" : "",
+            "example" : "",
+            "description" : "Tamper-resistent artifact from previous record"
+          },
+          "predecessor_signature" : {
+            "type" : "string",
+            "format" : "",
+            "example" : "",
+            "description" : "Tamper-resistent artifact from previous record (we don't know if the previous record was signed or not)"
+          }
+        }
+      },
+      "AgreementFilter" : {
+        "type" : "object",
+        "description" : "Query filter for API endpoint listing Agreement objects",
+        "required" : [ "id", "name" ],
+        "properties" : {
+          "id" : {
+            "type" : "string",
+            "format" : "",
+            "example" : "",
+            "description" : ""
+          },
+          "name" : {
+            "type" : "string",
+            "format" : "",
+            "example" : "",
+            "description" : ""
+          }
+        }
+      },
+      "ConsentRecordFilter" : {
+        "type" : "object",
+        "description" : "Query filter for API endpoint listing ConsentRecord objects",
+        "required" : [ "id", "opt_in" ],
+        "properties" : {
+          "id" : {
+            "type" : "string",
+            "format" : "",
+            "example" : "",
+            "description" : ""
+          },
+          "opt_in" : {
+            "type" : "boolean",
+            "format" : "",
+            "example" : "",
+            "description" : ""
+          }
+        }
+      },
+      "PolicyFilter" : {
+        "type" : "object",
+        "description" : "Query filter for API endpoint listing Policy objects",
+        "required" : [ "id", "name", "revision" ],
+        "properties" : {
+          "id" : {
+            "type" : "string",
+            "format" : "",
+            "example" : "",
+            "description" : ""
+          },
+          "name" : {
+            "type" : "string",
+            "format" : "",
+            "example" : "",
+            "description" : ""
+          },
+          "revision" : {
+            "$ref" : "#/components/schemas/Revision"
+          }
+        }
+      },
+      "Controller" : {
+        "type" : "object",
+        "description" : "Details of a data controller.",
+        "required" : [ "id", "name", "url" ],
+        "properties" : {
+          "id" : {
+            "type" : "string",
+            "format" : "",
+            "example" : "",
+            "description" : ""
+          },
+          "name" : {
+            "type" : "string",
+            "format" : "",
+            "example" : "",
+            "description" : "Name of data controller (may be omitted if no data involved)"
+          },
+          "url" : {
+            "type" : "string",
+            "format" : "",
+            "example" : "",
+            "description" : "URL of data controller (may be omitted if no data involved)"
+          }
+        }
+      },
+      "Signature" : {
+        "type" : "object",
+        "description" : "A generic signature contains a cryptographic hash of some value, together with a signature created by some private key in another system. Required signing methods: Revision object or another Signature object.",
+        "required" : [ "id", "verification_method", "verification_hash", "verification_signature", "jws_header", "signed_by", "timestamp", "object_type", "object_reference" ],
+        "properties" : {
+          "id" : {
+            "type" : "string",
+            "format" : "",
+            "example" : "",
+            "description" : ""
+          },
+          "verification_method" : {
+            "type" : "string",
+            "format" : "",
+            "example" : "",
+            "description" : ""
+          },
+          "verification_hash" : {
+            "type" : "string",
+            "format" : "",
+            "example" : "",
+            "description" : "Internally generated cryptographic hash of the value to be signed."
+          },
+          "verification_signature" : {
+            "type" : "string",
+            "format" : "",
+            "example" : "",
+            "description" : "Signature of verification_hash"
+          },
+          "jws_header" : {
+            "type" : "string",
+            "format" : "",
+            "example" : "",
+            "description" : "Alternative to the verification_method, verification_hash and verification_signature, give a JWS serialized object (RFC7515)"
+          },
+          "signed_by" : {
+            "type" : "string",
+            "format" : "",
+            "example" : "",
+            "description" : "Identifier information may change over time. This field could contain a natural individual's names, personal number, email addresses - store a snapshot that binds to the signature at the time of signing."
+          },
+          "timestamp" : {
+            "type" : "string",
+            "format" : "",
+            "example" : "",
+            "description" : "Timestamp of signature"
+          },
+          "object_type" : {
+            "type" : "string",
+            "format" : "",
+            "example" : "",
+            "description" : "signature/revision"
+          },
+          "object_reference" : {
+            "type" : "string",
+            "format" : "",
+            "example" : "",
+            "description" : "A symmetric relation / back reference to the object_type that was signed. We are currently just modelling signing another signature (a chain) or signing a Revision (which can be a revision of an agreement, policy etc)"
+          }
+        }
+      },
+      "AgreementPurpose" : {
+        "type" : "object",
+        "description" : "TBD: Models the purpose of an agreement",
+        "required" : [ "id", "name", "description" ],
+        "properties" : {
+          "id" : {
+            "type" : "string",
+            "format" : "",
+            "example" : "",
+            "description" : ""
+          },
+          "name" : {
+            "type" : "string",
+            "format" : "",
+            "example" : "",
+            "description" : "Name of purpose"
+          },
+          "description" : {
+            "type" : "string",
+            "format" : "",
+            "example" : "",
+            "description" : "Description of purpose"
+          }
+        }
+      },
+      "AgreementLifecycle" : {
+        "type" : "object",
+        "description" : "TBD: Models the valid lifecycle states of an Agreement",
+        "required" : [ "id", "name" ],
+        "properties" : {
+          "id" : {
+            "type" : "string",
+            "format" : "",
+            "example" : "",
+            "description" : ""
+          },
+          "name" : {
+            "type" : "string",
+            "format" : "",
+            "example" : "",
+            "description" : "Definition / Preparation / Capture / Use / Proof"
+          }
+        }
+      },
+      "RegistryReference" : {
+        "type" : "object",
+        "description" : "TBD: When creating an Invidiual, we need some input that refers to a functional or foundational ID in an external system",
+        "required" : [ "id", "foundational_id", "functional_id" ],
+        "properties" : {
+          "id" : {
+            "type" : "string",
+            "format" : "",
+            "example" : "",
+            "description" : ""
+          },
+          "foundational_id" : {
+            "type" : "string",
+            "format" : "",
+            "example" : "",
+            "description" : ""
+          },
+          "functional_id" : {
+            "type" : "string",
+            "format" : "",
+            "example" : "",
+            "description" : ""
+          }
+        }
+      },
+      "AuditTracker" : {
+        "type" : "object",
+        "description" : "TBD: An external tracker receiving information from the system that can be subject to external auditing and verification of correct behavior",
+        "required" : [ "id", "name", "public_key", "callback_agreement", "callback_consent_record", "callback_policy", "callback_revision_table_hash", "callback_signature_table_hash" ],
+        "properties" : {
+          "id" : {
+            "type" : "string",
+            "format" : "",
+            "example" : "",
+            "description" : ""
+          },
+          "name" : {
+            "type" : "string",
+            "format" : "",
+            "example" : "",
+            "description" : "Name of the auditing system"
+          },
+          "public_key" : {
+            "type" : "string",
+            "format" : "",
+            "example" : "",
+            "description" : "The auditing system's public key for encrypting data sent to callback functions"
+          },
+          "callback_agreement" : {
+            "type" : "string",
+            "format" : "",
+            "example" : "",
+            "description" : "A URL receiving a callback with the Agreement object + Revision + AuditEventType"
+          },
+          "callback_consent_record" : {
+            "type" : "string",
+            "format" : "",
+            "example" : "",
+            "description" : "A URL receiving a callback with the ConsentRecord object + Revision + AuditEventType"
+          },
+          "callback_policy" : {
+            "type" : "string",
+            "format" : "",
+            "example" : "",
+            "description" : "A URL receiving a callback with the Policy object + Revision + AuditEventType"
+          },
+          "callback_revision_table_hash" : {
+            "type" : "string",
+            "format" : "",
+            "example" : "",
+            "description" : "A URL receiving a callback with <string> + AuditEventType. Periodically, the system can publish the hash of the revision table."
+          },
+          "callback_signature_table_hash" : {
+            "type" : "string",
+            "format" : "",
+            "example" : "",
+            "description" : "A URL receiving a callback with <string> + AuditEventType. Periodically, the system can publish the hash of the signature table."
+          }
+        }
+      },
+      "AuditEventType" : {
+        "type" : "object",
+        "description" : "TBD: Model for the possible events pertaining a change to an object subject to auditing.",
+        "required" : [ "id", "event_name" ],
+        "properties" : {
+          "id" : {
+            "type" : "string",
+            "format" : "",
+            "example" : "",
+            "description" : ""
+          },
+          "event_name" : {
+            "type" : "string",
+            "format" : "",
+            "example" : "",
+            "description" : "What happened - create/update/delete"
+          }
+        }
+      }
+    },
+    "securitySchemes" : {
+      "OAuth2" : {
+        "type" : "oauth2",
+        "flows" : {
+          "authorizationCode" : {
+            "authorizationUrl" : "https://example.com/oauth/authorize",
+            "tokenUrl" : "https://example.com/oauth/token",
+            "scopes" : {
+              "read" : "Grants global read access",
+              "write" : "Grants global write access",
+              "org" : "Grants access to org operations",
+              "consumer" : "Grants access to data consumer operations",
+              "individual" : "Grants access to specific individual read/write operations",
+              "auditor" : "Grants access to specific auditor read operations"
+            }
+          }
+        }
+      }
+    }
+  },
+  "security" : [ {
+    "OAuth2" : [ "read" ]
+  } ]
+}

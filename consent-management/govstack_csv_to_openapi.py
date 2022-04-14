@@ -7,13 +7,18 @@ import shutil
 import sys
 
 
-if len(sys.argv) != 3:
-    print("USAGE: govstack_csv_to_openapi.py <path_to_endpoint_spec.csv> <path_to_schema_spec.csv>")
+if len(sys.argv) < 3:
+    print("USAGE: govstack_csv_to_openapi.py <path_to_endpoint_spec.csv> <path_to_schema_spec.csv> [--html-table]")
     print("")
     print("Tip: On Linux, pipe command to `xclip -selection clipboard` to direct outputs straight into X's clipboard and then paste it.")
     print("")
-    print("Example:")
+    print("")
+    print("Example of copying to text-only clipboard:")
     print("./govstack_csv_to_openapi.py GovStack\ Consent\ BB\ API\ endpoints\ -\ endpoints.csv GovStack\ Consent\ BB\ API\ endpoints\ -\ schema.csv | xclip -selection clipboard")
+    print("")
+    print("")
+    print("Example of copying HTML table to html-only clipboard:")
+    print("./govstack_csv_to_openapi.py GovStack\ Consent\ BB\ API\ endpoints\ -\ endpoints.csv GovStack\ Consent\ BB\ API\ endpoints\ -\ schema.csv | xclip -selection clipboard -i -t text/html")
     sys.exit(1)
 
 
@@ -28,13 +33,13 @@ template = """openapi: 3.0.0
 servers:
   # Added by API Auto Mocking Plugin
   - description: SwaggerHub API Auto Mocking
-    url: https://virtserver.swaggerhub.com/GovStack/consent_bb/0.7.0
+    url: https://app.swaggerhub.com/apis/GovStack/consent-management-bb/
 info:
-  description: A basic API reflecting requirements of the Consent BB (WIP)
-  version: 0.8.0
-  title: Consent Management BB API (WIP)
+  description: This is a basic API for GovStack's Consent Management Building Block. It reflects the basic requirements of the Consent Management BB specification, which is versioned .
+  version: 0.8.1
+  title: Consent Management BB API
   contact:
-    email: you@your-company.com
+    email: balder@overtag.dk
   license:
     name: Apache 2.0
     url: 'http://www.apache.org/licenses/LICENSE-2.0.html'
@@ -86,6 +91,9 @@ path_spec_template = """
       operationId: "{operationId}"
       description: "{description}"
       parameters: {url_parameters}
+      x-specification-usecase: "{usecase}"
+      x-specification-scenario: "{scenario}"
+      x-specification-pii-or-sensitive: "{sensitive}"
       responses:
         '200':
           description: "{responseOK}"
@@ -155,6 +163,33 @@ schema_property_fk_template = """
 """
 
 
+# This table is copy-paste friendly for a Google Doc
+html_table_template = """
+<table style="border: 1px solid #000;">
+<thead>
+<tr>
+<th>Model</th>
+<th>Description</th>
+<th>Fields</th>
+</tr>
+</thead>
+{rows}
+</table>
+"""
+
+html_table_rows_template = """
+  <tr>
+    <td>{model_name}</td>
+    <td>{model_description}</td>
+    <td>{model_fields}</td>
+  </tr>
+"""
+
+html_table_cols_template = """
+    
+"""
+
+
 def get_api_spec_from_row(row, current_tag):
 
     url = row[0]
@@ -169,6 +204,13 @@ def get_api_spec_from_row(row, current_tag):
 
     pattern_url_parameters = re.compile("{(\w+)}")
 
+    # Identifier of specification usecase
+    usecase = row[2].replace("\n", "\\n").replace("\"", "\\\"") or ""
+    
+    # Identifier of specification scenario
+    scenario = row[3].replace("\n", "\\n").replace("\"", "\\\"") or ""
+
+    sensitive = row[7] == "TRUE"
 
     operation_id = row[9]
     response_ok = row[10]
@@ -220,6 +262,9 @@ def get_api_spec_from_row(row, current_tag):
         "request_parameter": "",
         "responseOK": response_ok,
         "security": security,
+        "usecase": usecase,
+        "scenario": scenario,
+        "sensitive": sensitive,
     }
 
 
@@ -249,9 +294,6 @@ def is_row_with_schema_property(row):
 def is_row_with_schema_fk(row):
     return not is_row_with_model_name(row) and row[0] and row[2]
 
-
-# Build output in this variable
-output = ""
 
 
 #####################################
@@ -331,7 +373,9 @@ with open(schema_csv_file, newline='') as csvfile:
                 name=row[0],
                 fk_model=row[2],
             )
-        
+
+
+html_table_rows_output = ""
 
 for schema_name, properties in schema_fields.items():
     output_schemas += schema_template.format(
@@ -341,9 +385,20 @@ for schema_name, properties in schema_fields.items():
         properties=properties,
         required="\n".join("           - {}".format(name) for name in schema_field_names[schema_name])
     )
-    
+    html_table_rows_output += html_table_rows_template.format(
+        model_name="""<code style="font-family: monospace; white-space: nowrap">{}</code>""".format(schema_name),
+        model_description=schema_descriptions[schema_name].replace("\\n", "<br>"),
+        model_fields=", ".join("""<code style="font-family: monospace">{}</code>""".format(x) for x in schema_field_names[schema_name])
+    )
 
-output = template.format(paths=output_paths, schemas=output_schemas)
+yaml_output = template.format(paths=output_paths, schemas=output_schemas)
 
+html_table_output = html_table_template.format(rows=html_table_rows_output)
 
-print(output)
+if len(sys.argv) > 3 and sys.argv[3].strip() == "--html-table":
+
+    print(html_table_output)
+
+else:
+    print(yaml_output)
+
