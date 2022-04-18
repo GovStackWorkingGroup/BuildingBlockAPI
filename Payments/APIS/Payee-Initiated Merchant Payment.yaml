@@ -1,1323 +1,3558 @@
----
 openapi: 3.0.0
 info:
-  title: GovStack Payment BB Voucher Management APIs for external BB
   description: |
-    This schema is part of the Govstack Payments Building Block.
-  contact:
-    email: oscar.correia@maarifaeducation.com
-  version: 1.0.3
+    The purpose of this document is to specify the endpoints, fields, objects, and enumerations for Merchant Payment Mobile Money APIs, which are a subset of the GSMA Mobile Money API Specification. 
+    The Merchant Payment Mobile Money APIs allow merchants to accept payments from mobile money customers. Supported payment mechanisms include:
+
+    - Payee-initiated merchant payment. The merchant initiates the payment and the payer is requested to authenticate to confirm acceptance by the mobile money provider.
+
+    - Payer-initiated merchant payment. The payer initiates the payment by specifying the merchant that is to be paid.
+
+    - Merchant payment via pre-authorised payment code. The payer generates a payment authorisation code up to a maximum payment amount. The merchant then enters or scans (if rendered as a QR code) the payer’s code to perform the payment.
+
+    Closed loop and open-loop merchant payments are supported by the Mobile Money API. Closed loop merchant payments occur where the payer and payee accounts reside with the same mobile money provider.
+    Open loop payments occur where the payer and payee accounts reside with different mobile money providers.
+
+    You can find out more about what the API can do for your business at [https://developer.mobilemoneyapi.io].
+  version: "1.2.0"
+  title: Mobile Money API for Merchant Payments
 servers:
-- url: https://virtserver.swaggerhub.com/VMS-API2/VMS-API2-GS_P_VMS_API-1.0.2/1.0.3
-  description: SwaggerHub API Auto Mocking
-- url: https://virtserver.swaggerhub.com/GovStack/PaymentBuildingBlock/v1.0.1
-security:
-- app_id: []
+  - description: This url points to the GSMA Mobile Money API v1.2 Simulator.
+    url: https://sandbox.mobilemoneyapi.io/simulator/v1.2/passthrough/mm
 tags:
-- name: VoucherPreactivation
-  description: |
-    The **VoucherPreactivation** API is used by a non Payment Building Blocks in the GovStack Framework to request for a voucher to be used. This call reserves the voucher (for a period of time, which is to be implemented). This API requests a single voucher from the voucher server that can be used for a future redemption process. The caller sends an amount, a voucher group (depending on the use case), the currency and the name of the calling GovStack Building Block. If the API call is successful, the Payment Building Block will respond with a voucher number, a voucher serial number and an expiry date.
-- name: VoucherActivation
-  description: |
-    The **VoucherActivation** API is used by a non Payment Building Blocks in the GovStack Framework to activate a pre-activated voucher. This is second function call is intended to ensure that the voucher is only activated when it is disbursed. This API requests for the activation of a voucher when the caller sends the voucher number to be activated. If the API call is successful, the activation is confirmed and the voucher can now be used by the beneficiary.
-- name: VoucherRedemption
-  description: |
-    The **VoucherRedemption** API is used by a non Payment Building Blocks in the GovStack Framework to redeem a voucher. The calling Building Block will capture the voucher number and the voucher serial number from the merchant point. The external Building Block will also acquire the merchant name and payment details from the merchant registry. The calling Building Block will then send the voucher number, the voucher serial number, the merchant name and payment details. The Payment Building Block will verify that the voucher has been activated and has not been used or blocked or cancelled. If so, the Payment Building Block will then send a payment request to the funding agency / FSP. The Payment Gateway of the Payments Building Block will facilitate the debit of the funding account, and the credit of the merchant as well as handle any intermediary fees. Once the payment has been successfully done the Payment Building Block will mark the voucher as consumed and notify the merchant (and beneficiary if possible).
-- name: VoucherStatusCheck
-  description: |
-    The **VoucherStatus** API is used by a non Payment Building Blocks in the GovStack Framework to check the status of a voucher. The calling Building Block will capture the voucher number and send it to the Payments Building Block to determine the status of a voucher. The Payments Building will respond with one of the status of Pre-Activated, Activated,  Suspended, Blocked or Not Existing.
-- name: VoucherCancellation
-  description: "The **VocuherCancellation** API is used by a non Payment Building Blocks in the GovStack Framework to cancel a voucher. The calling Building Block will capture the voucher number and send it to the Payments Building Block to canel the voucher. The Payments Building Block will respond with a status of Cancelled, Already Cancelled or Not existing. The VoucherCancellation will override the Blocked status and render the voucher permanently unusable. \n"
+  - name: Transactions
+    description: |
+      Payer-initiated and payee-initiated merchant payments can be created and viewed using **Transactions** APIs. 
+  - name: Accounts
+    description: |
+      Using the **Accounts** APIs, merchants can view payments for their account and view their account balance.
+
+      **Identifying a Target Account**
+
+      Two methods are provided for identifying an account, the single identifier method and the multiple identifiers method.
+
+      Single Identifier Method:
+
+      - In the scenario where one identifier suffices to uniquely identify an account, the following path is to be used: **/accounts/{identifierType}/{identifier}**.
+
+      Multiple Identifiers Method:
+
+      - Where a single identifier is not sufficient to identify an account, the following path is to be used: &#39; **/accounts/{accountIdentifier1}@{value1}${accountIdentifier2}@{value2}${accountIdentifier3}@{value3}**&#39;. The list of permitted account identifiers supported by the Mobile Money API can be found in the API documentation. As there can be multiple identifiers required to identify the target account, the path uses a &#39;$&#39; delimiter to separate each identifier, up to a limit of three account identifiers.    
+  - name: Authorisation Codes
+    description: |
+      The **Authorisation** Codes APIs allow a payer to generate a payment code which when presented to the payee, can be redeemed for an amount associated with the code. 
+      Authorisation codes can be set to expire. Note that expiry time can be specified via the API, however the mobile money provider 
+      may mandate a common expiry period for all codes.
+      Authorisation Codes can be used for pre-authorised codes for merchant payments. The customer generates a code which can be redeemed at a merchant.
+  - name: Supporting
+    description: |
+      Supporting APIs consist of the following:
+
+      - **Heartbeat API:** Used for monitoring purposes and establishes whether the system of an API provider is in a state that enables a client to submit a request for processing within established SLAs.
+      - **Request State API** : Used to determine the state of an asynchronous request.
+      - **Responses API** : In some circumstances, the client may not have received the final representation of the resource for which it attempted to create or update. The **Responses** API allows a client to identify and retrieve the final representation of the resource assuming that the resource was created.     
 paths:
-  /vouchers/voucher_preactivation:
+  # Transactions APIs. These support creation and viewing of financial transactions in singular and bulk.
+
+  /transactions/type/{transactionType}:
     post:
       tags:
-      - VoucherPreactivation
-      description: Requests for voucher number, voucher serial number and expiry date by sending voucher group, amount and currency
-      operationId: VoucherPreactivationPOST
+        - Transactions
+      summary: Create a Transaction
+      description: Provided with a valid object representation, this endpoint allows
+        for a new transaction to be created for a given transaction type passed via the URL.
+      operationId: "transactionstypetransactionTypePUT"
       parameters:
-      - name: X-Callback-URL
-        in: header
-        description: The URL supplied by the client that will be used to return the callback in the form of a HTTP PUT.
-        required: false
-        style: simple
-        explode: false
-        schema:
-          type: string
-          format: uri
-          example: https://myserver.com/send/callback/here
-      - name: X-Date
-        in: header
-        description: Header parameter to indicate the date and time that the message was originated. It is used for basic message integrity checks, to ensure the request is not stale. Note that the header was previously referenced as 'Date' in version 1.0 of the Mobile Money API.
-        required: false
-        style: simple
-        explode: false
-        schema:
-          type: string
-          format: date-time
-      - name: X-CorrelationID
-        in: header
-        description: Header parameter to uniquely identify the request. Must be supplied as a UUID.
-        required: false
-        style: simple
-        explode: false
-        schema:
-          pattern: ^[0-9A-Fa-f]{8}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{12}$
-          type: string
-      - name: X-API-Key
-        in: header
-        description: Used to pass pre-shared client's API key to the server.
-        required: false
-        style: simple
-        explode: false
-        schema:
-          type: string
-      - name: X-User-Bearer
-        in: header
-        description: Used to pass user’s access token when OAuth 2.0/OIDC authorisation framework is used for end-user authentication.
-        required: false
-        style: simple
-        explode: false
-        schema:
-          type: string
-      - name: X-Client-Id
-        in: header
-        description: Used to pass pre-shared client's identifier to the server.
-        required: false
-        style: simple
-        explode: false
-        schema:
-          maxLength: 256
-          type: string
-      - name: X-Content-Hash
-        in: header
-        description: SHA-256 hex digest of the request content (encrypted or plain). Applicable only if basic data integrity checking is to be performed.
-        required: false
-        style: simple
-        explode: false
-        schema:
-          type: string
-      - name: X-User-Credential-1
-        in: header
-        description: The end-users encrypted security credential. Should only be used when OAuth 2.0/OIDC authorisation framework has not been implemented by the API Provider.
-        required: false
-        style: simple
-        explode: false
-        schema:
-          type: string
-      - name: X-User-Credential-2
-        in: header
-        description: The end-users encrypted security credential Should only be used when OAuth 2.0/OIDC authorisation framework has not been implemented by the API Provider.
-        required: false
-        style: simple
-        explode: false
-        schema:
-          type: string
-      - name: X-Channel
-        in: header
-        description: String containing the channel that was used to originate the request. For example USSD, Web, App.
-        required: false
-        style: simple
-        explode: false
-        schema:
-          maxLength: 256
-          type: string
+        - $ref: '#/components/parameters/transactionTypePath'
+        - $ref: '#/components/parameters/X-Date'
+        - $ref: '#/components/parameters/X-CorrelationID'
+        - $ref: '#/components/parameters/X-API-Key'
+        - $ref: '#/components/parameters/X-User-Bearer'
+        - $ref: '#/components/parameters/X-Client-Id'
+        - $ref: '#/components/parameters/X-Content-Hash'
+        - $ref: '#/components/parameters/X-User-Credential-1'
+        - $ref: '#/components/parameters/X-User-Credential-2'
+        - $ref: '#/components/parameters/X-Channel'
+        - $ref: '#/components/parameters/X-Callback-URL'
+        - $ref: '#/components/parameters/X-Account-Holding-Institution-Identifier-Type'
+        - $ref: '#/components/parameters/X-Account-Holding-Institution-Identifier'
       requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/voucher_preactivation_request'
-        required: true
+        $ref: '#/components/requestBodies/requestTransactionType'
+      callbacks:
+        transactionsSuccessEvent:
+          '{$request.header.X-Callback-URL}': # This is the callback URL provided by the client in the request header
+            put: 
+              summary: Transaction Success Callback
+              description: This callback communicates the final representation of the transaction requested by the client. 
+                The client endpoint is identified from the X-Callback-URL supplied in the POST request header.
+              operationId: "transactionsTransactionTypeSuccessPUT"
+              parameters:
+                - $ref: '#/components/parameters/X-Date'
+                - $ref: '#/components/parameters/X-CorrelationID'
+                - $ref: '#/components/parameters/X-Content-Hash'
+                - $ref: '#/components/parameters/X-API-Key'
+                - $ref: '#/components/parameters/X-User-Bearer'
+                - $ref: '#/components/parameters/X-Client-Id'
+              requestBody:
+                $ref: '#/components/requestBodies/updateTransaction' # The callback consists of the same body as a synchronous /transactions response
+              responses:
+                204:
+                  description: Your server returns this code if it accepts the callback   
+                400:
+                  description: Your server returns this code if it rejects the callback due to a violation of a business rule   
+                401:
+                  description: Your server returns this code if it rejects the callback due to an authorisation failure   
+                404:
+                  description: Your server returns this code if it rejects the callback due to a failure to identify the target resource   
+                500:
+                  description: Your server returns this code if it rejects the callback due to general server-side issue   
+                503:
+                  description: Your server returns this code if it rejects the callback due to systems unavailability   
+        transactionsFailureEvent:
+          '{$request.header.X-Callback-URL}': # This is the callback URL provided by the client in the request header
+            put: 
+              summary: Transaction Failure Callback
+              description: This callback communicates the information regarding a transaction failure in the form of an error object. 
+                The client endpoint is identified from the X-Callback-URL supplied in the POST request header.
+              operationId: "transactionsTransactionTypeFailurePUT"
+              parameters:
+                - $ref: '#/components/parameters/X-Date'
+                - $ref: '#/components/parameters/X-CorrelationID'
+                - $ref: '#/components/parameters/X-Content-Hash'
+                - $ref: '#/components/parameters/X-API-Key'
+                - $ref: '#/components/parameters/X-User-Bearer'
+                - $ref: '#/components/parameters/X-Client-Id'
+              requestBody:
+                $ref: '#/components/requestBodies/updateError' # The callback returns the error object in the event of failure
+              responses:
+                204:
+                  description: Your server returns this code if it accepts the callback   
+                400:
+                  description: Your server returns this code if it rejects the callback due to a violation of a business rule   
+                401:
+                  description: Your server returns this code if it rejects the callback due to an authorisation failure   
+                404:
+                  description: Your server returns this code if it rejects the callback due to a failure to identify the target resource   
+                500:
+                  description: Your server returns this code if it rejects the callback due to general server-side issue   
+                503:
+                  description: Your server returns this code if it rejects the callback due to systems unavailability   
       responses:
-        "200":
-          description: Successfully pre-activated voucher
+        201:
+          description: Represents a Transaction response
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/preactivation_response'
-        "400":
-          description: Invalid resquest
+                $ref: "#/components/schemas/responseTransactionType"
+          headers:
+            'X-Date':
+              $ref: '#/components/headers/X-Date'
+        202:
+          description: Represents an Asynchronous response
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/invalid_preactivation_request'
-        "452":
-          description: Invalid amount
+                $ref: "#/components/schemas/requestStateObject"
+          headers:
+            'X-Date':
+              $ref: '#/components/headers/X-Date'
+        400:
+          description: Represents an Error Caused by the Violation of a Business Rule
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/invalid_amount'
-        "453":
-          description: Invalid currency
+                $ref: "#/components/schemas/errorObject"
+          headers:
+            'X-Date':
+              $ref: '#/components/headers/X-Date'
+        401:
+          description: Represents an Error Caused by an Authorisation Failure
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/invalid_currency'
-        "454":
-          description: Invalid voucher group
+                $ref: "#/components/schemas/errorObject"
+          headers:
+            'X-Date':
+              $ref: '#/components/headers/X-Date'
+        404:
+          description: Represents an Error Caused by a Failure to Identify the Target Resource
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/invalid_voucher_group'
-        "455":
-          description: Voucher group exhausted
+                $ref: "#/components/schemas/errorObject"
+          headers:
+            'X-Date':
+              $ref: '#/components/headers/X-Date' 
+        500:
+          description: Represents an Error Caused by a General Server-Side Issue
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/voucher_group_exhausted'
-        "460":
-          description: Gov Stack Building Block does not exist
+                $ref: "#/components/schemas/errorObject"
+          headers:
+            'X-Date':
+              $ref: '#/components/headers/X-Date'
+        503:
+          description: Represents an Error Caused by System Unavailability
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/GovStack_BB_does_not_exist'
-        "500":
-          description: Internal Server Error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/internal_server_error'
-        "503":
-          description: Service Unavailable
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/service_unavailable'
-        "599":
-          description: Network connection timeout error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/network_timeout_error'
-  /vouchers/voucher_activation:
-    patch:
-      tags:
-      - VoucherActivation
-      description: Request for voucher activation by sending the voucher serial number
-      operationId: VoucherActivationPATCH
-      parameters:
-      - name: X-Callback-URL
-        in: header
-        description: The URL supplied by the client that will be used to return the callback in the form of a HTTP PUT.
-        required: false
-        style: simple
-        explode: false
-        schema:
-          type: string
-          format: uri
-          example: https://myserver.com/send/callback/here
-      - name: X-Date
-        in: header
-        description: Header parameter to indicate the date and time that the message was originated. It is used for basic message integrity checks, to ensure the request is not stale. Note that the header was previously referenced as 'Date' in version 1.0 of the Mobile Money API.
-        required: false
-        style: simple
-        explode: false
-        schema:
-          type: string
-          format: date-time
-      - name: X-CorrelationID
-        in: header
-        description: Header parameter to uniquely identify the request. Must be supplied as a UUID.
-        required: false
-        style: simple
-        explode: false
-        schema:
-          pattern: ^[0-9A-Fa-f]{8}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{12}$
-          type: string
-      - name: X-API-Key
-        in: header
-        description: Used to pass pre-shared client's API key to the server.
-        required: false
-        style: simple
-        explode: false
-        schema:
-          type: string
-      - name: X-User-Bearer
-        in: header
-        description: Used to pass user’s access token when OAuth 2.0/OIDC authorisation framework is used for end-user authentication.
-        required: false
-        style: simple
-        explode: false
-        schema:
-          type: string
-      - name: X-Client-Id
-        in: header
-        description: Used to pass pre-shared client's identifier to the server.
-        required: false
-        style: simple
-        explode: false
-        schema:
-          maxLength: 256
-          type: string
-      - name: X-Content-Hash
-        in: header
-        description: SHA-256 hex digest of the request content (encrypted or plain). Applicable only if basic data integrity checking is to be performed.
-        required: false
-        style: simple
-        explode: false
-        schema:
-          type: string
-      - name: X-User-Credential-1
-        in: header
-        description: The end-users encrypted security credential. Should only be used when OAuth 2.0/OIDC authorisation framework has not been implemented by the API Provider.
-        required: false
-        style: simple
-        explode: false
-        schema:
-          type: string
-      - name: X-User-Credential-2
-        in: header
-        description: The end-users encrypted security credential Should only be used when OAuth 2.0/OIDC authorisation framework has not been implemented by the API Provider.
-        required: false
-        style: simple
-        explode: false
-        schema:
-          type: string
-      - name: X-Channel
-        in: header
-        description: String containing the channel that was used to originate the request. For example USSD, Web, App.
-        required: false
-        style: simple
-        explode: false
-        schema:
-          maxLength: 256
-          type: string
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/Voucher_activate_request'
-        required: true
-      responses:
-        "200":
-          description: Successfully activated voucher
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/activation_response'
-        "400":
-          description: Invalid resquest
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/invalid_activation_request'
-        "456":
-          description: Invalid voucher serial number
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/invalid_voucher_serial_number'
-        "460":
-          description: Gov Stack Building Block does not exist
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/GovStack_BB_does_not_exist'
-        "500":
-          description: Internal Server Error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/internal_server_error'
-        "503":
-          description: Service Unavailable
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/service_unavailable'
-        "599":
-          description: Network connection timeout error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/network_timeout_error'
-  /vouchers/voucher_redeemption:
-    post:
-      tags:
-      - VoucherRedemption
-      description: Request for voucher redemption by sending the voucher number, the merchant name and merchant payment details
-      operationId: VoucherRedemptionPOST
-      parameters:
-      - name: X-Callback-URL
-        in: header
-        description: The URL supplied by the client that will be used to return the callback in the form of a HTTP PUT.
-        required: false
-        style: simple
-        explode: false
-        schema:
-          type: string
-          format: uri
-          example: https://myserver.com/send/callback/here
-      - name: X-Date
-        in: header
-        description: Header parameter to indicate the date and time that the message was originated. It is used for basic message integrity checks, to ensure the request is not stale. Note that the header was previously referenced as 'Date' in version 1.0 of the Mobile Money API.
-        required: false
-        style: simple
-        explode: false
-        schema:
-          type: string
-          format: date-time
-      - name: X-CorrelationID
-        in: header
-        description: Header parameter to uniquely identify the request. Must be supplied as a UUID.
-        required: false
-        style: simple
-        explode: false
-        schema:
-          pattern: ^[0-9A-Fa-f]{8}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{12}$
-          type: string
-      - name: X-API-Key
-        in: header
-        description: Used to pass pre-shared client's API key to the server.
-        required: false
-        style: simple
-        explode: false
-        schema:
-          type: string
-      - name: X-User-Bearer
-        in: header
-        description: Used to pass user’s access token when OAuth 2.0/OIDC authorisation framework is used for end-user authentication.
-        required: false
-        style: simple
-        explode: false
-        schema:
-          type: string
-      - name: X-Client-Id
-        in: header
-        description: Used to pass pre-shared client's identifier to the server.
-        required: false
-        style: simple
-        explode: false
-        schema:
-          maxLength: 256
-          type: string
-      - name: X-Content-Hash
-        in: header
-        description: SHA-256 hex digest of the request content (encrypted or plain). Applicable only if basic data integrity checking is to be performed.
-        required: false
-        style: simple
-        explode: false
-        schema:
-          type: string
-      - name: X-User-Credential-1
-        in: header
-        description: The end-users encrypted security credential. Should only be used when OAuth 2.0/OIDC authorisation framework has not been implemented by the API Provider.
-        required: false
-        style: simple
-        explode: false
-        schema:
-          type: string
-      - name: X-User-Credential-2
-        in: header
-        description: The end-users encrypted security credential Should only be used when OAuth 2.0/OIDC authorisation framework has not been implemented by the API Provider.
-        required: false
-        style: simple
-        explode: false
-        schema:
-          type: string
-      - name: X-Channel
-        in: header
-        description: String containing the channel that was used to originate the request. For example USSD, Web, App.
-        required: false
-        style: simple
-        explode: false
-        schema:
-          maxLength: 256
-          type: string
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/Voucher_redeem_request'
-        required: true
-      responses:
-        "200":
-          description: Voucher is successfully redeemed
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/redemption_response'
-        "400":
-          description: Invalid resquest
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/invalid_redemption_request'
-        "460":
-          description: Gov Stack Building Block does not exist
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/GovStack_BB_does_not_exist'
-        "461":
-          description: Invalid voucher number
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/invalid_voucher_number'
-        "462":
-          description: Insufficient funds in funding a/c
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/insufficient_funds'
-        "463":
-          description: Cannot credit merchant
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/cannot_credit_merchant'
-        "500":
-          description: Internal Server Error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/internal_server_error'
-        "503":
-          description: Service Unavailable
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/service_unavailable'
-        "599":
-          description: Network connection timeout error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/network_timeout_error'
-  /vouchers/voucherstatuscheck/{voucherserialnumber}:
+                $ref: "#/components/schemas/errorObject"
+          headers:
+            'X-Date':
+              $ref: '#/components/headers/X-Date'
+  /transactions/{transactionReference}:
+    parameters:
+      - $ref: '#/components/parameters/transactionReference'
+      - $ref: '#/components/parameters/X-Date'
+      - $ref: '#/components/parameters/X-API-Key'
+      - $ref: '#/components/parameters/X-User-Bearer'
+      - $ref: '#/components/parameters/X-Client-Id'
+      - $ref: '#/components/parameters/X-Content-Hash'
+      - $ref: '#/components/parameters/X-User-Credential-1'
+      - $ref: '#/components/parameters/X-User-Credential-2'
+      - $ref: '#/components/parameters/X-Channel'
+      - $ref: '#/components/parameters/X-Account-Holding-Institution-Identifier-Type'
+      - $ref: '#/components/parameters/X-Account-Holding-Institution-Identifier'
     get:
       tags:
-      - VoucherStatusCheck
-      description: Check the status of the Voucher. The API will respond with Not Preactivated, Preactivated, Activated, Active, Consumed, Blocked, Suspended and Purged.
-      operationId: VoucherStatusCheckGET
-      parameters:
-      - name: X-Callback-URL
-        in: header
-        description: The URL supplied by the client that will be used to return the callback in the form of a HTTP PUT.
-        required: false
-        style: simple
-        explode: false
-        schema:
-          type: string
-          format: uri
-          example: https://myserver.com/send/callback/here
-      - name: voucherserialnumber
-        in: path
-        description: Voucher serial number to check status of
-        required: true
-        style: simple
-        explode: false
-        schema:
-          type: string
-      - name: X-Date
-        in: header
-        description: Header parameter to indicate the date and time that the message was originated. It is used for basic message integrity checks, to ensure the request is not stale. Note that the header was previously referenced as 'Date' in version 1.0 of the Mobile Money API.
-        required: false
-        style: simple
-        explode: false
-        schema:
-          type: string
-          format: date-time
-      - name: X-CorrelationID
-        in: header
-        description: Header parameter to uniquely identify the request. Must be supplied as a UUID.
-        required: false
-        style: simple
-        explode: false
-        schema:
-          pattern: ^[0-9A-Fa-f]{8}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{12}$
-          type: string
-      - name: X-API-Key
-        in: header
-        description: Used to pass pre-shared client's API key to the server.
-        required: false
-        style: simple
-        explode: false
-        schema:
-          type: string
-      - name: X-User-Bearer
-        in: header
-        description: Used to pass user’s access token when OAuth 2.0/OIDC authorisation framework is used for end-user authentication.
-        required: false
-        style: simple
-        explode: false
-        schema:
-          type: string
-      - name: X-Client-Id
-        in: header
-        description: Used to pass pre-shared client's identifier to the server.
-        required: false
-        style: simple
-        explode: false
-        schema:
-          maxLength: 256
-          type: string
-      - name: X-Content-Hash
-        in: header
-        description: SHA-256 hex digest of the request content (encrypted or plain). Applicable only if basic data integrity checking is to be performed.
-        required: false
-        style: simple
-        explode: false
-        schema:
-          type: string
-      - name: X-User-Credential-1
-        in: header
-        description: The end-users encrypted security credential. Should only be used when OAuth 2.0/OIDC authorisation framework has not been implemented by the API Provider.
-        required: false
-        style: simple
-        explode: false
-        schema:
-          type: string
-      - name: X-User-Credential-2
-        in: header
-        description: The end-users encrypted security credential Should only be used when OAuth 2.0/OIDC authorisation framework has not been implemented by the API Provider.
-        required: false
-        style: simple
-        explode: false
-        schema:
-          type: string
-      - name: X-Channel
-        in: header
-        description: String containing the channel that was used to originate the request. For example USSD, Web, App.
-        required: false
-        style: simple
-        explode: false
-        schema:
-          maxLength: 256
-          type: string
+        - Transactions
+      summary: View A Transaction
+      description: This endpoint returns the details of a transaction
+      operationId: "transactionsTransactionReferenceGET"
       responses:
-        "200":
-          description: Voucher status
+        200:
+          description: Represents a Transaction response
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/voucher_status'
-        "400":
-          description: Invalid request
+                $ref: "#/components/schemas/responseTransaction"
+          headers:
+            'X-Date':
+              $ref: '#/components/headers/X-Date'
+        400:
+          description: Represents an Error Caused by the Violation of a Business Rule
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/invalid_validation_request'
-        "456":
-          description: Invalid voucher number
+                $ref: "#/components/schemas/errorObject"
+          headers:
+            'X-Date':
+              $ref: '#/components/headers/X-Date'
+        401:
+          description: Represents an Error Caused by an Authorisation Failure
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/invalid_voucher_number'
-        "458":
-          description: Voucher number already used
+                $ref: "#/components/schemas/errorObject"
+          headers:
+            'X-Date':
+              $ref: '#/components/headers/X-Date'
+        404:
+          description: Represents an Error Caused by a Failure to Identify the Target Resource
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/voucher_already_used'
-        "459":
-          description: Voucher has expired
+                $ref: "#/components/schemas/errorObject"
+          headers:
+            'X-Date':
+              $ref: '#/components/headers/X-Date' 
+        500:
+          description: Represents an Error Caused by a General Server-Side Issue
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/voucher_expired'
-        "460":
-          description: Gov Stack Building Block does not exist
+                $ref: "#/components/schemas/errorObject"
+          headers:
+            'X-Date':
+              $ref: '#/components/headers/X-Date'
+        503:
+          description: Represents an Error Caused by System Unavailability
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/GovStack_BB_does_not_exist'
-        "500":
-          description: Internal Server Error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/internal_server_error'
-        "503":
-          description: Service Unavailable
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/service_unavailable'
-        "599":
-          description: Network connection timeout error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/network_timeout_error'
+                $ref: "#/components/schemas/errorObject"
+          headers:
+            'X-Date':
+              $ref: '#/components/headers/X-Date'
     patch:
       tags:
-      - VoucherCancellation
-      description: This operation cancels a specific voucher number.
-      operationId: VoucherCancelPATCH
+        - Transactions
+      summary: Update A Transaction
+      description: This endpoint allows the transactionStatus of a transaction to be updated.
+      operationId: "transactionsTransactionReferencePATCH"
       parameters:
-      - name: X-Callback-URL
-        in: header
-        description: The URL supplied by the client that will be used to return the callback in the form of a HTTP PUT.
-        required: false
-        style: simple
-        explode: false
-        schema:
-          type: string
-          format: uri
-          example: https://myserver.com/send/callback/here
-      - name: voucherserialnumber
-        in: path
-        description: Voucher serial number to check status of
-        required: true
-        style: simple
-        explode: false
-        schema:
-          type: string
-      - name: X-Date
-        in: header
-        description: Header parameter to indicate the date and time that the message was originated. It is used for basic message integrity checks, to ensure the request is not stale. Note that the header was previously referenced as 'Date' in version 1.0 of the Mobile Money API.
-        required: false
-        style: simple
-        explode: false
-        schema:
-          type: string
-          format: date-time
-      - name: X-CorrelationID
-        in: header
-        description: Header parameter to uniquely identify the request. Must be supplied as a UUID.
-        required: false
-        style: simple
-        explode: false
-        schema:
-          pattern: ^[0-9A-Fa-f]{8}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{12}$
-          type: string
-      - name: X-API-Key
-        in: header
-        description: Used to pass pre-shared client's API key to the server.
-        required: false
-        style: simple
-        explode: false
-        schema:
-          type: string
-      - name: X-User-Bearer
-        in: header
-        description: Used to pass user’s access token when OAuth 2.0/OIDC authorisation framework is used for end-user authentication.
-        required: false
-        style: simple
-        explode: false
-        schema:
-          type: string
-      - name: X-Client-Id
-        in: header
-        description: Used to pass pre-shared client's identifier to the server.
-        required: false
-        style: simple
-        explode: false
-        schema:
-          maxLength: 256
-          type: string
-      - name: X-Content-Hash
-        in: header
-        description: SHA-256 hex digest of the request content (encrypted or plain). Applicable only if basic data integrity checking is to be performed.
-        required: false
-        style: simple
-        explode: false
-        schema:
-          type: string
-      - name: X-User-Credential-1
-        in: header
-        description: The end-users encrypted security credential. Should only be used when OAuth 2.0/OIDC authorisation framework has not been implemented by the API Provider.
-        required: false
-        style: simple
-        explode: false
-        schema:
-          type: string
-      - name: X-User-Credential-2
-        in: header
-        description: The end-users encrypted security credential Should only be used when OAuth 2.0/OIDC authorisation framework has not been implemented by the API Provider.
-        required: false
-        style: simple
-        explode: false
-        schema:
-          type: string
-      - name: X-Channel
-        in: header
-        description: String containing the channel that was used to originate the request. For example USSD, Web, App.
-        required: false
-        style: simple
-        explode: false
-        schema:
-          maxLength: 256
-          type: string
+        - $ref: '#/components/parameters/X-CorrelationID'
+        - $ref: '#/components/parameters/X-Callback-URL'
       requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/voucher_cancel_request'
-        required: true
+        $ref: '#/components/requestBodies/genericPatch'
+      callbacks:
+        transactionsUpdateSuccessEvent:
+          '{$request.header.X-Callback-URL}': # This is the callback URL provided by the client in the request header
+            put: 
+              summary: Transactions Update Success Callback
+              description: This callback communicates a simple message to communicate that the transaction update completed successfully.
+              operationId: "transactionsTransactionsUpdatePUT"
+              parameters:
+                - $ref: '#/components/parameters/X-Date'
+                - $ref: '#/components/parameters/X-CorrelationID'
+                - $ref: '#/components/parameters/X-Content-Hash'
+                - $ref: '#/components/parameters/X-API-Key'
+                - $ref: '#/components/parameters/X-User-Bearer'
+                - $ref: '#/components/parameters/X-Client-Id'
+              requestBody:
+                $ref: '#/components/requestBodies/genericUpdateSuccess' 
+              responses:
+                204:
+                  description: Your server returns this code if it accepts the callback   
+                400:
+                  description: Your server returns this code if it rejects the callback due to a violation of a business rule   
+                401:
+                  description: Your server returns this code if it rejects the callback due to an authorisation failure   
+                404:
+                  description: Your server returns this code if it rejects the callback due to a failure to identify the target resource   
+                500:
+                  description: Your server returns this code if it rejects the callback due to general server-side issue   
+                503:
+                  description: Your server returns this code if it rejects the callback due to systems unavailability   
+        transactionsUpdateFailureEvent:
+          '{$request.header.X-Callback-URL}': # This is the callback URL provided by the client in the request header
+            put: 
+              summary: Transaction Update Failure Callback
+              description: This callback communicates the information regarding a failure to update a transaction in the form of an error object. 
+                The client endpoint is identified from the X-Callback-URL supplied in the POST request header.
+              operationId: "transactionsTransactionsUpdateFailurePUT"
+              parameters:
+                - $ref: '#/components/parameters/X-Date'
+                - $ref: '#/components/parameters/X-CorrelationID'
+                - $ref: '#/components/parameters/X-Content-Hash'
+                - $ref: '#/components/parameters/X-API-Key'
+                - $ref: '#/components/parameters/X-User-Bearer'
+                - $ref: '#/components/parameters/X-Client-Id'
+              requestBody:
+                $ref: '#/components/requestBodies/updateError' # The callback returns the error object in the event of failure
+              responses:
+                204:
+                  description: Your server returns this code if it accepts the callback   
+                400:
+                  description: Your server returns this code if it rejects the callback due to a violation of a business rule   
+                401:
+                  description: Your server returns this code if it rejects the callback due to an authorisation failure   
+                404:
+                  description: Your server returns this code if it rejects the callback due to a failure to identify the target resource   
+                500:
+                  description: Your server returns this code if it rejects the callback due to general server-side issue   
+                503:
+                  description: Your server returns this code if it rejects the callback due to systems unavailability   
       responses:
-        "200":
-          description: Voucher cancelled
+        202:
+          description: Represents an Asynchronous response
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/voucher_cancelled'
-        "400":
-          description: Invalid request
+                $ref: "#/components/schemas/requestStateObject"
+          headers:
+            'X-Date':
+              $ref: '#/components/headers/X-Date'
+        204:
+          description: An empty response is returned for a synchronous successful patch.
+        400:
+          description: Represents an Error Caused by the Violation of a Business Rule
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/invalid_validation_request'
-        "463":
-          description: Invalid voucher
+                $ref: "#/components/schemas/errorObject"
+          headers:
+            'X-Date':
+              $ref: '#/components/headers/X-Date'
+        401:
+          description: Represents an Error Caused by an Authorisation Failure
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/invalid_voucher'
-        "464":
-          description: Voucher is already cancelled
+                $ref: "#/components/schemas/errorObject"
+          headers:
+            'X-Date':
+              $ref: '#/components/headers/X-Date'
+        404:
+          description: Represents an Error Caused by a Failure to Identify the Target Resource
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/already_cancelled'
+                $ref: "#/components/schemas/errorObject"
+          headers:
+            'X-Date':
+              $ref: '#/components/headers/X-Date' 
+        500:
+          description: Represents an Error Caused by a General Server-Side Issue
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/errorObject"
+          headers:
+            'X-Date':
+              $ref: '#/components/headers/X-Date'
+        503:
+          description: Represents an Error Caused by System Unavailability
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/errorObject"
+          headers:
+            'X-Date':
+              $ref: '#/components/headers/X-Date'
+  /transactions/{transactionReference}/reversals:
+    post:
+      tags:
+        - Transactions
+      summary: Create A Reversal
+      description: Provided with a valid object representation, this endpoint allows for a new reversal to be created
+      operationId: "transactionsTransactionReferenceReversalsPOST"
+      parameters:
+        - $ref: '#/components/parameters/transactionReference'
+        - $ref: '#/components/parameters/X-Date'
+        - $ref: '#/components/parameters/X-CorrelationID'
+        - $ref: '#/components/parameters/X-API-Key'
+        - $ref: '#/components/parameters/X-User-Bearer'
+        - $ref: '#/components/parameters/X-Client-Id'
+        - $ref: '#/components/parameters/X-Content-Hash'
+        - $ref: '#/components/parameters/X-User-Credential-1'
+        - $ref: '#/components/parameters/X-User-Credential-2'
+        - $ref: '#/components/parameters/X-Channel'
+        - $ref: '#/components/parameters/X-Callback-URL'
+        - $ref: '#/components/parameters/X-Account-Holding-Institution-Identifier-Type'
+        - $ref: '#/components/parameters/X-Account-Holding-Institution-Identifier'
+      requestBody:
+        $ref: '#/components/requestBodies/requestReversal'
+      callbacks:
+        reversalsSuccessEvent:
+          '{$request.header.X-Callback-URL}': # This is the callback URL provided by the client in the request header
+            put: 
+              summary: Reversal Callback
+              description: This callback communicates the final representation of the reversal requested by the client. 
+                The client endpoint is identified from the X-Callback-URL supplied in the POST request header.
+              operationId: "transactionsTransactionReferenceReversalsSuccessPUT"
+              parameters:
+                - $ref: '#/components/parameters/X-Date'
+                - $ref: '#/components/parameters/X-CorrelationID'
+                - $ref: '#/components/parameters/X-Content-Hash'
+                - $ref: '#/components/parameters/X-API-Key'
+                - $ref: '#/components/parameters/X-User-Bearer'
+                - $ref: '#/components/parameters/X-Client-Id'
+              requestBody:
+                $ref: '#/components/requestBodies/updateReversal' # The callback consists of the same body as a synchronous /reversals response
+              responses:
+                204:
+                  description: Your server returns this code if it accepts the callback   
+                400:
+                  description: Your server returns this code if it rejects the callback due to a violation of a business rule   
+                401:
+                  description: Your server returns this code if it rejects the callback due to an authorisation failure   
+                404:
+                  description: Your server returns this code if it rejects the callback due to a failure to identify the target resource   
+                500:
+                  description: Your server returns this code if it rejects the callback due to general server-side issue   
+                503:
+                  description: Your server returns this code if it rejects the callback due to systems unavailability   
+        reversalsFailureEvent:
+          '{$request.header.X-Callback-URL}': # This is the callback URL provided by the client in the request header
+            put: 
+              summary: Reversal Failure Callback
+              description: This callback communicates the information regarding a transaction failure in the form of an error object. 
+                The client endpoint is identified from the X-Callback-URL supplied in the POST request header.
+              operationId: "transactionsTransactionReferenceReversalfailurePUT"
+              parameters:
+                - $ref: '#/components/parameters/X-Date'
+                - $ref: '#/components/parameters/X-CorrelationID'
+                - $ref: '#/components/parameters/X-Content-Hash'
+                - $ref: '#/components/parameters/X-API-Key'
+                - $ref: '#/components/parameters/X-User-Bearer'
+                - $ref: '#/components/parameters/X-Client-Id'
+              requestBody:
+                $ref: '#/components/requestBodies/updateError' # The callback returns the error object in the event of failure
+              responses:
+                204:
+                  description: Your server returns this code if it accepts the callback    
+                400:
+                  description: Your server returns this code if it rejects the callback due to a violation of a business rule   
+                401:
+                  description: Your server returns this code if it rejects the callback due to an authorisation failure   
+                404:
+                  description: Your server returns this code if it rejects the callback due to a failure to identify the target resource   
+                500:
+                  description: Your server returns this code if it rejects the callback due to general server-side issue   
+                503:
+                  description: Your server returns this code if it rejects the callback due to systems unavailability   
+      responses:
+        201:
+          description: Represents a Transaction Reversal response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/responseReversal"
+          headers:
+            'X-Date':
+              $ref: '#/components/headers/X-Date'
+        202:
+          description: Represents an Asynchronous response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/requestStateObject"
+          headers:
+            'X-Date':
+              $ref: '#/components/headers/X-Date'
+        400:
+          description: Represents an Error Caused by the Violation of a Business Rule
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/errorObject"
+          headers:
+            'X-Date':
+              $ref: '#/components/headers/X-Date'
+        401:
+          description: Represents an Error Caused by an Authorisation Failure
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/errorObject"
+          headers:
+            'X-Date':
+              $ref: '#/components/headers/X-Date'
+        404:
+          description: Represents an Error Caused by a Failure to Identify the Target Resource
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/errorObject"
+          headers:
+            'X-Date':
+              $ref: '#/components/headers/X-Date' 
+        500:
+          description: Represents an Error Caused by a General Server-Side Issue
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/errorObject"
+          headers:
+            'X-Date':
+              $ref: '#/components/headers/X-Date'
+        503:
+          description: Represents an Error Caused by System Unavailability
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/errorObject"
+          headers:
+            'X-Date':
+              $ref: '#/components/headers/X-Date'
+
+  # Accounts APIs. These support viewing of account-related information.
+
+  /accounts/{accountId}/balance:
+    get:
+      tags:
+        - Accounts
+      summary: View Account Balance
+      description: This endpoint returns the balance of an account
+      operationId: "accountsAccountIdBalanceGET"
+      parameters:
+        - $ref: '#/components/parameters/accountId'
+        - $ref: '#/components/parameters/X-Date'
+        - $ref: '#/components/parameters/X-API-Key'
+        - $ref: '#/components/parameters/X-User-Bearer'
+        - $ref: '#/components/parameters/X-Client-Id'
+        - $ref: '#/components/parameters/X-Content-Hash'
+        - $ref: '#/components/parameters/X-User-Credential-1'
+        - $ref: '#/components/parameters/X-User-Credential-2'
+        - $ref: '#/components/parameters/X-Channel'
+        - $ref: '#/components/parameters/X-Account-Holding-Institution-Identifier-Type'
+        - $ref: '#/components/parameters/X-Account-Holding-Institution-Identifier'
+      responses:
+        200:
+          description: Represents an Account Balance response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/responseAccountBalance"
+          headers:
+            'X-Date':
+              $ref: '#/components/headers/X-Date'
+        400:
+          description: Represents an Error Caused by the Violation of a Business Rule
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/errorObject"
+          headers:
+            'X-Date':
+              $ref: '#/components/headers/X-Date'
+        401:
+          description: Represents an Error Caused by an Authorisation Failure
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/errorObject"
+          headers:
+            'X-Date':
+              $ref: '#/components/headers/X-Date'
+        404:
+          description: Represents an Error Caused by a Failure to Identify the Target Resource
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/errorObject"
+          headers:
+            'X-Date':
+              $ref: '#/components/headers/X-Date' 
+        500:
+          description: Represents an Error Caused by a General Server-Side Issue
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/errorObject"
+          headers:
+            'X-Date':
+              $ref: '#/components/headers/X-Date'
+        503:
+          description: Represents an Error Caused by System Unavailability
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/errorObject"
+          headers:
+            'X-Date':
+              $ref: '#/components/headers/X-Date'
+  /accounts/{identifierType}/{identifier}/balance:
+    get:
+      tags:
+        - Accounts
+      summary: View Account Balance
+      description: This endpoint returns the balance of an account.
+      operationId: "accountsIdentifierTypeIdentifierBalanceGET"
+      parameters:
+        - $ref: '#/components/parameters/identifierType'
+        - $ref: '#/components/parameters/identifier'
+        - $ref: '#/components/parameters/X-Date'
+        - $ref: '#/components/parameters/X-API-Key'
+        - $ref: '#/components/parameters/X-User-Bearer'
+        - $ref: '#/components/parameters/X-Client-Id'
+        - $ref: '#/components/parameters/X-Content-Hash'
+        - $ref: '#/components/parameters/X-User-Credential-1'
+        - $ref: '#/components/parameters/X-User-Credential-2'
+        - $ref: '#/components/parameters/X-Channel'
+        - $ref: '#/components/parameters/X-Account-Holding-Institution-Identifier-Type'
+        - $ref: '#/components/parameters/X-Account-Holding-Institution-Identifier'
+      responses:
+        200:
+          description: Represents an Account Balance response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/responseAccountBalance"
+          headers:
+            'X-Date':
+              $ref: '#/components/headers/X-Date'
+        400:
+          description: Represents an Error Caused by the Violation of a Business Rule
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/errorObject"
+          headers:
+            'X-Date':
+              $ref: '#/components/headers/X-Date'
+        401:
+          description: Represents an Error Caused by an Authorisation Failure
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/errorObject"
+          headers:
+            'X-Date':
+              $ref: '#/components/headers/X-Date'
+        404:
+          description: Represents an Error Caused by a Failure to Identify the Target Resource
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/errorObject"
+          headers:
+            'X-Date':
+              $ref: '#/components/headers/X-Date' 
+        500:
+          description: Represents an Error Caused by a General Server-Side Issue
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/errorObject"
+          headers:
+            'X-Date':
+              $ref: '#/components/headers/X-Date'
+        503:
+          description: Represents an Error Caused by System Unavailability
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/errorObject"
+          headers:
+            'X-Date':
+              $ref: '#/components/headers/X-Date'
+  /accounts/balance:
+    get:
+      tags:
+        - Accounts
+      summary: View Account Balance
+      description: This endpoint returns the balance of an account. As the account is not passed as a parameter, the account is assumed to be that of the calling client.
+      operationId: "accountsBalanceGET"
+      parameters:
+        - $ref: '#/components/parameters/X-Date'
+        - $ref: '#/components/parameters/X-API-Key'
+        - $ref: '#/components/parameters/X-User-Bearer'
+        - $ref: '#/components/parameters/X-Client-Id'
+        - $ref: '#/components/parameters/X-Content-Hash'
+        - $ref: '#/components/parameters/X-User-Credential-1'
+        - $ref: '#/components/parameters/X-User-Credential-2'
+        - $ref: '#/components/parameters/X-Channel'
+        - $ref: '#/components/parameters/X-Account-Holding-Institution-Identifier-Type'
+        - $ref: '#/components/parameters/X-Account-Holding-Institution-Identifier'
+      responses:
+        200:
+          description: Represents an Account Balance response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/responseAccountBalance"
+          headers:
+            'X-Date':
+              $ref: '#/components/headers/X-Date'
+        400:
+          description: Represents an Error Caused by the Violation of a Business Rule
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/errorObject"
+          headers:
+            'X-Date':
+              $ref: '#/components/headers/X-Date'
+        401:
+          description: Represents an Error Caused by an Authorisation Failure
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/errorObject"
+          headers:
+            'X-Date':
+              $ref: '#/components/headers/X-Date'
+        404:
+          description: Represents an Error Caused by a Failure to Identify the Target Resource
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/errorObject"
+          headers:
+            'X-Date':
+              $ref: '#/components/headers/X-Date' 
+        500:
+          description: Represents an Error Caused by a General Server-Side Issue
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/errorObject"
+          headers:
+            'X-Date':
+              $ref: '#/components/headers/X-Date'
+        503:
+          description: Represents an Error Caused by System Unavailability
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/errorObject"
+          headers:
+            'X-Date':
+              $ref: '#/components/headers/X-Date'
+  /accounts/{accountId}/transactions:
+    get:
+      tags:
+        - Accounts
+      summary: View Account Specific Transaction
+      description: This endpoint returns transactions linked to a specific account
+      operationId: "accountsAccountIdTransactionsGET"
+      parameters:
+        - $ref: '#/components/parameters/accountId'
+        - $ref: '#/components/parameters/X-Date'
+        - $ref: '#/components/parameters/X-API-Key'
+        - $ref: '#/components/parameters/X-User-Bearer'
+        - $ref: '#/components/parameters/X-Client-Id'
+        - $ref: '#/components/parameters/X-Content-Hash'
+        - $ref: '#/components/parameters/X-User-Credential-1'
+        - $ref: '#/components/parameters/X-User-Credential-2'
+        - $ref: '#/components/parameters/X-Channel'
+        - $ref: '#/components/parameters/X-Account-Holding-Institution-Identifier-Type'
+        - $ref: '#/components/parameters/X-Account-Holding-Institution-Identifier'
+        - $ref: '#/components/parameters/limit'
+        - $ref: '#/components/parameters/offset'
+        - $ref: '#/components/parameters/fromDateTime'
+        - $ref: '#/components/parameters/toDateTime'        
+        - $ref: '#/components/parameters/transactionStatus'        
+        - $ref: '#/components/parameters/transactionTypeQuery' 
+
+      responses:
+        200:
+          description: Represent a list of Transactions
+          content:
+            application/json:
+              schema:
+                type: "array"
+                items:
+                  $ref: "#/components/schemas/responseTransaction"
+                minItems: 0
+          headers:
+            'X-Date':
+              $ref: '#/components/headers/X-Date'
+            'X-Records-Available-Count':
+              $ref: '#/components/headers/X-Records-Available-Count' 
+            'X-Records-Returned-Count':
+              $ref: '#/components/headers/X-Records-Returned-Count' 
+        400:
+          description: Represents an Error Caused by the Violation of a Business Rule
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/errorObject"
+          headers:
+            'X-Date':
+              $ref: '#/components/headers/X-Date'
+        401:
+          description: Represents an Error Caused by an Authorisation Failure
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/errorObject"
+          headers:
+            'X-Date':
+              $ref: '#/components/headers/X-Date'
+        404:
+          description: Represents an Error Caused by a Failure to Identify the Target Resource
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/errorObject"
+          headers:
+            'X-Date':
+              $ref: '#/components/headers/X-Date' 
+        500:
+          description: Represents an Error Caused by a General Server-Side Issue
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/errorObject"
+          headers:
+            'X-Date':
+              $ref: '#/components/headers/X-Date'
+        503:
+          description: Represents an Error Caused by System Unavailability
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/errorObject"
+          headers:
+            'X-Date':
+              $ref: '#/components/headers/X-Date'
+  /accounts/{identifierType}/{identifier}/transactions:
+    get:
+      tags:
+        - Accounts
+      summary: View Account Specific Transaction
+      description: This endpoint returns transactions linked to a specific account.
+      operationId: "accountsIdentifierTypeIdentifierTransactionsGET"
+      parameters:
+        - $ref: '#/components/parameters/identifierType'
+        - $ref: '#/components/parameters/identifier'
+        - $ref: '#/components/parameters/X-Date'
+        - $ref: '#/components/parameters/X-API-Key'
+        - $ref: '#/components/parameters/X-User-Bearer'
+        - $ref: '#/components/parameters/X-Client-Id'
+        - $ref: '#/components/parameters/X-Content-Hash'
+        - $ref: '#/components/parameters/X-User-Credential-1'
+        - $ref: '#/components/parameters/X-User-Credential-2'
+        - $ref: '#/components/parameters/X-Channel'
+        - $ref: '#/components/parameters/X-Account-Holding-Institution-Identifier-Type'
+        - $ref: '#/components/parameters/X-Account-Holding-Institution-Identifier'
+        - $ref: '#/components/parameters/limit'
+        - $ref: '#/components/parameters/offset'
+        - $ref: '#/components/parameters/fromDateTime'
+        - $ref: '#/components/parameters/toDateTime'        
+        - $ref: '#/components/parameters/transactionStatus'        
+        - $ref: '#/components/parameters/transactionTypeQuery' 
+      responses:
+        200:
+          description: Represent a list of Transactions
+          content:
+            application/json:
+              schema:
+                type: "array"
+                items:
+                  $ref: "#/components/schemas/responseTransaction"
+                minItems: 0
+          headers:
+            'X-Date':
+              $ref: '#/components/headers/X-Date'
+            'X-Records-Available-Count':
+              $ref: '#/components/headers/X-Records-Available-Count' 
+            'X-Records-Returned-Count':
+              $ref: '#/components/headers/X-Records-Returned-Count' 
+        400:
+          description: Represents an Error Caused by the Violation of a Business Rule
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/errorObject"
+          headers:
+            'X-Date':
+              $ref: '#/components/headers/X-Date'
+        401:
+          description: Represents an Error Caused by an Authorisation Failure
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/errorObject"
+          headers:
+            'X-Date':
+              $ref: '#/components/headers/X-Date'
+        404:
+          description: Represents an Error Caused by a Failure to Identify the Target Resource
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/errorObject"
+          headers:
+            'X-Date':
+              $ref: '#/components/headers/X-Date' 
+        500:
+          description: Represents an Error Caused by a General Server-Side Issue
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/errorObject"
+          headers:
+            'X-Date':
+              $ref: '#/components/headers/X-Date'
+        503:
+          description: Represents an Error Caused by System Unavailability
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/errorObject"
+          headers:
+            'X-Date':
+              $ref: '#/components/headers/X-Date'
+
+  # Authorisation Codes APIs. These support creation, modification and viewing of authorisation codes.
+
+  /accounts/{accountId}/authorisationcodes:
+    post:
+      tags:
+        - Authorisation Codes
+      summary: Create an Authorisation Code
+      description: this endpoint allows allows a mobile money payer or payee to generate a code which 
+        when presented to the other party, can be redeemed for an amount set by the payer or payee, depending upon the use case
+      operationId: "accountsAccountIdAuthorisationcodesPOST"
+      parameters:
+        - $ref: '#/components/parameters/accountId'
+        - $ref: '#/components/parameters/X-Date'
+        - $ref: '#/components/parameters/X-CorrelationID'
+        - $ref: '#/components/parameters/X-API-Key'
+        - $ref: '#/components/parameters/X-User-Bearer'
+        - $ref: '#/components/parameters/X-Client-Id'
+        - $ref: '#/components/parameters/X-Content-Hash'
+        - $ref: '#/components/parameters/X-User-Credential-1'
+        - $ref: '#/components/parameters/X-User-Credential-2'
+        - $ref: '#/components/parameters/X-Channel'
+        - $ref: '#/components/parameters/X-Callback-URL'
+        - $ref: '#/components/parameters/X-Account-Holding-Institution-Identifier-Type'
+        - $ref: '#/components/parameters/X-Account-Holding-Institution-Identifier' 
+      requestBody:
+        $ref: '#/components/requestBodies/requestAuthorisationCode'
+      callbacks:
+        authorisationCodesSuccessEvent:
+          '{$request.header.X-Callback-URL}': # This is the callback URL provided by the client in the request header
+            put: 
+              summary: Authorisation Codes Success Callback
+              description: This callback communicates the final representation of the Authorisation Code requested by the client. 
+                The client endpoint is identified from the X-Callback-URL supplied in the POST request header.
+              operationId: "authorisationCodesAccountIdSuccessPUT"
+              parameters:
+                - $ref: '#/components/parameters/X-Date'
+                - $ref: '#/components/parameters/X-CorrelationID'
+                - $ref: '#/components/parameters/X-Content-Hash'
+                - $ref: '#/components/parameters/X-API-Key'
+                - $ref: '#/components/parameters/X-User-Bearer'
+                - $ref: '#/components/parameters/X-Client-Id'
+              requestBody:
+                $ref: '#/components/requestBodies/updateAuthorisationCode' # The callback consists of the same body as a synchronous /authorisationcodes response
+              responses:
+                204:
+                  description: Your server returns this code if it accepts the callback   
+                400:
+                  description: Your server returns this code if it rejects the callback due to a violation of a business rule   
+                401:
+                  description: Your server returns this code if it rejects the callback due to an authorisation failure   
+                404:
+                  description: Your server returns this code if it rejects the callback due to a failure to identify the target resource   
+                500:
+                  description: Your server returns this code if it rejects the callback due to general server-side issue   
+                503:
+                  description: Your server returns this code if it rejects the callback due to systems unavailability   
+        authorisationCodesFailureEvent:
+          '{$request.header.X-Callback-URL}': # This is the callback URL provided by the client in the request header
+            put: 
+              summary: Authorisation Codes Failure Callback
+              description: This callback communicates the information regarding a failure to receive an authorisation code in the form of an error object. 
+                The client endpoint is identified from the X-Callback-URL supplied in the POST request header.
+              operationId: "authorisationCodesAccountIdFailurePUT"
+              parameters:
+                - $ref: '#/components/parameters/X-Date'
+                - $ref: '#/components/parameters/X-CorrelationID'
+                - $ref: '#/components/parameters/X-Content-Hash'
+                - $ref: '#/components/parameters/X-API-Key'
+                - $ref: '#/components/parameters/X-User-Bearer'
+                - $ref: '#/components/parameters/X-Client-Id'
+              requestBody:
+                $ref: '#/components/requestBodies/updateError' # The callback returns the error object in the event of failure
+              responses:
+                204:
+                  description: Your server returns this code if it accepts the callback   
+                400:
+                  description: Your server returns this code if it rejects the callback due to a violation of a business rule   
+                401:
+                  description: Your server returns this code if it rejects the callback due to an authorisation failure   
+                404:
+                  description: Your server returns this code if it rejects the callback due to a failure to identify the target resource   
+                500:
+                  description: Your server returns this code if it rejects the callback due to general server-side issue   
+                503:
+                  description: Your server returns this code if it rejects the callback due to systems unavailability   
+      responses:
+        201:
+          description: Represents an Authorisation Code response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/responseAuthorisationCode"
+          headers:
+            'X-Date':
+              $ref: '#/components/headers/X-Date'
+        202:
+          description: Represents an Asynchronous response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/requestStateObject"
+          headers:
+            'X-Date':
+              $ref: '#/components/headers/X-Date'
+        400:
+          description: Represents an Error Caused by the Violation of a Business Rule
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/errorObject"
+          headers:
+            'X-Date':
+              $ref: '#/components/headers/X-Date'
+        401:
+          description: Represents an Error Caused by an Authorisation Failure
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/errorObject"
+          headers:
+            'X-Date':
+              $ref: '#/components/headers/X-Date'
+        404:
+          description: Represents an Error Caused by a Failure to Identify the Target Resource
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/errorObject"
+          headers:
+            'X-Date':
+              $ref: '#/components/headers/X-Date' 
+        500:
+          description: Represents an Error Caused by a General Server-Side Issue
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/errorObject"
+          headers:
+            'X-Date':
+              $ref: '#/components/headers/X-Date'
+        503:
+          description: Represents an Error Caused by System Unavailability
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/errorObject"
+          headers:
+            'X-Date':
+              $ref: '#/components/headers/X-Date'
+    get:
+      tags:
+        - Authorisation Codes
+      summary: View Authorisation Codes for a given account
+      description: This endpoint allows allows a mobile money payer or payee to view authorisation codes for a given account. 
+      operationId: "accountsAccountIdAuthorisationcodesGET"
+      parameters:
+        - $ref: '#/components/parameters/accountId'
+        - $ref: '#/components/parameters/X-Date'
+        - $ref: '#/components/parameters/X-API-Key'
+        - $ref: '#/components/parameters/X-User-Bearer' 
+        - $ref: '#/components/parameters/X-Client-Id'
+        - $ref: '#/components/parameters/X-Content-Hash'
+        - $ref: '#/components/parameters/X-User-Credential-1'
+        - $ref: '#/components/parameters/X-User-Credential-2'
+        - $ref: '#/components/parameters/X-Channel'
+        - $ref: '#/components/parameters/X-Account-Holding-Institution-Identifier-Type'
+        - $ref: '#/components/parameters/X-Account-Holding-Institution-Identifier' 
+        - $ref: '#/components/parameters/limit'
+        - $ref: '#/components/parameters/offset'
+        - $ref: '#/components/parameters/fromDateTime'
+        - $ref: '#/components/parameters/toDateTime'        
+        - $ref: '#/components/parameters/codeState'        
+      responses:
+        200:
+          description: Represents an authorisation codes response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/responseAuthorisationCode"
+          headers:
+            'X-Date':
+              $ref: '#/components/headers/X-Date'
+            'X-Records-Available-Count':
+              $ref: '#/components/headers/X-Records-Available-Count' 
+            'X-Records-Returned-Count':
+              $ref: '#/components/headers/X-Records-Returned-Count' 
+        400:
+          description: Represents an Error Caused by the Violation of a Business Rule
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/errorObject"
+          headers:
+            'X-Date':
+              $ref: '#/components/headers/X-Date'
+        401:
+          description: Represents an Error Caused by an Authorisation Failure
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/errorObject"
+          headers:
+            'X-Date':
+              $ref: '#/components/headers/X-Date'
+        404:
+          description: Represents an Error Caused by a Failure to Identify the Target Resource
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/errorObject"
+          headers:
+            'X-Date':
+              $ref: '#/components/headers/X-Date' 
+        500:
+          description: Represents an Error Caused by a General Server-Side Issue
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/errorObject"
+          headers:
+            'X-Date':
+              $ref: '#/components/headers/X-Date'
+        503:
+          description: Represents an Error Caused by System Unavailability
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/errorObject"
+          headers:
+            'X-Date':
+              $ref: '#/components/headers/X-Date'
+  /accounts/{identifierType}/{identifier}/authorisationcodes:
+    post:
+      tags:
+        - Authorisation Codes
+      summary: Create an Authorisation Code via an account identifier.
+      description: This endpoint allows allows a mobile money payer or payee to generate a code which 
+        when presented to the other party, can be redeemed for an amount set by the payer or payee, depending upon the use case.
+      operationId: "accountsIdentifierTypeIdentifierAuthorisationCodesPOST"
+      parameters:
+        - $ref: '#/components/parameters/identifierType'
+        - $ref: '#/components/parameters/identifier'
+        - $ref: '#/components/parameters/X-Date'
+        - $ref: '#/components/parameters/X-CorrelationID'
+        - $ref: '#/components/parameters/X-API-Key'
+        - $ref: '#/components/parameters/X-User-Bearer'
+        - $ref: '#/components/parameters/X-Client-Id'
+        - $ref: '#/components/parameters/X-Content-Hash'
+        - $ref: '#/components/parameters/X-User-Credential-1'
+        - $ref: '#/components/parameters/X-User-Credential-2'
+        - $ref: '#/components/parameters/X-Channel'
+        - $ref: '#/components/parameters/X-Callback-URL'
+        - $ref: '#/components/parameters/X-Account-Holding-Institution-Identifier-Type'
+        - $ref: '#/components/parameters/X-Account-Holding-Institution-Identifier' 
+      requestBody:
+        $ref: '#/components/requestBodies/requestAuthorisationCode'
+      callbacks:
+        authorisationCodesSuccessEvent:
+          '{$request.header.X-Callback-URL}': # This is the callback URL provided by the client in the request header
+            put: 
+              summary: Authorisation Codes Success Callback
+              description: This callback communicates the final representation of the Authorisation Code requested by the client. 
+                The client endpoint is identified from the X-Callback-URL supplied in the POST request header.
+              operationId: "authorisationCodesIdentifierTypeIdentifierSuccessPUT"
+              parameters:
+                - $ref: '#/components/parameters/X-Date'
+                - $ref: '#/components/parameters/X-CorrelationID'
+                - $ref: '#/components/parameters/X-Content-Hash'
+                - $ref: '#/components/parameters/X-API-Key'
+                - $ref: '#/components/parameters/X-User-Bearer'
+                - $ref: '#/components/parameters/X-Client-Id'
+              requestBody:
+                $ref: '#/components/requestBodies/updateAuthorisationCode' # The callback consists of the same body as a synchronous /authorisationcodes response
+              responses:
+                204:
+                  description: Your server returns this code if it accepts the callback   
+                400:
+                  description: Your server returns this code if it rejects the callback due to a violation of a business rule   
+                401:
+                  description: Your server returns this code if it rejects the callback due to an authorisation failure   
+                404:
+                  description: Your server returns this code if it rejects the callback due to a failure to identify the target resource   
+                500:
+                  description: Your server returns this code if it rejects the callback due to general server-side issue   
+                503:
+                  description: Your server returns this code if it rejects the callback due to systems unavailability   
+        authorisationCodesFailureEvent:
+          '{$request.header.X-Callback-URL}': # This is the callback URL provided by the client in the request header
+            put: 
+              summary: Authorisation Codes Failure Callback
+              description: This callback communicates the information regarding a failure to receive an authorisation code in the form of an error object. 
+                The client endpoint is identified from the X-Callback-URL supplied in the POST request header.
+              operationId: "authorisationCodesIdentifierTypeIdentifierFailurePUT"
+              parameters:
+                - $ref: '#/components/parameters/X-Date'
+                - $ref: '#/components/parameters/X-CorrelationID'
+                - $ref: '#/components/parameters/X-Content-Hash'
+                - $ref: '#/components/parameters/X-API-Key'
+                - $ref: '#/components/parameters/X-User-Bearer'
+                - $ref: '#/components/parameters/X-Client-Id'
+              requestBody:
+                $ref: '#/components/requestBodies/updateError' # The callback returns the error object in the event of failure
+              responses:
+                204:
+                  description: Your server returns this code if it accepts the callback   
+                400:
+                  description: Your server returns this code if it rejects the callback due to a violation of a business rule   
+                401:
+                  description: Your server returns this code if it rejects the callback due to an authorisation failure   
+                404:
+                  description: Your server returns this code if it rejects the callback due to a failure to identify the target resource   
+                500:
+                  description: Your server returns this code if it rejects the callback due to general server-side issue   
+                503:
+                  description: Your server returns this code if it rejects the callback due to systems unavailability   
+      responses:
+        201:
+          description: Represents an Authorisation Code response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/responseAuthorisationCode"
+          headers:
+            'X-Date':
+              $ref: '#/components/headers/X-Date'
+        202:
+          description: Represents an Asynchronous response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/requestStateObject"
+          headers:
+            'X-Date':
+              $ref: '#/components/headers/X-Date'
+        400:
+          description: Represents an Error Caused by the Violation of a Business Rule
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/errorObject"
+          headers:
+            'X-Date':
+              $ref: '#/components/headers/X-Date'
+        401:
+          description: Represents an Error Caused by an Authorisation Failure
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/errorObject"
+          headers:
+            'X-Date':
+              $ref: '#/components/headers/X-Date'
+        404:
+          description: Represents an Error Caused by a Failure to Identify the Target Resource
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/errorObject"
+          headers:
+            'X-Date':
+              $ref: '#/components/headers/X-Date' 
+        500:
+          description: Represents an Error Caused by a General Server-Side Issue
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/errorObject"
+          headers:
+            'X-Date':
+              $ref: '#/components/headers/X-Date'
+        503:
+          description: Represents an Error Caused by System Unavailability
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/errorObject"
+          headers:
+            'X-Date':
+              $ref: '#/components/headers/X-Date'
+    get:
+      tags:
+        - Authorisation Codes
+      summary: View Authorisation Codes for a given account
+      description: This endpoint allows allows a mobile money payer or payee to view authorisation codes for a given account. 
+      operationId: "accountsIdentifierTypeIdentifierAuthorisationCodesGET"
+      parameters:
+        - $ref: '#/components/parameters/identifierType'
+        - $ref: '#/components/parameters/identifier'
+        - $ref: '#/components/parameters/X-Date'
+        - $ref: '#/components/parameters/X-API-Key'
+        - $ref: '#/components/parameters/X-User-Bearer' 
+        - $ref: '#/components/parameters/X-Client-Id'
+        - $ref: '#/components/parameters/X-Content-Hash'
+        - $ref: '#/components/parameters/X-User-Credential-1'
+        - $ref: '#/components/parameters/X-User-Credential-2'
+        - $ref: '#/components/parameters/X-Channel'
+        - $ref: '#/components/parameters/X-Account-Holding-Institution-Identifier-Type'
+        - $ref: '#/components/parameters/X-Account-Holding-Institution-Identifier' 
+        - $ref: '#/components/parameters/limit'
+        - $ref: '#/components/parameters/offset'
+        - $ref: '#/components/parameters/fromDateTime'
+        - $ref: '#/components/parameters/toDateTime'        
+        - $ref: '#/components/parameters/codeState'        
+      responses:
+        200:
+          description: Represents an authorisation codes response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/responseAuthorisationCode"
+          headers:
+            'X-Date':
+              $ref: '#/components/headers/X-Date'
+            'X-Records-Available-Count':
+              $ref: '#/components/headers/X-Records-Available-Count' 
+            'X-Records-Returned-Count':
+              $ref: '#/components/headers/X-Records-Returned-Count' 
+        400:
+          description: Represents an Error Caused by the Violation of a Business Rule
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/errorObject"
+          headers:
+            'X-Date':
+              $ref: '#/components/headers/X-Date'
+        401:
+          description: Represents an Error Caused by an Authorisation Failure
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/errorObject"
+          headers:
+            'X-Date':
+              $ref: '#/components/headers/X-Date'
+        404:
+          description: Represents an Error Caused by a Failure to Identify the Target Resource
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/errorObject"
+          headers:
+            'X-Date':
+              $ref: '#/components/headers/X-Date' 
+        500:
+          description: Represents an Error Caused by a General Server-Side Issue
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/errorObject"
+          headers:
+            'X-Date':
+              $ref: '#/components/headers/X-Date'
+        503:
+          description: Represents an Error Caused by System Unavailability
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/errorObject"
+          headers:
+            'X-Date':
+              $ref: '#/components/headers/X-Date'
+  /accounts/{accountId}/authorisationcodes/{authorisationCode}:
+    parameters:
+      - $ref: '#/components/parameters/accountId'
+      - $ref: '#/components/parameters/authorisationCode'
+      - $ref: '#/components/parameters/X-Date'
+      - $ref: '#/components/parameters/X-API-Key'
+      - $ref: '#/components/parameters/X-User-Bearer'
+      - $ref: '#/components/parameters/X-Client-Id'
+      - $ref: '#/components/parameters/X-Content-Hash'
+      - $ref: '#/components/parameters/X-User-Credential-1'
+      - $ref: '#/components/parameters/X-User-Credential-2'
+      - $ref: '#/components/parameters/X-Channel'
+      - $ref: '#/components/parameters/X-Account-Holding-Institution-Identifier-Type'
+      - $ref: '#/components/parameters/X-Account-Holding-Institution-Identifier' 
+    get:
+      tags:
+        - Authorisation Codes
+      summary: View an Authorisation Code
+      description: This endpoint returns a specific Authorisation Code linked to an account
+      operationId: "accountsAccountIdAuthorisationCodeAuthorisationCodeGET"
+      responses:
+        200:
+          description: Represents an Authorisation Code response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/responseAuthorisationCode"
+          headers:
+            'X-Date':
+              $ref: '#/components/headers/X-Date'
+        400:
+          description: Represents an Error Caused by the Violation of a Business Rule
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/errorObject"
+          headers:
+            'X-Date':
+              $ref: '#/components/headers/X-Date'
+        401:
+          description: Represents an Error Caused by an Authorisation Failure
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/errorObject"
+          headers:
+            'X-Date':
+              $ref: '#/components/headers/X-Date'
+        404:
+          description: Represents an Error Caused by a Failure to Identify the Target Resource
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/errorObject"
+          headers:
+            'X-Date':
+              $ref: '#/components/headers/X-Date' 
+        500:
+          description: Represents an Error Caused by a General Server-Side Issue
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/errorObject"
+          headers:
+            'X-Date':
+              $ref: '#/components/headers/X-Date'
+        503:
+          description: Represents an Error Caused by System Unavailability
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/errorObject"
+          headers:
+            'X-Date':
+              $ref: '#/components/headers/X-Date'
+    patch:
+      tags:
+        - Authorisation Codes
+      summary: Update an Authorisation Code
+      description: This endpoint updates a specific Authorisation Code linked to an account. The only permissable modification is to set
+        codeState to cancelled. 
+      operationId: "accountsAccountIdAuthorisationCodesAuthorisationCodePATCH"
+      parameters:
+        - $ref: '#/components/parameters/X-CorrelationID'
+        - $ref: '#/components/parameters/X-Callback-URL'
+      requestBody:
+        $ref: '#/components/requestBodies/genericPatch'
+      callbacks:
+        authorisationCodesSuccessEvent:
+          '{$request.header.X-Callback-URL}': # This is the callback URL provided by the client in the request header
+            put: 
+              summary: Authorisation Code Update Success Callback
+              description: This callback communicates a simple message to communicate that the Authorisation Code update 
+                completed successfully.
+              operationId: "authorisationCodeUpdateAccountIdSuccessPUT"
+              parameters:
+                - $ref: '#/components/parameters/X-Date'
+                - $ref: '#/components/parameters/X-CorrelationID'
+                - $ref: '#/components/parameters/X-Content-Hash'
+                - $ref: '#/components/parameters/X-API-Key'
+                - $ref: '#/components/parameters/X-User-Bearer'
+                - $ref: '#/components/parameters/X-Client-Id'
+              requestBody:
+                $ref: '#/components/requestBodies/genericUpdateSuccess' 
+              responses:
+                204:
+                  description: Your server returns this code if it accepts the callback   
+                400:
+                  description: Your server returns this code if it rejects the callback due to a violation of a business rule   
+                401:
+                  description: Your server returns this code if it rejects the callback due to an authorisation failure   
+                404:
+                  description: Your server returns this code if it rejects the callback due to a failure to identify the target resource   
+                500:
+                  description: Your server returns this code if it rejects the callback due to general server-side issue   
+                503:
+                  description: Your server returns this code if it rejects the callback due to systems unavailability   
+        authorisationCodesFailureEvent:
+          '{$request.header.X-Callback-URL}': # This is the callback URL provided by the client in the request header
+            put: 
+              summary: Authorisation Code Update Failure Callback
+              description: This callback communicates the information regarding a failure to update an authorisaton code in the form of an error object. 
+                The client endpoint is identified from the X-Callback-URL supplied in the POST request header.
+              operationId: "authorisationCodeAccountIdFailurePUT"
+              parameters:
+                - $ref: '#/components/parameters/X-Date'
+                - $ref: '#/components/parameters/X-CorrelationID'
+                - $ref: '#/components/parameters/X-Content-Hash'
+                - $ref: '#/components/parameters/X-API-Key'
+                - $ref: '#/components/parameters/X-User-Bearer'
+                - $ref: '#/components/parameters/X-Client-Id'
+              requestBody:
+                $ref: '#/components/requestBodies/updateError' # The callback returns the error object in the event of failure
+              responses:
+                204:
+                  description: Your server returns this code if it accepts the callback   
+                400:
+                  description: Your server returns this code if it rejects the callback due to a violation of a business rule   
+                401:
+                  description: Your server returns this code if it rejects the callback due to an authorisation failure   
+                404:
+                  description: Your server returns this code if it rejects the callback due to a failure to identify the target resource   
+                500:
+                  description: Your server returns this code if it rejects the callback due to general server-side issue   
+                503:
+                  description: Your server returns this code if it rejects the callback due to systems unavailability   
+      responses:
+        202:
+          description: Represents an Asynchronous response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/requestStateObject"
+          headers:
+            'X-Date':
+              $ref: '#/components/headers/X-Date'
+        204:
+          description: An empty response is returned for a synchronous successful patch.
+        400:
+          description: Represents an Error Caused by the Violation of a Business Rule
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/errorObject"
+          headers:
+            'X-Date':
+              $ref: '#/components/headers/X-Date'
+        401:
+          description: Represents an Error Caused by an Authorisation Failure
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/errorObject"
+          headers:
+            'X-Date':
+              $ref: '#/components/headers/X-Date'
+        404:
+          description: Represents an Error Caused by a Failure to Identify the Target Resource
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/errorObject"
+          headers:
+            'X-Date':
+              $ref: '#/components/headers/X-Date' 
+        500:
+          description: Represents an Error Caused by a General Server-Side Issue
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/errorObject"
+          headers:
+            'X-Date':
+              $ref: '#/components/headers/X-Date'
+        503:
+          description: Represents an Error Caused by System Unavailability
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/errorObject"
+          headers:
+            'X-Date':
+              $ref: '#/components/headers/X-Date'
+  /accounts/{identifierType}/{identifier}/authorisationcodes/{authorisationCode}:
+    parameters:
+      - $ref: '#/components/parameters/identifierType'
+      - $ref: '#/components/parameters/identifier'
+      - $ref: '#/components/parameters/authorisationCode'
+      - $ref: '#/components/parameters/X-Date'
+      - $ref: '#/components/parameters/X-API-Key'
+      - $ref: '#/components/parameters/X-User-Bearer'
+      - $ref: '#/components/parameters/X-Client-Id'
+      - $ref: '#/components/parameters/X-Content-Hash'
+      - $ref: '#/components/parameters/X-User-Credential-1'
+      - $ref: '#/components/parameters/X-User-Credential-2'
+      - $ref: '#/components/parameters/X-Channel'
+      - $ref: '#/components/parameters/X-Account-Holding-Institution-Identifier-Type'
+      - $ref: '#/components/parameters/X-Account-Holding-Institution-Identifier'       
+    get:
+      tags:
+        - Authorisation Codes
+      summary: View an Authorisation Code
+      description: This endpoint returns a specific Authorisation Code linked to an account.
+      operationId: "accountsIdentifierTypeIdentifierAuthorisationCodesAuthorisationCodeGET"
+      responses:
+        200:
+          description: Represents an Authorisation Code response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/responseAuthorisationCode"
+          headers:
+            'X-Date':
+              $ref: '#/components/headers/X-Date'
+        400:
+          description: Represents an Error Caused by the Violation of a Business Rule
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/errorObject"
+          headers:
+            'X-Date':
+              $ref: '#/components/headers/X-Date'
+        401:
+          description: Represents an Error Caused by an Authorisation Failure
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/errorObject"
+          headers:
+            'X-Date':
+              $ref: '#/components/headers/X-Date'
+        404:
+          description: Represents an Error Caused by a Failure to Identify the Target Resource
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/errorObject"
+          headers:
+            'X-Date':
+              $ref: '#/components/headers/X-Date' 
+        500:
+          description: Represents an Error Caused by a General Server-Side Issue
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/errorObject"
+          headers:
+            'X-Date':
+              $ref: '#/components/headers/X-Date'
+        503:
+          description: Represents an Error Caused by System Unavailability
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/errorObject"
+          headers:
+            'X-Date':
+              $ref: '#/components/headers/X-Date'
+    patch:
+      tags:
+        - Authorisation Codes
+      summary: Cancel an Authorisation Code
+      description: This endpoint updates a specific Authorisation Code linked to an account. The only permissable modification is to set
+        codeState to cancelled. 
+      operationId: "accountsIdentifierTypeIdentifierAuthorisationCodesAuthorisationCodePATCH"
+      parameters:
+        - $ref: '#/components/parameters/X-CorrelationID'
+        - $ref: '#/components/parameters/X-Callback-URL'
+      requestBody:
+        $ref: '#/components/requestBodies/genericPatch'
+      callbacks:
+        authorisationCodesSuccessEvent:
+          '{$request.header.X-Callback-URL}': # This is the callback URL provided by the client in the request header
+            put: 
+              summary: Authorisation Code Update Success Callback
+              description: This callback communicates a simple message to communicate that the Authorisation Code update 
+                 completed successfully.
+              operationId: "authorisationCodeUpdateIdentifierTypeIdentifierSuccessPUT"
+              parameters:
+                - $ref: '#/components/parameters/X-Date'
+                - $ref: '#/components/parameters/X-CorrelationID'
+                - $ref: '#/components/parameters/X-Content-Hash'
+                - $ref: '#/components/parameters/X-API-Key'
+                - $ref: '#/components/parameters/X-User-Bearer'
+                - $ref: '#/components/parameters/X-Client-Id'
+              requestBody:
+                $ref: '#/components/requestBodies/genericUpdateSuccess' 
+              responses:
+                204:
+                  description: Your server returns this code if it accepts the callback   
+                400:
+                  description: Your server returns this code if it rejects the callback due to a violation of a business rule   
+                401:
+                  description: Your server returns this code if it rejects the callback due to an authorisation failure   
+                404:
+                  description: Your server returns this code if it rejects the callback due to a failure to identify the target resource   
+                500:
+                  description: Your server returns this code if it rejects the callback due to general server-side issue   
+                503:
+                  description: Your server returns this code if it rejects the callback due to systems unavailability   
+        authorisationCodesFailureEvent:
+          '{$request.header.X-Callback-URL}': # This is the callback URL provided by the client in the request header
+            put: 
+              summary: Authorisation Code Update Failure Callback
+              description: This callback communicates the information regarding a failure to update an authorisaton code in the form of an error object. 
+                The client endpoint is identified from the X-Callback-URL supplied in the POST request header.
+              operationId: "authorisationCodeIdentifierTypeIdentifierFailurePUT"
+              parameters:
+                - $ref: '#/components/parameters/X-Date'
+                - $ref: '#/components/parameters/X-CorrelationID'
+                - $ref: '#/components/parameters/X-Content-Hash'
+                - $ref: '#/components/parameters/X-API-Key'
+                - $ref: '#/components/parameters/X-User-Bearer'
+                - $ref: '#/components/parameters/X-Client-Id'
+              requestBody:
+                $ref: '#/components/requestBodies/updateError' # The callback returns the error object in the event of failure
+              responses:
+                204:
+                  description: Your server returns this code if it accepts the callback   
+                400:
+                  description: Your server returns this code if it rejects the callback due to a violation of a business rule   
+                401:
+                  description: Your server returns this code if it rejects the callback due to an authorisation failure   
+                404:
+                  description: Your server returns this code if it rejects the callback due to a failure to identify the target resource   
+                500:
+                  description: Your server returns this code if it rejects the callback due to general server-side issue   
+                503:
+                  description: Your server returns this code if it rejects the callback due to systems unavailability   
+      responses:
+        202:
+          description: Represents an Asynchronous response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/requestStateObject"
+          headers:
+            'X-Date':
+              $ref: '#/components/headers/X-Date'
+        204:
+          description: An empty response is returned for a synchronous successful patch.
+        400:
+          description: Represents an Error Caused by the Violation of a Business Rule
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/errorObject"
+          headers:
+            'X-Date':
+              $ref: '#/components/headers/X-Date'
+        401:
+          description: Represents an Error Caused by an Authorisation Failure
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/errorObject"
+          headers:
+            'X-Date':
+              $ref: '#/components/headers/X-Date'
+        404:
+          description: Represents an Error Caused by a Failure to Identify the Target Resource
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/errorObject"
+          headers:
+            'X-Date':
+              $ref: '#/components/headers/X-Date' 
+        500:
+          description: Represents an Error Caused by a General Server-Side Issue
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/errorObject"
+          headers:
+            'X-Date':
+              $ref: '#/components/headers/X-Date'
+        503:
+          description: Represents an Error Caused by System Unavailability
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/errorObject"
+          headers:
+            'X-Date':
+              $ref: '#/components/headers/X-Date'
+
+  # Support APIs. These support checking for server health, request state polling and missing response retrieval.
+
+  /heartbeat:
+    get:
+      tags:
+        - Supporting
+      summary: Check API availability
+      description: This endpoint returns the current status of the API
+      operationId: "heartbeatGET"
+      parameters:
+        - $ref: '#/components/parameters/X-Date'
+        - $ref: '#/components/parameters/X-API-Key'
+        - $ref: '#/components/parameters/X-Client-Id'
+      responses:
+        200:
+          description: Represents a Heartbeat response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/responseHeartbeat"
+          headers:
+            'X-Date':
+              $ref: '#/components/headers/X-Date'
+        400:
+          description: Represents an Error Caused by the Violation of a Business Rule
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/errorObject"
+          headers:
+            'X-Date':
+              $ref: '#/components/headers/X-Date'
+        401:
+          description: Represents an Error Caused by an Authorisation Failure
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/errorObject"
+          headers:
+            'X-Date':
+              $ref: '#/components/headers/X-Date'
+        404:
+          description: Represents an Error Caused by a Failure to Identify the Target Resource
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/errorObject"
+          headers:
+            'X-Date':
+              $ref: '#/components/headers/X-Date' 
+        500:
+          description: Represents an Error Caused by a General Server-Side Issue
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/errorObject"
+          headers:
+            'X-Date':
+              $ref: '#/components/headers/X-Date'
+        503:
+          description: Represents an Error Caused by System Unavailability
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/errorObject"
+          headers:
+            'X-Date':
+              $ref: '#/components/headers/X-Date'
+  /requeststates/{serverCorrelationId}:
+    get:
+      tags:
+        - Supporting
+      summary: View A Request State
+      description: This endpoint returns a specific request state
+      operationId: "requeststatesServerCorrelationIdGET"
+      parameters:
+        - $ref: '#/components/parameters/serverCorrelationId'
+        - $ref: '#/components/parameters/X-Date'
+        - $ref: '#/components/parameters/X-API-Key'
+        - $ref: '#/components/parameters/X-Client-Id'
+        - $ref: '#/components/parameters/X-Content-Hash'
+        - $ref: '#/components/parameters/X-User-Credential-1'
+        - $ref: '#/components/parameters/X-User-Credential-2'
+        - $ref: '#/components/parameters/X-Channel'
+      responses:
+        200:
+          description: Represents an Asynchronous response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/requestStateObject"
+          headers:
+            'X-Date':
+              $ref: '#/components/headers/X-Date'
+        400:
+          description: Represents an Error Caused by the Violation of a Business Rule
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/errorObject"
+          headers:
+            'X-Date':
+              $ref: '#/components/headers/X-Date'
+        401:
+          description: Represents an Error Caused by an Authorisation Failure
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/errorObject"
+          headers:
+            'X-Date':
+              $ref: '#/components/headers/X-Date'
+        404:
+          description: Represents an Error Caused by a Failure to Identify the Target Resource
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/errorObject"
+          headers:
+            'X-Date':
+              $ref: '#/components/headers/X-Date' 
+        500:
+          description: Represents an Error Caused by a General Server-Side Issue
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/errorObject"
+          headers:
+            'X-Date':
+              $ref: '#/components/headers/X-Date'
+        503:
+          description: Represents an Error Caused by System Unavailability
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/errorObject"
+          headers:
+            'X-Date':
+              $ref: '#/components/headers/X-Date'
+    patch:
+      deprecated: true # This Patch operation is to be deprecated as asynchronous callbacks will be handled by Swagger Callback definitions using PUT.
+      tags:
+        - Supporting
+      summary: Update A Request State
+      description: This endpoint updates a specific request state. This operation is to be deprecated. Please refer to Callback definitions 
+        for the revised approach to implementing asynchronous callbacks.
+      operationId: "requeststatesServerCorrelationIdPATCH"
+      parameters:
+        - $ref: '#/components/parameters/serverCorrelationId'
+        - $ref: '#/components/parameters/X-Date'
+        - $ref: '#/components/parameters/X-CorrelationID'
+        - $ref: '#/components/parameters/X-API-Key'
+        - $ref: '#/components/parameters/X-Client-Id'
+        - $ref: '#/components/parameters/X-Content-Hash'
+        - $ref: '#/components/parameters/X-User-Credential-1'
+        - $ref: '#/components/parameters/X-User-Credential-2'
+        - $ref: '#/components/parameters/X-Channel'
+      requestBody:
+        $ref: '#/components/requestBodies/genericPatch'
+      responses:
+        204:
+          description: An empty response is returned for a synchronous successful patch.
+        400:
+          description: Represents an Error Caused by the Violation of a Business Rule
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/errorObject"
+          headers:
+            'X-Date':
+              $ref: '#/components/headers/X-Date'
+        401:
+          description: Represents an Error Caused by an Authorisation Failure
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/errorObject"
+          headers:
+            'X-Date':
+              $ref: '#/components/headers/X-Date'
+        404:
+          description: Represents an Error Caused by a Failure to Identify the Target Resource
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/errorObject"
+          headers:
+            'X-Date':
+              $ref: '#/components/headers/X-Date' 
+        500:
+          description: Represents an Error Caused by a General Server-Side Issue
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/errorObject"
+          headers:
+            'X-Date':
+              $ref: '#/components/headers/X-Date'
+        503:
+          description: Represents an Error Caused by System Unavailability
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/errorObject"
+          headers:
+            'X-Date':
+              $ref: '#/components/headers/X-Date'
+  /responses/{clientCorrelationId}:
+    get:
+      tags:
+        - Supporting
+      summary: View A Response
+      description: This endpoint returns a specific response.
+      operationId: "responsesClientCorrelationIdGET"
+      parameters:
+        - $ref: '#/components/parameters/clientCorrelationId'
+        - $ref: '#/components/parameters/X-Date'
+        - $ref: '#/components/parameters/X-API-Key'
+        - $ref: '#/components/parameters/X-Client-Id'
+        - $ref: '#/components/parameters/X-Content-Hash'
+        - $ref: '#/components/parameters/X-User-Credential-1'
+        - $ref: '#/components/parameters/X-User-Credential-2'
+        - $ref: '#/components/parameters/X-Channel'
+      responses:
+        200:
+          description: Represents an Response object response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/responseResponse"
+          headers:
+            'X-Date':
+              $ref: '#/components/headers/X-Date'
+        400:
+          description: Represents an Error Caused by the Violation of a Business Rule
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/errorObject"
+          headers:
+            'X-Date':
+              $ref: '#/components/headers/X-Date'
+        401:
+          description: Represents an Error Caused by an Authorisation Failure
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/errorObject"
+          headers:
+            'X-Date':
+              $ref: '#/components/headers/X-Date'
+        404:
+          description: Represents an Error Caused by a Failure to Identify the Target Resource
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/errorObject"
+          headers:
+            'X-Date':
+              $ref: '#/components/headers/X-Date' 
+        500:
+          description: Represents an Error Caused by a General Server-Side Issue
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/errorObject"
+          headers:
+            'X-Date':
+              $ref: '#/components/headers/X-Date'
+        503:
+          description: Represents an Error Caused by System Unavailability
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/errorObject"
+          headers:
+            'X-Date':
+              $ref: '#/components/headers/X-Date'
+
+# All the GSMA Mobile Money API Objects and Fields are defined here.
+
 components:
   schemas:
-    voucher_preactivation_request:
+    amount:
+      type: "string"
+      minLength: 1
+      maxLength: 23
+      pattern: ^([0]|([1-9][0-9]{0,17}))([.][0-9]{0,3}[1-9])?$      
+      example: "15.21"
+    currency:
+      type: "string"
+      enum:
+        - "AED"
+        - "AFN"
+        - "ALL"
+        - "AMD"
+        - "ANG"
+        - "AOA"
+        - "ARS"
+        - "AUD"
+        - "AWG"
+        - "AZN"
+        - "BAM"
+        - "BBD"
+        - "BDT"
+        - "BGN"
+        - "BHD"
+        - "BIF"
+        - "BMD"
+        - "BND"
+        - "BOB"
+        - "BOV"
+        - "BRL"
+        - "BSD"
+        - "BTN"
+        - "BWP"
+        - "BYN"
+        - "BZD"
+        - "CAD"
+        - "CDF"
+        - "CHE"
+        - "CHF"
+        - "CHW"
+        - "CLF"
+        - "CLP"
+        - "CNY"
+        - "COP"
+        - "COU"
+        - "CRC"
+        - "CUC"
+        - "CUP"
+        - "CVE"
+        - "CZK"
+        - "DJF"
+        - "DKK"
+        - "DOP"
+        - "DZD"
+        - "EGP"
+        - "ERN"
+        - "ETB"
+        - "EUR"
+        - "FJD"
+        - "FKP"
+        - "GBP"
+        - "GEL"
+        - "GHS"
+        - "GIP"
+        - "GMD"
+        - "GNF"
+        - "GTQ"
+        - "GYD"
+        - "HKD"
+        - "HNL"
+        - "HRK"
+        - "HTG"
+        - "HUF"
+        - "IDR"
+        - "ILS"
+        - "INR"
+        - "IQD"
+        - "IRR"
+        - "ISK"
+        - "JMD"
+        - "JOD"
+        - "JPY"
+        - "KES"
+        - "KGS"
+        - "KHR"
+        - "KMF"
+        - "KPW"
+        - "KRW"
+        - "KWD"
+        - "KYD"
+        - "KZT"
+        - "LAK"
+        - "LBP"
+        - "LKR"
+        - "LRD"
+        - "LSL"
+        - "LYD"
+        - "MAD"
+        - "MDL"
+        - "MGA"
+        - "MKD"
+        - "MMK"
+        - "MNT"
+        - "MOP"
+        - "MRO"
+        - "MUR"
+        - "MVR"
+        - "MWK"
+        - "MXN"
+        - "MXV"
+        - "MYR"
+        - "MZN"
+        - "NAD"
+        - "NGN"
+        - "NIO"
+        - "NOK"
+        - "NPR"
+        - "NZD"
+        - "OMR"
+        - "PAB"
+        - "PEN"
+        - "PGK"
+        - "PHP"
+        - "PKR"
+        - "PLN"
+        - "PYG"
+        - "QAR"
+        - "RON"
+        - "RSD"
+        - "RUB"
+        - "RWF"
+        - "SAR"
+        - "SBD"
+        - "SCR"
+        - "SDG"
+        - "SEK"
+        - "SGD"
+        - "SHP"
+        - "SLL"
+        - "SOS"
+        - "SRD"
+        - "SSP"
+        - "STD"
+        - "SVC"
+        - "SYP"
+        - "SZL"
+        - "THB"
+        - "TJS"
+        - "TMT"
+        - "TND"
+        - "TOP"
+        - "TRY"
+        - "TTD"
+        - "TWD"
+        - "TZS"
+        - "UAH"
+        - "UGX"
+        - "USD"
+        - "USN"
+        - "UYI"
+        - "UYU"
+        - "UZS"
+        - "VEF"
+        - "VND"
+        - "VUV"
+        - "WST"
+        - "XAF"
+        - "XAG"
+        - "XAU"
+        - "XBA"
+        - "XBB"
+        - "XBC"
+        - "XBD"
+        - "XCD"
+        - "XDR"
+        - "XOF"
+        - "XPD"
+        - "XPF"
+        - "XPT"
+        - "XSU"
+        - "XTS"
+        - "XUA"
+        - "XXX"
+        - "YER"
+        - "ZAR"
+        - "ZMW"
+        - "ZWL"
+    type:
+      type: "string"
+      description: The harmonised Transaction Type.
+      enum:
+        - "billpay"
+        - "deposit"
+        - "disbursement"
+        - "transfer"
+        - "merchantpay"
+        - "inttransfer"
+        - "adjustment"
+        - "reversal"
+        - "withdrawal"
+    typeReversal:
+      type: "string"
+      description: The harmonised Transaction Type.
+      enum:
+        - "adjustment"
+        - "reversal"
+      example: "reversal"  
+    subType:
+      type: "string"
+      description: A non-harmonised sub-classification of the type of transaction. 
+          Values are not fixed, and usage will vary according to Provider.
+      minLength: 0
+      maxLength: 256
+    descriptionText:
+      type: "string"
+      description: Free format text description of the transaction provided by the client. This can be provided as a reference 
+        for the receiver on a notification SMS and on an account statement.
+      minLength: 0
+      maxLength: 160
+    requestDate:
+      type: "string"
+      format: "date-time"
+      description: The date and time of the request as supplied by the client.
+    requestingOrganisationTransactionReference:
+      type: "string"
+      description: A reference provided by the requesting organisation that is 
+          to be associated with the transaction.
+      minLength: 0
+      maxLength: 256
+    oneTimeCode:
+      type: "string"
+      description: A one-time code that can be supplied in the request or can be 
+          generated in the response depending upon the use case. 
+          An authorisation code can be supplied in this field for requests that have been pre-authorised.
+      minLength: 0
+      maxLength: 256
+    geoCode:
+      type: "string"
+      description: Indicates the geographic location from where the transaction was initiated.
+      minLength: 0
+      maxLength: 256
+      pattern: "^(-?(90|(\\d|[1-8]\\d)(\\.\\d{1,6}){0,1}))\\,{1}(-?(180|(\\d|\\d\\d|1[0-7]\\d)(\\.\\d{1,6}){0,1}))$"
+      example: "37.423825,-122.082900"  
+    originalTransactionReference:
+      type: "string"
+      description: For reversals and refunds, this field indicates the transaction which is the subject of the reversal.
+      minLength: 0
+      maxLength: 256
+    servicingIdentity:
+      type: "string"
+      description: The field is used to identify the servicing identity for transactions, e.g. till, POS ID, assistant ID.
+      minLength: 0
+      maxLength: 256
+    transactionStatus:
+      type: "string"
+      description: Indicates the status of the transaction as stored by the API provider.
+      minLength: 1
+      maxLength: 256
+    creationDate:
+      type: "string"
+      format: "date-time"
+      description: Date and time when the object was created by the API Provider.
+    modificationDate:
+      type: "string"
+      format: "date-time"
+      description: Date and time when the object was modified by the API Provider.
+    transactionReference:
+      type: "string"
+      description: Unique reference for the transaction. This is returned in the response by API provider.
+      minLength: 1
+      maxLength: 256
+    transactionReceipt:
+      type: "string"
+      description: Transaction receipt number as notified to the parties. This may differ from the Transaction Reference.
+      minLength: 0
+      maxLength: 256
+    party:
+      type: "object"
       required:
-      - Gov_Stack_BB
-      - voucher_amount
-      - voucher_currency
-      - voucher_group
-      type: object
+      - "key"
+      - "value"
       properties:
-        voucher_amount:
-          maxLength: 23
+        key:
+          type: "string"
+          description: Provides the account identifier type.
           minLength: 1
-          pattern: ^([0]|([1-9][0-9]{0,17}))([.][0-9]{0,3}[0-9])?$
-          type: string
-          example: "15.21"
-        voucher_currency:
-          type: string
+          maxLength: 256
+          example: "msisdn"
+        value:
+          type: "string"
+          description: Provides the account identifier type value.
+          minLength: 1
+          maxLength: 256
+          example: "+33555123456"
+    creditPartyArray:
+      type: "array"
+      description: A collection of key/value pairs that enable the party to be identified. Keys include MSISDN and Wallet Identifier.
+      items:
+        $ref: "#/components/schemas/party"
+      maxItems: 10
+      minItems: 1
+    debitPartyArray:
+      type: "array"
+      description: A collection of key/value pairs that enable the party to be identified. Keys include MSISDN and Wallet Identifier.
+      items:
+        $ref: "#/components/schemas/party"
+      maxItems: 10
+      minItems: 1
+    feesArray:
+      type: "array"
+      description: Returns all fees that are applicable to the object.
+      items:
+        $ref: "#/components/schemas/fees"
+      maxItems: 20
+      minItems: 1
+    metadataArray:
+      type: "array"
+      description: A collection of key/value pairs. These can be used to populate additional 
+        properties that describe administrative information regarding the resource.
+      items:
+        $ref: "#/components/schemas/metadata"
+      maxItems: 20
+    customDataArray:
+      type: "array"
+      description: A collection of key/value pairs. These can be used to populate provider specific fields.
+      items:
+        $ref: "#/components/schemas/customData"
+      maxItems: 20
+    fees:
+      type: "object"
+      required:
+      - "feeType"
+      - "feeCurrency"
+      - "feeAmount"
+      properties:
+        feeType:
+          type: "string"
+          description: Defines the type of fee.
+          minLength: 1
+          maxLength: 256
+        feeAmount:
+          description: Defines the amount of the fee.
+          allOf:
+            - $ref: '#/components/schemas/amount' 
+          example: "5.46"
+        feeCurrency:
+          description: Defines the currency for the given fee.
+          allOf:
+            - $ref: '#/components/schemas/currency' 
+    metadata:
+      type: "object"
+      required:
+      - "key"
+      - "value"
+      properties:
+        key:
+          type: "string"
+          description: Identifies the type of additional field.
+          minLength: 1
+          maxLength: 256
+        value:
+          type: "string"
+          description: Identifies the value of the additional field.
+          minLength: 1
+          maxLength: 256
+    customData:
+      type: "object"
+      required:
+      - "key"
+      - "value"
+      properties:
+        key:
+          type: "string"
+          description: Identifies the type of additional field.
+          minLength: 1
+          maxLength: 256
+        value:
+          type: "string"
+          description: Identifies the value of the additional field.
+          minLength: 1
+          maxLength: 256
+
+    link:
+      type: "string"
+      description: Provides a URL to the resource.
+      minLength: 1
+      maxLength: 256
+    currentBalance:
+      description: Current outstanding balance on the account.
+      allOf:
+        - $ref: '#/components/schemas/amount' 
+      example: "15.00"
+    availableBalance:
+      description: Indicates the balance that is able to be debited for an account. 
+          This balance is only provided on some API provider systems.
+      allOf:
+        - $ref: '#/components/schemas/amount' 
+      example: "15.00"
+    reservedBalance:
+      description: Indicates the portion of the balance that is reserved, i.e. 
+          intended to be debited. This balance is only provided on some API provider systems.
+      allOf:
+        - $ref: '#/components/schemas/amount' 
+      example: "15.00"
+    unclearedBalance:
+      description: Indicates the sum of uncleared funds in an account, i.e. the funds 
+          that are awaiting a credit confirmation.
+      allOf:
+        - $ref: '#/components/schemas/amount' 
+      example: "15.00"
+    accountStatus:
+      type: "string"
+      enum:
+        - "available"
+        - "unavailable"
+        - "unregistered"
+      description: Indicates a harmonised representation of the account status. 
+        This will be shown as available, unavailable or unregistered.
+      minLength: 1
+      maxLength: 256
+
+    requestingOrganisation:
+      type: "object"
+      description: An object that details the originating organisation of the request.
+      required:
+      - "requestingOrganisationIdentifierType"
+      - "requestingOrganisationIdentifier"
+      properties:
+        requestingOrganisationIdentifierType:
+          type: "string"
+          description: Identifies the identifier type of the requesting organisation.
           enum:
-          - AED
-          - AFN
-          - ALL
-          - AMD
-          - ANG
-          - AOA
-          - ARS
-          - AUD
-          - AWG
-          - AZN
-          - BAM
-          - BBD
-          - BDT
-          - BGN
-          - BHD
-          - BIF
-          - BMD
-          - BND
-          - BOB
-          - BOV
-          - BRL
-          - BSD
-          - BTN
-          - BWP
-          - BYN
-          - BZD
-          - CAD
-          - CDF
-          - CHE
-          - CHF
-          - CHW
-          - CLF
-          - CLP
-          - CNY
-          - COP
-          - COU
-          - CRC
-          - CUC
-          - CUP
-          - CVE
-          - CZK
-          - DJF
-          - DKK
-          - DOP
-          - DZD
-          - EGP
-          - ERN
-          - ETB
-          - EUR
-          - FJD
-          - FKP
-          - GBP
-          - GEL
-          - GHS
-          - GIP
-          - GMD
-          - GNF
-          - GTQ
-          - GYD
-          - HKD
-          - HNL
-          - HRK
-          - HTG
-          - HUF
-          - IDR
-          - ILS
-          - INR
-          - IQD
-          - IRR
-          - ISK
-          - JMD
-          - JOD
-          - JPY
-          - KES
-          - KGS
-          - KHR
-          - KMF
-          - KPW
-          - KRW
-          - KWD
-          - KYD
-          - KZT
-          - LAK
-          - LBP
-          - LKR
-          - LRD
-          - LSL
-          - LYD
-          - MAD
-          - MDL
-          - MGA
-          - MKD
-          - MMK
-          - MNT
-          - MOP
-          - MRO
-          - MUR
-          - MVR
-          - MWK
-          - MXN
-          - MXV
-          - MYR
-          - MZN
-          - NAD
-          - NGN
-          - NIO
-          - NOK
-          - NPR
-          - NZD
-          - OMR
-          - PAB
-          - PEN
-          - PGK
-          - PHP
-          - PKR
-          - PLN
-          - PYG
-          - QAR
-          - RON
-          - RSD
-          - RUB
-          - RWF
-          - SAR
-          - SBD
-          - SCR
-          - SDG
-          - SEK
-          - SGD
-          - SHP
-          - SLL
-          - SOS
-          - SRD
-          - SSP
-          - STD
-          - SVC
-          - SYP
-          - SZL
-          - THB
-          - TJS
-          - TMT
-          - TND
-          - TOP
-          - TRY
-          - TTD
-          - TWD
-          - TZS
-          - UAH
-          - UGX
-          - USD
-          - USN
-          - UYI
-          - UYU
-          - UZS
-          - VEF
-          - VND
-          - VUV
-          - WST
-          - XAF
-          - XAG
-          - XAU
-          - XBA
-          - XBB
-          - XBC
-          - XBD
-          - XCD
-          - XDR
-          - XOF
-          - XPD
-          - XPF
-          - XPT
-          - XSU
-          - XTS
-          - XUA
-          - XXX
-          - YER
-          - ZAR
-          - ZMW
-          - ZWL
-        voucher_group:
-          type: string
-        Gov_Stack_BB:
-          type: string
-        voucher_comment:
-          type: string
-    preactivation_response:
+            - "lei"
+            - "swiftbic"
+            - "organisationid"
+        requestingOrganisationIdentifier:
+          type: "string"
+          description: Contains the requesting organisation identifier.
+          minLength: 1
+          maxLength: 256
+    authorisationCode:
+      type: "string"
+      description: The code that will be presented to the other party for redemption.
+      maxLength: 256
+    codeState:
+      type: "string"
+      description: Indicates the state of the Authorisation Code.
+      enum:
+        - "active"
+        - "expired"
+        - "cancelled"
+    codeLifetime:
+      type: "number"
+      format: "int32"
+      minimum: 1
+      example: "600"
+      description: Indicates the expiry time in seconds of the code.
+    amountType:
+      type: "string"
+      description: The amount for the authorisation can be an exact amount or can be a maximum amount.
+      enum:
+        - "exact"
+        - "maximum"
+    holdFundsIndicator:
+      type: "boolean"
+      description: Indicates whether funds should be reserved against the payers account where the payer is the requestor.
+    redemptionChannels:
+      type: "array"
+      description: Indicates the channel(s) that the code can be redeemed against, e.g. ATM, Merchant, etc.
+      items:
+        type: "object"
+        properties:
+          channelType:
+            type: "string"
+            description: Identifies the channel type
+            minLength: 1
+            maxLength: 256
+        required:
+        - "channelType"
+      maxItems: 50
+    redemptionTransactionTypes:
+      type: "array"
+      description: Indicates the Transaction Types(s) that the code can be redeemed against
+      items:
+        type: "object"
+        properties:
+          transactionType:
+            $ref: '#/components/schemas/type'
+          transactionSubtype:
+            $ref: '#/components/schemas/subType'
+        required:
+          - "transactionType"
+      maxItems: 50
+    redemptionAccountIdentifiers:
+      type: "array"
+      description: A collection of key/value pairs that enable the redemption account 
+        to be identified. Keys include MSISDN and Wallet Identifier.
+      items:
+        $ref: '#/components/schemas/party'
+      maxItems: 50
+    serviceStatus:
+      type: "string"
+      description: Provides the status of the requested service.
+      enum:
+        - "available"
+        - "unavailable"
+        - "degraded"
+    delay:
+      type: "number"
+      format: "int64"
+      description: The anticipated processing delay in milliseconds.
+    plannedRestorationTime:
+      type: "string"
+      format: "date-time"
+      description: Where the planned restoration time is known (e.g. scheduled maintenance), it can be provided in this field.
+
+    # All the GSMA Mobile Money API Request Schemas are defined here.
+
+    requestStateObject:
+      type: "object"
       required:
-      - expiry_date_time
-      - voucher_number
-      - voucher_serial_number
+        - "notificationMethod"
+        - "serverCorrelationId"
+        - "status"
       properties:
-        voucher_number:
-          maxLength: 25
-          minLength: 16
-          type: string
-          description: This is a random secret number that uniquely identifies the value and validity of the voucher.
-        voucher_serial_number:
-          maxLength: 25
-          minLength: 16
-          type: string
-          description: This is a sequential number that is used to identify a voucher without necessarily revealing the voucher secret number. There is no relationship between the voucher serial number and the voucher number.
-        expiry_date_time:
-          type: string
-          format: date-time
-    invalid_preactivation_request:
-      required:
-      - message
-      type: object
-      properties:
-        message:
-          type: string
-    invalid_amount:
-      required:
-      - message
-      type: object
-      properties:
-        message:
-          type: string
-    invalid_currency:
-      required:
-      - message
-      type: object
-      properties:
-        message:
-          type: string
-    invalid_voucher_group:
-      required:
-      - message
-      type: object
-      properties:
-        message:
-          type: string
-    voucher_group_exhausted:
-      required:
-      - message
-      type: object
-      properties:
-        message:
-          type: string
-    GovStack_BB_does_not_exist:
-      required:
-      - message
-      type: object
-      properties:
-        message:
-          type: string
-    internal_server_error:
-      required:
-      - message
-      type: object
-      properties:
-        message:
-          type: string
-    service_unavailable:
-      required:
-      - message
-      type: object
-      properties:
-        message:
-          type: string
-    network_timeout_error:
-      required:
-      - message
-      type: object
-      properties:
-        message:
-          type: string
-    Voucher_activate_request:
-      required:
-      - Gov_Stack_BB
-      - voucher_serial_number
-      type: object
-      properties:
-        voucher_serial_number:
-          type: integer
-          format: int64
-        Gov_Stack_BB:
-          type: string
-    activation_response:
-      required:
-      - result_status
-      properties:
-        result_status:
-          type: string
-    invalid_activation_request:
-      required:
-      - message
-      type: object
-      properties:
-        message:
-          type: string
-    invalid_voucher_serial_number:
-      required:
-      - message
-      type: object
-      properties:
-        message:
-          type: string
-    Voucher_redeem_request:
-      required:
-      - Gov_Stack_BB
-      - merchant_bank_details
-      - merchant_name
-      - merchant_voucher_group
-      - override
-      - voucher_number
-      type: object
-      properties:
-        voucher_number:
-          type: integer
-          format: int64
-        Gov_Stack_BB:
-          type: string
-        merchant_name:
-          type: string
-        merchant_bank_details:
-          type: string
-        merchant_voucher_group:
-          type: string
-        override:
-          type: boolean
-    redemption_response:
-      required:
-      - result_status
-      properties:
-        result_status:
-          type: string
-    invalid_redemption_request:
-      required:
-      - message
-      type: object
-      properties:
-        message:
-          type: string
-    invalid_voucher_number:
-      required:
-      - message
-      type: object
-      properties:
-        message:
-          type: string
-    cannot_credit_merchant:
-      required:
-      - message
-      type: object
-      properties:
-        message:
-          type: string
-    insufficient_funds:
-      required:
-      - message
-      type: object
-      properties:
-        message:
-          type: string
-    voucher_status:
-      properties:
-        voucher_status:
-          type: string
+        serverCorrelationId:
+          type: "string"
+          description: A unique identifier issued by the provider to enable the client 
+             to identify the RequestState resource on subsequent polling requests. Must be supplied as a UUID.
+          minLength: 1
+          maxLength: 256
+          pattern: "^[0-9A-Fa-f]{8}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{12}$"
+        objectReference:
+          type: "string"
+          description: Provides a reference to the subject resource, e.g. transaction reference.
+          minLength: 0
+          maxLength: 256
+        status:
+          type: "string"
           enum:
-          - Not Pre-Activated
-          - Pre-Activated
-          - Activated
-          - Suspended
-          - Blocked
-          - Purged
-          - Not Existing
-        voucher_amount:
-          type: string
-    invalid_validation_request:
-      type: object
-      properties:
-        message:
-          type: string
-    voucher_already_used:
+          - "pending"
+          - "completed"
+          - "failed"
+          description: Indicates the status of the request.
+        notificationMethod:
+          type: "string"
+          enum:
+          - "callback"
+          - "polling"
+          description: Indicates whether a callback will be issued or whether the client will need to poll.
+        pendingReason:
+          type: "string"
+          description: A textual description that can be provided to describe the reason for a pending status.
+          minLength: 0
+          maxLength: 256
+        expiryTime:
+          type: "string"
+          format: "date-time"
+          description: Indicate the time by which the provider will fail the request if completion criteria have not been met. 
+            For an example, a debit party failing to authorise within the allowed period.
+        pollLimit:
+          type: "number"
+          format: "int32"
+          description: Indicates the number of poll attempts for the given requeststate resource that will be allowed by the provider.
+          minimum: 0
+          exclusiveMinimum: true
+        error:
+          description: If the asynchronous processing failed, details of the error will be returned here.
+          allOf:
+            - $ref: '#/components/schemas/errorObject' 
+    genericUpdateSuccess:
+      type: "object"
       required:
-      - message
-      type: object
+      - "result"
       properties:
-        message:
-          type: string
-    voucher_expired:
+        result:
+          type: "string"
+          description: The success message provided in a callback to communicate the success of an update operation.
+          enum:
+          - "success"          
+    errorObject:
+      type: "object"
       required:
-      - message
-      type: object
+      - "errorCategory"
+      - "errorCode"
       properties:
-        message:
-          type: string
-    invalid_voucher:
+        errorCategory:
+          type: "string"
+          description: The category grouping for the error.
+          enum:
+          - "businessRule"
+          - "validation"
+          - "authorisation"
+          - "identification"
+          - "internal"
+          - "serviceUnavailable"
+        errorCode:
+          type: "string"
+          description: The harmonised error code identifying the reason for error.
+          enum:
+          - "genericError"
+          - "dailyVolumeLimitExceeded"
+          - "dailyValueLimitExceeded"
+          - "weeklyVolumeLimitExceeded"
+          - "weeklyValueLimitExceeded"
+          - "monthlyVolumeLimitExceeded"
+          - "monthlyValueLimitExceeded"
+          - "accountMaxTotalVolumeExceeded"
+          - "accountMaxTotalValueExceeded"
+          - "lessThanTransactionMinValue"
+          - "greaterThanTransactionMaxValue"
+          - "maxBalanceExceeded"
+          - "samePartiesError"
+          - "duplicateRequest"
+          - "insufficientFunds"
+          - "incorrectState"
+          - "underPaymentNotAllowed"
+          - "overPaymentNotAllowed"
+          - "rateLimitError"
+          - "transactionTypeError"
+          - "noMandateAuthority"
+          - "linkViolation"
+          - "countryofOriginNotPermitted"
+          - "nationalityNotPermitted"
+          - "idDocumentNotSupported"
+          - "issuingCountryNotSupported"
+          - "quoteHasExpired"
+          - "identifierError"
+          - "lengthError"
+          - "formatError"
+          - "negativeValue"
+          - "currencyNotSupported"
+          - "mandatoryValueNotSupplied"
+          - "invalidOffset"
+          - "clientAuthorisationError"
+          - "requestDeclined"
+          - "servicingPartyAuthorisationError"
+          - "requestingPartyAuthorisationError"
+        errordescription: 
+          type: "string"
+          description: A textual description of the error.
+          minLength: 0
+          maxLength: 256
+        errorDateTime:
+          type: "string"
+          format: "date-time"
+          description: The timestamp indicating when the error occurred.
+        errorParameters:
+          description: Diagnostic information in the form of key/value pairs relating to the error.
+          allOf:
+            - $ref: '#/components/schemas/metadataArray' 
+    requestTransactionType:
+      allOf:
+        - type: "object"
+          required:
+            - "amount"
+            - "currency"
+          properties:
+            requestingOrganisationTransactionReference:
+              $ref: '#/components/schemas/requestingOrganisationTransactionReference'
+            originalTransactionReference:
+              $ref: '#/components/schemas/originalTransactionReference'            
+            subType:
+              $ref: '#/components/schemas/subType'  
+            amount:
+              description: The transaction amount.
+              allOf:
+                - $ref: '#/components/schemas/amount' 
+              example: "15.23"
+            currency:
+              description: Currency of the transaction amount.
+              allOf:
+                - $ref: '#/components/schemas/currency' 
+              example: "RWF"
+            descriptionText:
+              $ref: '#/components/schemas/descriptionText'  
+            fees:
+             $ref: '#/components/schemas/feesArray'       
+            geoCode:
+              $ref: '#/components/schemas/geoCode'            
+            oneTimeCode:
+              $ref: '#/components/schemas/oneTimeCode'            
+            requestingOrganisation:
+              $ref: '#/components/schemas/requestingOrganisation'            
+            servicingIdentity:
+              $ref: '#/components/schemas/servicingIdentity'            
+            requestDate:
+              $ref: '#/components/schemas/requestDate'  
+            customData:
+              $ref: '#/components/schemas/customDataArray'
+            metadata:
+              $ref: '#/components/schemas/metadataArray'
+        - anyOf:
+          - type: object # This construct allows for conditionality on credit/debit party. Both can be supplied or one or the other can be supplied.
+            required: 
+              - creditParty
+            properties:
+               creditParty:
+                 $ref: '#/components/schemas/creditPartyArray'
+          - type: object
+            required: 
+              - debitParty
+            properties:
+              debitParty:
+                $ref: '#/components/schemas/debitPartyArray'
+          - type: object
+            required: 
+              - debitParty
+              - creditParty
+            properties:
+              creditParty:
+                $ref: '#/components/schemas/creditPartyArray'
+              debitParty:
+                $ref: '#/components/schemas/debitPartyArray'  
+    requestReversal:
+      type: "object"
       required:
-      - message
-      type: object
+        - "type"
       properties:
-        message:
-          type: string
-    already_cancelled:
+        requestingOrganisationTransactionReference:
+          $ref: '#/components/schemas/requestingOrganisationTransactionReference'
+        creditParty:
+          $ref: '#/components/schemas/creditPartyArray'            
+        debitParty:
+          $ref: '#/components/schemas/debitPartyArray'            
+        type:
+          $ref: '#/components/schemas/typeReversal'   
+        subType:
+          $ref: '#/components/schemas/subType'  
+        amount:
+          description: The transaction amount.
+          allOf:
+            - $ref: '#/components/schemas/amount' 
+          example: "15.23"
+        currency:
+          description: Currency of the transaction amount.
+          allOf:
+            - $ref: '#/components/schemas/currency' 
+          example: "RWF"
+        descriptionText:
+          $ref: '#/components/schemas/descriptionText'  
+        fees:
+         $ref: '#/components/schemas/feesArray'       
+        geoCode:
+          $ref: '#/components/schemas/geoCode'            
+        requestingOrganisation:
+          $ref: '#/components/schemas/requestingOrganisation'            
+        servicingIdentity:
+          $ref: '#/components/schemas/servicingIdentity'          
+        requestDate:
+          $ref: '#/components/schemas/requestDate'  
+        customData:
+          $ref: '#/components/schemas/customDataArray'
+        metadata:
+          $ref: '#/components/schemas/metadataArray'
+    requestAuthorisationCode:
+      type: "object"
+      properties:
+        amount:
+          description: Indicates the amount associated with the authorisation code.
+          allOf:
+            - $ref: '#/components/schemas/amount' 
+          example: "15.00"
+        currency:
+          description: Indicates the Amount Currency. Must be supplied when an amount is supplied.
+          allOf:
+            - $ref: '#/components/schemas/currency'         
+        amountType:
+          $ref: '#/components/schemas/amountType'      
+        codeLifetime:
+          $ref: '#/components/schemas/codeLifetime'            
+        holdFundsIndicator:
+          $ref: '#/components/schemas/holdFundsIndicator'      
+        redemptionAccountIdentifiers:
+          $ref: '#/components/schemas/redemptionAccountIdentifiers'
+        redemptionChannels:
+          $ref: '#/components/schemas/redemptionChannels'  
+        redemptionTransactionTypes:
+          $ref: '#/components/schemas/redemptionTransactionTypes'
+        requestingOrganisation:
+          $ref: '#/components/schemas/requestingOrganisation'            
+        requestDate:
+          $ref: '#/components/schemas/requestDate'         
+        customData:
+          $ref: '#/components/schemas/customDataArray'  
+        metadata:
+          $ref: '#/components/schemas/metadataArray'
+    requestGenericPatchArray:
+      type: "array"
+      description: Collection of updates that are to be processed.
+      items:
+        $ref: "#/components/schemas/requestGenericPatch"
+      minItems: 1
+      maxItems: 10
+    requestGenericPatch:
+      type: "object"
       required:
-      - message
-      type: object
+        - "op"
+        - "path"
+        - "value"      
       properties:
-        message:
-          type: string
-    voucher_cancel_request:
+        op:
+          description: Indicates the Patch operation to be performed. 'replace' is used to update a field and 'add' is used to add a new field.
+          type: "string"
+          enum:
+          - "replace"
+          - "add"
+        path:
+          description: Specify the field to be updated or added preceded by '/'.
+          type: "string"
+          maxLength: 256
+        value:
+          description: Specify the value of the field to be updated or added.
+          type: "string"
+          maxLength: 256
+
+    # All the GSMA Mobile Money API Response Schemas are defined here.
+ 
+    responseTransaction:
+      type: "object"
       required:
-      - Gov_Stack_BB
-      - voucherserialnumber
-      type: object
+        - "amount"
+        - "currency"
+        - "type"
+        - "transactionReference"
+        - "transactionStatus"
+        - "creditParty"
+        - "debitParty"
       properties:
-        voucherserialnumber:
-          type: string
-        Gov_Stack_BB:
-          type: string
-    voucher_cancelled:
+        transactionReference:
+          $ref: '#/components/schemas/transactionReference'       
+        originalTransactionReference:
+          $ref: '#/components/schemas/originalTransactionReference'            
+        requestingOrganisationTransactionReference:
+          $ref: '#/components/schemas/requestingOrganisationTransactionReference'
+        creditParty:
+          $ref: '#/components/schemas/creditPartyArray'            
+        debitParty:
+          $ref: '#/components/schemas/debitPartyArray'            
+        type:
+          $ref: '#/components/schemas/type'   
+        subType:
+          $ref: '#/components/schemas/subType'  
+        transactionStatus:
+          $ref: '#/components/schemas/transactionStatus'            
+        amount:
+          description: The transaction amount.
+          allOf:
+            - $ref: '#/components/schemas/amount' 
+          example: "15.23"
+        currency:
+          description: Currency of the transaction amount.
+          allOf:
+            - $ref: '#/components/schemas/currency' 
+          example: "RWF"
+        descriptionText:
+          $ref: '#/components/schemas/descriptionText'  
+        fees:
+         $ref: '#/components/schemas/feesArray'       
+        geoCode:
+          $ref: '#/components/schemas/geoCode'            
+        oneTimeCode:
+          $ref: '#/components/schemas/oneTimeCode'            
+        requestingOrganisation:
+          $ref: '#/components/schemas/requestingOrganisation'            
+        servicingIdentity:
+          $ref: '#/components/schemas/servicingIdentity'            
+        transactionReceipt:
+          $ref: '#/components/schemas/transactionReceipt'       
+        creationDate:
+          $ref: '#/components/schemas/creationDate'       
+        modificationDate:
+          $ref: '#/components/schemas/modificationDate'                 
+        requestDate:
+          $ref: '#/components/schemas/requestDate'  
+        customData:
+          $ref: '#/components/schemas/customDataArray'
+        metadata:
+          $ref: '#/components/schemas/metadataArray'
+    responseTransactionType:
+      allOf:
+        - type: "object"
+          required:
+            - "amount"
+            - "currency"
+            - "type"
+            - "transactionReference"
+            - "transactionStatus"
+          properties:
+            transactionReference:
+              $ref: '#/components/schemas/transactionReference'       
+            requestingOrganisationTransactionReference:
+              $ref: '#/components/schemas/requestingOrganisationTransactionReference'
+            originalTransactionReference:
+              $ref: '#/components/schemas/originalTransactionReference'            
+            type:
+              $ref: '#/components/schemas/type'   
+            subType:
+              $ref: '#/components/schemas/subType'  
+            transactionStatus:
+              $ref: '#/components/schemas/transactionStatus'            
+            amount:
+              description: The transaction amount.
+              allOf:
+                - $ref: '#/components/schemas/amount' 
+              example: "15.23"
+            currency:
+              description: Currency of the transaction amount.
+              allOf:
+                - $ref: '#/components/schemas/currency' 
+              example: "RWF"
+            descriptionText:
+              $ref: '#/components/schemas/descriptionText'  
+            fees:
+             $ref: '#/components/schemas/feesArray'       
+            geoCode:
+              $ref: '#/components/schemas/geoCode'            
+            oneTimeCode:
+              $ref: '#/components/schemas/oneTimeCode'            
+            requestingOrganisation:
+              $ref: '#/components/schemas/requestingOrganisation'            
+            servicingIdentity:
+              $ref: '#/components/schemas/servicingIdentity'            
+            transactionReceipt:
+              $ref: '#/components/schemas/transactionReceipt'       
+            creationDate:
+              $ref: '#/components/schemas/creationDate'       
+            modificationDate:
+              $ref: '#/components/schemas/modificationDate'                 
+            requestDate:
+              $ref: '#/components/schemas/requestDate'  
+            customData:
+              $ref: '#/components/schemas/customDataArray'
+            metadata:
+              $ref: '#/components/schemas/metadataArray'
+        - anyOf:
+          - type: object  # This construct allows for conditionality on credit/debit party. Both can be supplied or one or the other can be supplied.
+            required: 
+              - creditParty
+            properties:
+              creditParty:
+                $ref: '#/components/schemas/creditPartyArray'
+          - type: object
+            required: 
+              - debitParty
+            properties:
+              debitParty:
+                $ref: '#/components/schemas/debitPartyArray'
+          - type: object
+            required: 
+              - debitParty
+              - creditParty
+            properties:
+              creditParty:
+                $ref: '#/components/schemas/creditPartyArray'
+              debitParty:
+                $ref: '#/components/schemas/debitPartyArray'
+    responseReversal:
+      type: "object"
       required:
-      - message
-      type: object
+        - "type"
+        - "originalTransactionReference"
+        - "transactionReference"
+        - "transactionStatus"
       properties:
-        message:
-          type: string
-  parameters:
-    voucherserialnumber:
-      name: voucherserialnumber
-      in: path
-      description: Voucher serial number to check status of
+        transactionReference:
+          $ref: '#/components/schemas/transactionReference'       
+        requestingOrganisationTransactionReference:
+          $ref: '#/components/schemas/requestingOrganisationTransactionReference'
+        originalTransactionReference:
+          $ref: '#/components/schemas/originalTransactionReference'            
+        creditParty:
+          $ref: '#/components/schemas/debitPartyArray'            
+        debitParty:
+          $ref: '#/components/schemas/debitPartyArray'            
+        type:
+          $ref: '#/components/schemas/typeReversal'   
+        subType:
+          $ref: '#/components/schemas/subType'  
+        transactionStatus:
+          $ref: '#/components/schemas/transactionStatus'            
+        amount:
+          description: The transaction amount.
+          allOf:
+            - $ref: '#/components/schemas/amount' 
+          example: "15.23"
+        currency:
+          description: Currency of the transaction amount.
+          allOf:
+            - $ref: '#/components/schemas/currency' 
+          example: "RWF"
+        descriptionText:
+          $ref: '#/components/schemas/descriptionText'  
+        fees:
+         $ref: '#/components/schemas/feesArray'       
+        geoCode:
+          $ref: '#/components/schemas/geoCode'            
+        requestingOrganisation:
+          $ref: '#/components/schemas/requestingOrganisation'            
+        servicingIdentity:
+          $ref: '#/components/schemas/servicingIdentity'            
+        transactionReceipt:
+          $ref: '#/components/schemas/transactionReceipt'            
+        creationDate:
+          $ref: '#/components/schemas/creationDate'       
+        modificationDate:
+          $ref: '#/components/schemas/modificationDate'                 
+        requestDate:
+          $ref: '#/components/schemas/requestDate'  
+        customData:
+          $ref: '#/components/schemas/customDataArray'
+        metadata:
+          $ref: '#/components/schemas/metadataArray'
+    responseAccountBalance:
+      type: "object"
+      properties:
+        accountStatus:
+          $ref: '#/components/schemas/accountStatus'
+        currentBalance:
+          $ref: '#/components/schemas/currentBalance'
+        availableBalance:
+          $ref: '#/components/schemas/availableBalance'
+        reservedBalance:
+          $ref: '#/components/schemas/reservedBalance'
+        unclearedBalance:
+          $ref: '#/components/schemas/unclearedBalance'
+        currency:
+          description: Currency for all returned balances.
+          allOf:
+            - $ref: '#/components/schemas/currency'
+    responseAuthorisationCode:
+      type: "object"
+      required:
+        - "authorisationCode"
+        - "codeState"
+      properties:
+        authorisationCode:
+          $ref: '#/components/schemas/authorisationCode'
+        codeState:
+          $ref: '#/components/schemas/codeState'
+        amount:
+          description: Indicates the amount associated with the authorisation code.
+          allOf:
+            - $ref: '#/components/schemas/amount' 
+          example: "15.00"
+        currency:
+          description: Indicates the Amount Currency. Must be supplied when an amount is supplied.
+          allOf:
+            - $ref: '#/components/schemas/currency'         
+        amountType:
+          $ref: '#/components/schemas/amountType'      
+        codeLifetime:
+          $ref: '#/components/schemas/codeLifetime'            
+        holdFundsIndicator:
+          $ref: '#/components/schemas/holdFundsIndicator'      
+        redemptionAccountIdentifiers:
+          $ref: '#/components/schemas/redemptionAccountIdentifiers'
+        redemptionChannels:
+          $ref: '#/components/schemas/redemptionChannels'  
+        redemptionTransactionTypes:
+          $ref: '#/components/schemas/redemptionTransactionTypes'
+        requestingOrganisation:
+          $ref: '#/components/schemas/requestingOrganisation'            
+        creationDate:
+          $ref: '#/components/schemas/creationDate'         
+        modificationDate:
+          $ref: '#/components/schemas/modificationDate'         
+        requestDate:
+          $ref: '#/components/schemas/requestDate'         
+        customData:
+          $ref: '#/components/schemas/customDataArray'  
+        metadata:
+          $ref: '#/components/schemas/metadataArray'
+    responseHeartbeat:
+      type: "object"
+      required:
+        - "serviceStatus"
+      properties:
+        serviceStatus:
+          $ref: '#/components/schemas/serviceStatus'
+        delay:
+          $ref: '#/components/schemas/delay'
+        plannedRestorationTime:
+          $ref: '#/components/schemas/plannedRestorationTime'
+    responseResponse:
+      type: "object"
+      required:
+        - "link"
+      properties:
+        link:
+          $ref: '#/components/schemas/link'
+
+  # All the GSMA Mobile Money API Request Bodies are defined here.
+
+  requestBodies:
+    updateError:
       required: true
-      style: simple
-      explode: false
+      description: Represents the request body of error callback.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/errorObject'
+    genericUpdateSuccess:
+      required: true
+      description: Represents the request body of a success message callback to an update event.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/genericUpdateSuccess'
+    requestTransactionType:
+      required: true
+      description: Represents the request body of a transaction without Type.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/requestTransactionType'
+    updateTransaction:
+      required: true
+      description: Represents the request body of transaction callback.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/responseTransaction'
+    requestReversal:
+      required: true
+      description: Represents the request body of a transaction reversal.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/requestReversal'
+    updateReversal:
+      required: true
+      description: Represents the request body of a reversal callback.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/responseReversal'
+    genericPatch:
+      required: true
+      description: Represents the request body of a batch of generic Patch operation.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/requestGenericPatchArray'
+    requestAuthorisationCode:
+      required: true
+      description: Represents the request body of an Authorisation Code.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/requestAuthorisationCode'
+    updateAuthorisationCode:
+      required: true
+      description: Represents the request body of an Authorisation Code Callback.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/responseAuthorisationCode'
+
+
+  # All the GSMA Mobile Money API Response Headers are defined here.
+
+  headers:
+    X-Date:
+      description: The date and time that the response message was sent.
       schema:
-        type: string
+        type: "string"
+        format: "date-time"
+    X-Records-Available-Count:
+      description: Integer containing number of records that are available to be returned.
+      schema:
+        type: "integer"
+        format: "int32"
+    X-Records-Returned-Count:
+      description: Integer containing number of records that are returned.  
+      schema:
+        type: "integer"
+        format: "int32"
+
+  parameters:
+
+    # All the GSMA Mobile Money API Query String, Path and Header parameters are defined here.
+
     X-CorrelationID:
-      name: X-CorrelationID
-      in: header
+      name: "X-CorrelationID"
+      in: "header"
       description: Header parameter to uniquely identify the request. Must be supplied as a UUID.
       required: false
-      style: simple
-      explode: false
       schema:
-        pattern: ^[0-9A-Fa-f]{8}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{12}$
-        type: string
-    X-Date:
-      name: X-Date
-      in: header
-      description: Header parameter to indicate the date and time that the message was originated. It is used for basic message integrity checks, to ensure the request is not stale. Note that the header was previously referenced as 'Date' in version 1.0 of the Mobile Money API.
+        type: "string"
+        pattern: "^[0-9A-Fa-f]{8}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{12}$"
+    X-Date:  
+      name: "X-Date"
+      in: "header"
+      description: Header parameter to indicate the date and time that the message 
+         was originated. It is used for basic message integrity checks, to ensure the request is not stale. 
+         Note that the header was previously referenced as 'Date' in version 1.0 of the Mobile Money API.
       required: false
-      style: simple
-      explode: false
       schema:
-        type: string
-        format: date-time
+        type: "string"
+        format: "date-time"      
     X-API-Key:
-      name: X-API-Key
-      in: header
+      name: "X-API-Key"
+      in: "header"
       description: Used to pass pre-shared client's API key to the server.
       required: false
-      style: simple
-      explode: false
       schema:
-        type: string
+        type: "string"        
     X-User-Bearer:
-      name: X-User-Bearer
-      in: header
-      description: Used to pass user’s access token when OAuth 2.0/OIDC authorisation framework is used for end-user authentication.
+      name: "X-User-Bearer"
+      in: "header"
+      description: Used to pass user’s access token when OAuth 2.0/OIDC authorisation framework is used for end-user authentication
       required: false
-      style: simple
-      explode: false
       schema:
-        type: string
-    X-Client-Id:
-      name: X-Client-Id
-      in: header
+        type: "string"        
+    X-Client-Id:    
+      name: "X-Client-Id"
+      in: "header"
       description: Used to pass pre-shared client's identifier to the server.
       required: false
-      style: simple
-      explode: false
       schema:
+        type: "string"    
         maxLength: 256
-        type: string
     X-Content-Hash:
-      name: X-Content-Hash
-      in: header
-      description: SHA-256 hex digest of the request content (encrypted or plain). Applicable only if basic data integrity checking is to be performed.
+      name: "X-Content-Hash"
+      in: "header"
+      description: SHA-256 hex digest of the request content (encrypted or plain). 
+        Applicable only if basic data integrity checking is to be performed.
       required: false
-      style: simple
-      explode: false
       schema:
-        type: string
+        type: "string"          
     X-User-Credential-1:
-      name: X-User-Credential-1
-      in: header
-      description: The end-users encrypted security credential. Should only be used when OAuth 2.0/OIDC authorisation framework has not been implemented by the API Provider.
+      name: "X-User-Credential-1"
+      in: "header"
+      description: The end-users encrypted security credential. 
+         Should only be used when OAuth 2.0/OIDC authorisation framework has not been implemented by the API Provider.
       required: false
-      style: simple
-      explode: false
       schema:
-        type: string
+        type: "string"        
     X-User-Credential-2:
-      name: X-User-Credential-2
-      in: header
-      description: The end-users encrypted security credential Should only be used when OAuth 2.0/OIDC authorisation framework has not been implemented by the API Provider.
+      name: "X-User-Credential-2"
+      in: "header"
+      description: The end-users encrypted security credential 
+         Should only be used when OAuth 2.0/OIDC authorisation framework has not been implemented by the API Provider.
       required: false
-      style: simple
-      explode: false
       schema:
-        type: string
+        type: "string"        
     X-Channel:
-      name: X-Channel
-      in: header
+      name: "X-Channel"
+      in: "header"
       description: String containing the channel that was used to originate the request. For example USSD, Web, App.
       required: false
-      style: simple
-      explode: false
       schema:
+        type: "string"
         maxLength: 256
-        type: string
+    transactionTypePath:
+      name: "transactionType"
+      in: "path"
+      required: true
+      description: Identifies the type of transaction that is to be created.
+      schema:
+        type: "string"
+        enum:
+          - "billpay"
+          - "deposit"
+          - "disbursement"
+          - "transfer"
+          - "merchantpay"
+          - "inttransfer"
+          - "adjustment"
+          - "reversal"
+          - "withdrawal"
+    transactionReference:
+      name: "transactionReference"
+      in: "path"
+      description: Path variable to uniquely identify the transaction.
+      required: true
+      schema:
+        type: "string"
+        maxLength: 256
+        minLength: 1
+    limit:  
+      name: "limit"
+      in: "query"
+      description: Supports pagination. If this is not supplied, then the server 
+         will apply a limit of 50 records returned for each request.
+      required: false
+      schema:
+        type: "integer"
+        format: "int32"
+    offset:  
+      name: "offset"
+      in: "query"
+      description: Supports pagination. This value will indicate the cursor position 
+         from where to retrieve the set of records. For example, a limit of 50 
+         and offset of 10 will return records 11 to 60.
+      required: false
+      schema:
+        type: "integer"
+        format: "int32"
+    fromDateTime:  
+      name: "fromDateTime"
+      in: "query"
+      description: Indicates the minimum creation date for which records should be returned.
+      required: false
+      schema:
+        type: "string"
+        format: "date-time"
+    toDateTime:
+      name: "toDateTime"
+      in: "query"
+      description: Indicates the maximum creation date for which records should be returned.
+      required: false
+      schema:
+        type: "string"
+        format: "date-time"
+    codeState:
+      name: "codeState"
+      in: "query"
+      description: Allows returned records to be filtered on state of the authorisation code.
+      required: true
+      schema:
+        type: "string"
+        maxLength: 256
+    accountId:
+      name: "accountId"
+      in: "path"
+      description: "Path variable to uniquely identify an account. Up to three account identifiers can be supplied. 
+         Identifiers are delimited by $ and values are delimited by @. Example: organisationid@1234$accountid@3333.
+         Valid account identifiers are accountcategory, bankaccountno, accountrank, identityalias, iban, accountid,
+         msisdn, swiftbic, sortcode, organisationid, username, walletid, linkref, consumerno, serviceprovider, storeid,
+         bankname, bankaccounttitle, emailaddress, mandatereference."
+      required: true
+      schema:
+        type: "string"
+        pattern: ^((accountcategory|bankaccountno|accountrank|identityalias|iban|accountid|msisdn|swiftbic|sortcode|organisationid|username|walletid|linkref|consumerno|serviceprovider|storeid|bankname|bankaccounttitle|emailaddress|mandatereference)@([^$\n]+))(\$(accountcategory|bankaccountno|accountrank|identityalias|iban|accountid|msisdn|swiftbic|sortcode|organisationid|username|walletid|linkref|consumerno|serviceprovider|storeid|bankname|bankaccounttitle|emailaddress|mandatereference)@([^$\n]+)){0,2}$
+    transactionStatus:
+      name: "transactionStatus"
+      in: "query"
+      description: Query variable to uniquely identify the transaction status.
+      required: false
+      schema:
+        type: "string"
+        maxLength: 256
+    transactionTypeQuery:
+      name: "transactionType"
+      in: "query"
+      required: false
+      description: Identifies the type of transaction.
+      schema:
+        type: "string"
+        enum:
+          - "billpay"
+          - "deposit"
+          - "disbursement"
+          - "transfer"
+          - "merchantpay"
+          - "inttransfer"
+          - "adjustment"
+          - "reversal"
+          - "withdrawal"
+    authorisationCode:
+      name: "authorisationCode"
+      in: "path"
+      description: Path variable to uniquely identify an authorisation code.
+      required: true
+      schema:
+        type: "string"
+        maxLength: 256
+        minLength: 1
+    serverCorrelationId:
+      name: "serverCorrelationId"
+      in: "path"
+      description: Path variable to uniquely identify a request state. Must be supplied as a UUID.
+      required: true
+      schema:
+        type: "string"
+        pattern: "^[0-9A-Fa-f]{8}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{12}$"
+    clientCorrelationId:
+      name: "clientCorrelationId"
+      in: "path"
+      description: Path variable to uniquely identify a response object. Must be supplied as a UUID.
+      required: true
+      schema:
+        type: "string"
+        pattern: "^[0-9A-Fa-f]{8}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{12}$"
     X-Callback-URL:
-      name: X-Callback-URL
-      in: header
+      name: "X-Callback-URL"
+      in: "header"
       description: The URL supplied by the client that will be used to return the callback in the form of a HTTP PUT.
       required: false
-      style: simple
-      explode: false
       schema:
-        type: string
+        type: "string" 
         format: uri
         example: https://myserver.com/send/callback/here
-  securitySchemes:
-    app_id:
-      type: apiKey
-      description: API key to authorize request
-      name: appid
-      in: query
+    identifierType:
+      name: "identifierType"
+      in: "path"
+      required: true
+      description: Path variable to specify the type of the identifier that is used to identify the account.
+      schema:
+        type: "string"
+        enum:
+          - "accountid"
+          - "msisdn"
+          - "walletid"
+          - "linkref"
+          - "consumerno"
+          - "serviceprovider"
+          - "storeid"
+          - "accountcategory"
+          - "bankaccountno"
+          - "accountrank"
+          - "identityalias"
+          - "iban"
+          - "swiftbic"
+          - "sortcode"
+          - "organisationid"
+          - "bankname"
+          - "bankaccounttitle"
+          - "username"
+          - "emailaddress"
+          - "mandatereference"
+    identifier:
+      name: "identifier"
+      in: "path"
+      description: Path variable that contains the account identifier.
+      required: true
+      schema:
+        type: "string"
+        maxLength: 256
+        minLength: 1
+    X-Account-Holding-Institution-Identifier-Type:
+      name: "X-Account-Holding-Institution-Identifier-Type"
+      in: "header"
+      description: A header variable that identifies the type of the account holding institution. 
+         This header is used to support request routing and should be used in conjunction with 
+         the X-Account-Holding-Institution-Identifier header.
+      required: false
+      schema:
+        type: "string"
+        enum:
+          - "lei"
+          - "swiftbic"
+          - "organisationid"
+    X-Account-Holding-Institution-Identifier:
+      name: "X-Account-Holding-Institution-Identifier"
+      in: "header"
+      description: A header variable that identifies the account holding institution. 
+         This header is used to support request routing and should be used in conjunction with 
+         the X-Account-Holding-Institution-Identifier-Type header.
+      required: false
+      schema:
+        type: "string"
