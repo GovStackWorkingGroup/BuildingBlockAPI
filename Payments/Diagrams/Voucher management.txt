@@ -1,0 +1,11 @@
+title Voucher management
+
+Originatin BB->Voucher Issuing: 
+note left of Admin: Voucher provisioning
+note right of Voucher Issuing: Vocher printing
+Voucher Issuing-> Redemption: 
+note right of Redemption: Merchant Redemption
+note right of Redemption: Agent Cashout
+note left of Admin: Merchant/Agent Registration
+Admin->Redemption:
+

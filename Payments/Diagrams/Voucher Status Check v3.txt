@@ -1,0 +1,26 @@
+
+title Voucher Status Check v3
+
+Source BB -> Payment BB: Voucher Status Check
+Payment BB-->Source BB: Voucher Status
+
+alt Error 400
+    Payment BB-->Source BB: Invalid Request
+end
+
+alt Error 456
+    Payment BB-->Source BB: Invalid Voucher Serial number
+end
+
+alt Error 500
+    Payment BB-->Source BB: Internal server error
+end
+
+alt Error 503
+    Payment BB-->Source BB: Service unavailable
+end
+
+alt Error 599
+    Payment BB-->Source BB: Network connection error
+end
+

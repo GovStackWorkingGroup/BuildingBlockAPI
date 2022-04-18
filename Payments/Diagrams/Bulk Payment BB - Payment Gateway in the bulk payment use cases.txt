@@ -1,0 +1,17 @@
+title Bulk Payment BB - Payment Gateway in the bulk payment use cases
+note right of Beneficiary System: CompileList
+Beneficiary System->Bulk payment: transmit w timing
+Bulk payment->ALS: lookup alias
+ALS->FSP: Validate Account
+FSP->ALS: Return status
+ALS->Bulk payment: Return Lookup Status
+note right of Bulk payment: validate
+FSP->Payment Gateway: Qoute Fee
+note right of Bulk payment: Batch
+Bulk payment->Payment Gateway: Send Batch
+Payment Gateway->FSP: Make PAyments
+FSP->Beneficiary: Get Notifcation
+Beneficiary->FSP: Request
+FSP->Channels: Funds move
+Channels->Beneficiary System: Success
+note right of Bulk payment: Recocile

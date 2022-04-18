@@ -1,0 +1,46 @@
+title Voucher Pre-activation v3
+
+Source BB->Payment BB: Pre-activate voucher
+Payment BB-->Source BB: Voucher successfully pre-activated
+
+alt Error 400
+    Payment BB-->Source BB: Invalid request
+end
+
+alt Error 452
+    Payment BB-->Source BB: Invalid amount
+end
+
+alt Error 453
+    Payment BB-->Source BB: Invalid currency
+end
+
+alt Error 454
+    Payment BB-->Source BB: Invalid voucher group
+end
+
+alt Error 455
+    Payment BB-->Source BB: Voucher group exhausted
+end
+
+alt Error 460
+    Payment BB-->Source BB: Gov Stack Building Block does not exist
+end
+
+alt Error 455
+    Payment BB-->Source BB: Voucher group exhausted
+end
+
+alt Error 500
+    Payment BB-->Source BB: Internal Server error
+end
+
+alt Error 503
+    Payment BB-->Source BB: Service Unavailable
+end
+
+alt Error 599
+    Payment BB-->Source BB: Network connection timeout error
+end
+
+

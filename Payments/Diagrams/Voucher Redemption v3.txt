@@ -1,0 +1,48 @@
+title Voucher Redemption v3
+
+Source BB (Merchant Interface) -> Merchant registry: Submit voucher details
+Merchant registry --> Source BB (Merchant Interface): Merchant name and payment details
+Source BB (Merchant Interface) -> Payment BB: Submit voucher and merchant details
+
+alt Error 400
+    Payment BB-->Source BB (Merchant Interface): Invalid request
+end
+
+Payment BB -> Payment BB: Check Voucher
+
+alt Error 458
+    Payment BB-->Source BB (Merchant Interface): Voucher number already used
+end
+
+alt Error 461
+    Payment BB-->Source BB (Merchant Interface): Invalid voucher number
+end
+
+Payment BB->FSP: Debit request
+
+alt Error 599
+    Payment BB-->Source BB (Merchant Interface): Network connection error
+end
+
+FSP->Funding A/c: Debit request
+Funding A/c --> FSP: Debit successful
+
+alt Error 462
+    FSP --> Payment BB: Insufficient funds
+    Payment BB --> Source BB (Merchant Interface): Insufficient funds
+end
+
+FSP->Merchant A/c: Credit Request
+Merchant A/c --> FSP: Credit Request successful
+
+alt Error 463
+    FSP --> Payment BB: Cannot credit merchant
+    Payment BB --> Source BB (Merchant Interface): Cannot credit merchant
+end
+
+Payment BB -> Payment BB: Consume Voucher
+Payment BB -> Source BB (Merchant Interface): Amount credited to merchant account and voucher is consumed
+
+
+
+

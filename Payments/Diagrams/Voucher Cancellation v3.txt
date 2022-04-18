@@ -1,0 +1,20 @@
+title Voucher Cancellation v3
+
+Source BB -> Payment BB: Cancel Voucher
+Payment BB-->Source BB: Voucher Cancelled
+
+alt Error 499
+    Payment BB-->Source BB: Invalid Request
+end
+
+alt Error 463
+    Payment BB-->Source BB: Invalid Voucher
+end
+
+alt Error 464
+    Payment BB-->Source BB: Voucher is already cancelled
+end
+
+alt Error 599
+    Payment BB-->Source BB: Network connection timeout error
+end
