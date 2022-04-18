@@ -1,31 +1,31 @@
 openapi: 3.0.0
 info:
   description: |
-    The purpose of this document is to specify the endpoints, fields, objects, and enumerations for Merchant Payment Mobile Money APIs, which are a subset of the GSMA Mobile Money API Specification. 
-    The Merchant Payment Mobile Money APIs allow merchants to accept payments from mobile money customers. Supported payment mechanisms include:
+    The purpose of this document is to specify the endpoints, fields, objects, and enumerations for government payments.
+    The  Payment Mobile Money APIs allow government to accept payments from mobile money customers. Supported payment mechanisms include:
 
-    - Payee-initiated merchant payment. The merchant initiates the payment and the payer is requested to authenticate to confirm acceptance by the mobile money provider.
+    - Payee-initiated government payment. The Government entity initiates the payment and the payer is requested to authenticate to confirm acceptance by the mobile money provider.
 
-    - Payer-initiated merchant payment. The payer initiates the payment by specifying the merchant that is to be paid.
+    - Payer-initiated government payment. The payer initiates the payment by specifying the government entity that is to be paid.
 
-    - Merchant payment via pre-authorised payment code. The payer generates a payment authorisation code up to a maximum payment amount. The merchant then enters or scans (if rendered as a QR code) the payer’s code to perform the payment.
+    - Government payment via pre-authorised payment code. The payer generates a payment authorisation code up to a maximum payment amount. The government entity then enters or scans (if rendered as a QR code) the payer’s code to perform the payment.
 
-    Closed loop and open-loop merchant payments are supported by the Mobile Money API. Closed loop merchant payments occur where the payer and payee accounts reside with the same mobile money provider.
+    Closed loop and open-loop government entity payments are supported by the Mobile Money API. Closed loop governmnet entity payments occur where the payer and payee accounts reside with the same mobile money provider.
     Open loop payments occur where the payer and payee accounts reside with different mobile money providers.
 
     You can find out more about what the API can do for your business at [https://developer.mobilemoneyapi.io].
   version: "1.2.0"
-  title: Mobile Money API for Merchant Payments
+  title: Mobile Money API for Government Payments
 servers:
   - description: This url points to the GSMA Mobile Money API v1.2 Simulator.
     url: https://sandbox.mobilemoneyapi.io/simulator/v1.2/passthrough/mm
 tags:
   - name: Transactions
     description: |
-      Payer-initiated and payee-initiated merchant payments can be created and viewed using **Transactions** APIs. 
+      Payer-initiated and payee-initiated government payments can be created and viewed using **Transactions** APIs. 
   - name: Accounts
     description: |
-      Using the **Accounts** APIs, merchants can view payments for their account and view their account balance.
+      Using the **Accounts** APIs, government entity can view payments for their account and view their account balance.
 
       **Identifying a Target Account**
 
@@ -43,7 +43,7 @@ tags:
       The **Authorisation** Codes APIs allow a payer to generate a payment code which when presented to the payee, can be redeemed for an amount associated with the code. 
       Authorisation codes can be set to expire. Note that expiry time can be specified via the API, however the mobile money provider 
       may mandate a common expiry period for all codes.
-      Authorisation Codes can be used for pre-authorised codes for merchant payments. The customer generates a code which can be redeemed at a merchant.
+      Authorisation Codes can be used for pre-authorised codes for Government payments. The customer generates a code which can be redeemed at a government.
   - name: Supporting
     description: |
       Supporting APIs consist of the following:
