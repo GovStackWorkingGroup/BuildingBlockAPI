@@ -18,7 +18,7 @@ if len(sys.argv) < 3:
     print("")
     print("")
     print("Example of copying HTML table to html-only clipboard:")
-    print("./govstack_csv_to_openapi.py GovStack\ Consent\ BB\ API\ endpoints\ -\ endpoints.csv GovStack\ Consent\ BB\ API\ endpoints\ -\ schema.csv | xclip -selection clipboard -i -t text/html")
+    print("./govstack_csv_to_openapi.py GovStack\ Consent\ BB\ API\ endpoints\ -\ endpoints.csv GovStack\ Consent\ BB\ API\ endpoints\ -\ schema.csv --html-table | xclip -selection clipboard -i -t text/html")
     sys.exit(1)
 
 
