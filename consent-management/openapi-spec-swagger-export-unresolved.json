@@ -2,14 +2,11 @@
   "openapi" : "3.0.0",
   "servers" : [ {
     "description" : "SwaggerHub API Auto Mocking",
-    "url" : "https://virtserver.swaggerhub.com/GovStack/consent-management-bb/0.8.1"
-  }, {
-    "description" : "SwaggerHub API Auto Mocking",
     "url" : "https://app.swaggerhub.com/apis/GovStack/consent-management-bb/"
   } ],
   "info" : {
     "description" : "This is a basic API for GovStack's Consent Management Building Block. It reflects the basic requirements of the Consent Management BB specification, which is versioned .",
-    "version" : "0.8.1",
+    "version" : "0.9.0-rc1",
     "title" : "Consent Management BB API",
     "contact" : {
       "email" : "balder@overtag.dk"
@@ -1525,14 +1522,14 @@
     "schemas" : {
       "Individual" : {
         "type" : "object",
-        "description" : "Models an individual, with details referenced from an external system (registration system, functional ID, foundational ID etc). A unique entry in this model is not to be mistaken with a unique natural individual. It is up to the system owner to decide if this record permits mapping to a natural individual and/or if a single Individual row can map to several consent agreements.",
+        "description" : "Shallowly models an Individual which may reference some instance in an external system (registration system, functional ID, foundational ID etc). An Individual instance of this model is not to be mistaken with a unique natural individual. It is up to the system owner to decide if this record permits mapping to a natural individual and/or if a single Individual row can map to several consent agreements.",
         "required" : [ "id", "functional_id", "foundational_id", "session_id" ],
         "properties" : {
           "id" : {
             "type" : "string",
             "format" : "",
             "example" : "",
-            "description" : "The unique ID of a Individual row."
+            "description" : "The unique ID of an Individual row."
           },
           "functional_id" : {
             "type" : "string",
@@ -1550,7 +1547,7 @@
             "type" : "string",
             "format" : "",
             "example" : "",
-            "description" : "An \"individual\" may simply be mapped to a temporary session?"
+            "description" : "An Individual may simply be mapped to a temporary session."
           }
         }
       },
@@ -1660,7 +1657,7 @@
       },
       "Policy" : {
         "type" : "object",
-        "description" : "A policy governs the processing and use of data in the organization that is \"data controller\" and owner of Agreement.",
+        "description" : "A policy governs data and Agreement in the realm of an organisation that is refered to as \"data controller\" (GDPR) and owner of referencing Agreements.",
         "required" : [ "id", "name", "version", "url", "jurisdiction", "industry_sector", "data_retention_period_days", "geographic_restriction", "storage_location" ],
         "properties" : {
           "id" : {
@@ -1721,7 +1718,7 @@
       },
       "ConsentRecord" : {
         "type" : "object",
-        "description" : "A consent record expresses consent (as defined in this building block's specification) to a single Agreement.",
+        "description" : "A Consent Record expresses consent (as defined in this building block's specification) to a single Agreement.",
         "required" : [ "id", "agreement", "agreement_revision", "individual", "opt_in", "state", "signature" ],
         "properties" : {
           "id" : {
@@ -1905,7 +1902,7 @@
       "Signature" : {
         "type" : "object",
         "description" : "A generic signature contains a cryptographic hash of some value, together with a signature created by some private key in another system. Required signing methods: Revision object or another Signature object.",
-        "required" : [ "id", "verification_method", "verification_hash", "verification_signature", "jws_header", "signed_by", "timestamp", "object_type", "object_reference" ],
+        "required" : [ "id", "verification_method", "verification_hash", "verification_signature", "verification_artifact", "jws_header", "signed_by", "timestamp", "object_type", "object_reference" ],
         "properties" : {
           "id" : {
             "type" : "string",
@@ -1930,6 +1927,12 @@
             "format" : "",
             "example" : "",
             "description" : "Signature of verification_hash"
+          },
+          "verification_artifact" : {
+            "type" : "string",
+            "format" : "",
+            "example" : "",
+            "description" : "A verification artifact in the form of a scanned object, image, signature etc."
           },
           "jws_header" : {
             "type" : "string",
@@ -2034,7 +2037,7 @@
       },
       "AuditTracker" : {
         "type" : "object",
-        "description" : "TBD: An external tracker receiving information from the system that can be subject to external auditing and verification of correct behavior",
+        "description" : "TBD: An external tracker receiving information from the system that can be subject to external auditing and verification of correct behavior. This is one of several notification/monitor/subscription patterns that may be more suitable for an encrypted Pub/Sub service.",
         "required" : [ "id", "name", "public_key", "callback_agreement", "callback_consent_record", "callback_policy", "callback_revision_table_hash", "callback_signature_table_hash" ],
         "properties" : {
           "id" : {
@@ -2089,7 +2092,7 @@
       },
       "AuditEventType" : {
         "type" : "object",
-        "description" : "TBD: Model for the possible events pertaining a change to an object subject to auditing.",
+        "description" : "TBD: Model for the possible events pertaining a change to an object subject to auditing. This model is not necessarily a database-backed model, but part of application code.",
         "required" : [ "id", "event_name" ],
         "properties" : {
           "id" : {
