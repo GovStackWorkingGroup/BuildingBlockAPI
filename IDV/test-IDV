@@ -1,0 +1,1020 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Verification",
+    "description": "Verification of individual with the provided information",
+    "license": {
+      "name": "MPL-2.0",
+      "url": "https://www.mozilla.org/en-US/MPL/2.0/"
+    },
+    "version": "1.0-oas3-oas3"
+  },
+  
+  
+  
+  
+  
+  
+  "servers": [
+        {
+            "url": "http://securityserver/r1/egovstack/GOV/7003/ID_Verification/authenticate"
+        }
+    ]
+  
+  
+  
+  
+  ,
+  "paths": {
+    "/authenticate": {
+      "post": {
+        "summary": "",
+        "description": "To authenticate an individual",
+        "operationId": "post-authenticate",
+        "parameters": [
+          {
+                        "in": "header",
+                        "name": "X-Road-Client",
+                        "example": "egovstack/GOV/7002/Registration",
+                        "description": "Format is: INSTANCE/CLASS/MEMBER/SUBSYSTEM",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "required": true
+          },
+          {
+            "name": "Signature",
+            "in": "header",
+            "description": "JWS signature of the entire http body of the body header..signature",
+            "required": false,
+            "style": "simple",
+            "explode": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/authenticate_body"
+              },
+              "examples": {
+                "Example": {
+                  "value": {
+                    "context": {
+                      "id": "8284-8198-7235",
+                      "transactionId": "TXN123456789",
+                      "requestTime": "2016-07-16T19:20:30+5:30"
+                    },
+                    "consent": {
+                      "type": "linked",
+                      "schema": "https://govstack.global/schema/consent",
+                      "signUri": "https://govstack.global/TXN123456789.sig",
+                      "linkUri": "https://govstack.global/TXN123456789.data"
+                    },
+                    "demographics": [
+                      {
+                        "attributeName": "name",
+                        "operator": "=",
+                        "value": "Sasi",
+                        "lang": "eng"
+                      }
+                    ],
+                    "biometrics": [
+                      {
+                        "specVersion": "1.0",
+                        "data": {
+                          "captureDevice": "string",
+                          "env": "string",
+                          "deviceServiceVersion": "1.0",
+                          "bioType": "Finger",
+                          "bioSubType": "Left IndexFinger",
+                          "purpose": "Auth",
+                          "domainUri": "http://idv.govstack.global",
+                          "bioValue": "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiYWRtaW4iOnRydWUsImlhdCI6MTUxNjIzOTAyMn0.POstGetfAytaZS82wHcjoTyoqhMyxXiWdR7Nn7A29DNSl0EiXLdwJ6xC6AfgZWF1bOsS_TuYI3OG85AmiExREkrS6tDfTQ2B3WXlrr-wp5AokiRbz3_oB4OxG-W9KcEEbDRcZc0nH3L7LzYptiy1PtAylQGxHTWZXtGz4ht0bAecBgmpdgXMguEIcoqPJ1n3pIWk_dUZegpqx0Lka21H6XxUTxiy8OcaarA8zdnPUnV6AmNP3ecFawIFYdvJB_cm-GvpCSbr8G8y_Mllj8f4x9nBH8pQux89_6gUY618iYv7tuPWBFfEbLxtF2pZS6YC1aSfLQxeNe8djT9YjpvRZA",
+                          "transactionId": "TXN123456789",
+                          "timestamp": "2016-07-16T19:20:30+5:30",
+                          "requestedScore": 65,
+                          "qualityScore": 90
+                        },
+                        "hash": "string",
+                        "sessionKey": "string",
+                        "thumbprint": "string"
+                      }
+                    ],
+                    "authFactors": [
+                      {
+                        "factor": "string",
+                        "specVersion": "string",
+                        "data": [
+                          {}
+                        ]
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/inline_response_200"
+                },
+                "examples": {
+                  "example-1": {}
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "AuthFactor": {
+        "title": "AuthFactor",
+        "required": [
+          "data",
+          "factor",
+          "specVersion"
+        ],
+        "type": "object",
+        "properties": {
+          "factor": {
+            "type": "string"
+          },
+          "specVersion": {
+            "type": "string"
+          },
+          "hash": {
+            "type": "string"
+          },
+          "data": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            }
+          },
+          "security": {
+            "$ref": "#/components/schemas/Encryption"
+          }
+        }
+      },
+      "AuthFactor_2": {
+        "title": "AuthFactor",
+        "required": [
+          "data",
+          "factor",
+          "specVersion"
+        ],
+        "type": "object",
+        "properties": {
+          "factor": {
+            "maxLength": 256,
+            "minLength": 1,
+            "type": "string",
+            "description": "Name of the factor"
+          },
+          "specVersion": {
+            "maxLength": 5,
+            "minLength": 1,
+            "type": "string",
+            "description": "Adopted spec version for this factor"
+          },
+          "hash": {
+            "maxLength": 512,
+            "minLength": 1,
+            "type": "string",
+            "description": "hash value of the data object before encryption"
+          },
+          "data": {
+            "type": "array",
+            "description": "Free data object as per the factors specification",
+            "items": {
+              "type": "object"
+            }
+          },
+          "security": {
+            "$ref": "#/components/schemas/Encryption"
+          }
+        }
+      },
+      "BiometricData": {
+        "title": "BiometricFactor",
+        "required": [
+          "hash",
+          "sessionKey",
+          "specVersion",
+          "thumbprint"
+        ],
+        "type": "object",
+        "properties": {
+          "specVersion": {
+            "minLength": 1,
+            "type": "string",
+            "enum": [
+              "0.95",
+              "1.0"
+            ]
+          },
+          "data": {
+            "$ref": "#/components/schemas/BiometricData_data"
+          },
+          "hash": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "sessionKey": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "thumbprint": {
+            "minLength": 1,
+            "type": "string"
+          }
+        }
+      },
+      "CaptureDevice": {
+        "required": [
+          "dateTime",
+          "make",
+          "model",
+          "serialNo",
+          "type"
+        ],
+        "type": "object",
+        "properties": {
+          "serialNo": {
+            "maxLength": 12,
+            "minLength": 0,
+            "type": "string",
+            "description": "Serial no of the device, same as whats printed on the device. In case of integrated pls ensure the it can be seen in about device or similar such features. Alpha numeric"
+          },
+          "make": {
+            "maxLength": 50,
+            "minLength": 1,
+            "type": "string",
+            "description": "Make of the device"
+          },
+          "model": {
+            "maxLength": 50,
+            "minLength": 1,
+            "type": "string",
+            "description": "Model of the device"
+          },
+          "type": {
+            "maxLength": 50,
+            "minLength": 1,
+            "type": "string",
+            "description": "Type of the device",
+            "enum": [
+              "Finger",
+              "Iris",
+              "Face"
+            ]
+          },
+          "deviceSubType": {
+            "maxLength": 50,
+            "minLength": 1,
+            "type": "string",
+            "description": "Additional mode details of device type. Its a enum",
+            "enum": [
+              "Slap",
+              "Single",
+              "Touchless",
+              "Double",
+              "Full Frontal"
+            ]
+          },
+          "deviceProvider": {
+            "maxLength": 256,
+            "minLength": 1,
+            "type": "string",
+            "description": "Provider name as per the certification"
+          },
+          "deviceProviderId": {
+            "maxLength": 50,
+            "minLength": 1,
+            "type": "string",
+            "description": "Unique provider id assigned by the certifier"
+          },
+          "dateTime": {
+            "minLength": 1,
+            "type": "string",
+            "description": "ISO Timestamp of the device ",
+            "format": "date-time"
+          }
+        },
+        "description": "Digital footprint of the capture device",
+        "x-examples": {
+          "example-1": {
+            "serialNo": "Serial number",
+            "make": "Make of the device",
+            "model": "Model of the device",
+            "type": "Type of the biometric device",
+            "deviceSubType": "Subtypes of the biometric device",
+            "deviceProvider": "Device provider name",
+            "deviceProviderId": "Device provider id",
+            "dateTime": "Current datetime in ISO format"
+          }
+        }
+      },
+      "Consent": {
+        "title": "Consent",
+        "required": [
+          "type"
+        ],
+        "type": "object",
+        "properties": {
+          "type": {
+            "maxLength": 50,
+            "minLength": 1,
+            "type": "string",
+            "description": "Consent type. Limited the enum values",
+            "example": "linked",
+            "enum": [
+              "embedded",
+              "linked",
+              "no-consent"
+            ]
+          },
+          "data": {
+            "maxLength": 256,
+            "minLength": 1,
+            "type": "string",
+            "description": "embedded data in jwt format"
+          },
+          "schema": {
+            "maxLength": 256,
+            "minLength": 1,
+            "type": "string",
+            "description": "Schema for the consent",
+            "format": "uri-reference"
+          },
+          "signUri": {
+            "maxLength": 256,
+            "minLength": 1,
+            "type": "string",
+            "description": "signature url. no data of the consent",
+            "format": "uri"
+          },
+          "linkUri": {
+            "maxLength": 256,
+            "minLength": 1,
+            "type": "string",
+            "description": "unique link to the content of the consent",
+            "format": "uri"
+          }
+        },
+        "description": ""
+      },
+      "Credential": {
+        "title": "Credential",
+        "required": [
+          "consent",
+          "credentialSubject",
+          "id",
+          "issuanceDate",
+          "issuedTo",
+          "issuer",
+          "proof",
+          "protectedAttributes",
+          "type"
+        ],
+        "type": "object",
+        "properties": {
+          "issuer": {
+            "maxLength": 256,
+            "minLength": 1,
+            "type": "string",
+            "description": "Who has issued this credential."
+          },
+          "id": {
+            "maxLength": 256,
+            "minLength": 1,
+            "type": "string",
+            "description": "ID of the credential"
+          },
+          "issuedTo": {
+            "maxLength": 256,
+            "minLength": 1,
+            "type": "string",
+            "description": "to whom the id is issued to"
+          },
+          "issuanceDate": {
+            "minLength": 1,
+            "type": "string",
+            "format": "date-time"
+          },
+          "protectedAttributes": {
+            "type": "array",
+            "description": "Array of attributes that are available in protected form (encrypted).",
+            "items": {
+              "type": "string"
+            }
+          },
+          "credentialSubject": {
+            "$ref": "#/components/schemas/Credential_credentialSubject"
+          },
+          "type": {
+            "maxItems": 20,
+            "minItems": 1,
+            "type": "array",
+            "description": "Array of strings indicating the type of the credential",
+            "items": {
+              "maxLength": 50,
+              "minLength": 1,
+              "type": "string",
+              "example": "[\"VerifiableCredential\", \"AlumniCredential\"]"
+            }
+          },
+          "consent": {
+            "$ref": "#/components/schemas/Consent"
+          },
+          "proof": {
+            "$ref": "#/components/schemas/Credential_proof"
+          }
+        },
+        "description": "Credential",
+        "x-examples": {
+          "example-1": {
+            "issuedTo": "mpartner-default-print",
+            "protectedAttributes": [],
+            "issuanceDate": "2021-01-20T04:38:41.045Z",
+            "credentialSubject": {
+              "name": "james",
+              "gender": "male"
+            },
+            "id": "http://govstack.global/credentials/9178c6ed-6c3d-4be4-9eef-7668ca236c21",
+            "type": [
+              "VerifiableCredential",
+              "GovStackVerifiableCredential"
+            ],
+            "consent": "",
+            "issuer": "https://govstack.global/issuers/"
+          }
+        }
+      },
+      "DemoAttribute": {
+        "title": "Demo",
+        "required": [
+          "attributeName",
+          "value"
+        ],
+        "type": "object",
+        "properties": {
+          "attributeName": {
+            "maxLength": 50,
+            "minLength": 1,
+            "type": "string",
+            "description": "Name of the attribute. eg name, firstname"
+          },
+          "value": {
+            "maxLength": 2096,
+            "minLength": 1,
+            "type": "string",
+            "description": "Value for the demographic data"
+          },
+          "language": {
+            "maxLength": 3,
+            "minLength": 2,
+            "type": "string",
+            "description": "Language of the value ISO 639-1 in case the language is not available in 639-1 use 639-2"
+          }
+        }
+      },
+      "Encryption": {
+        "title": "Encryption",
+        "required": [
+          "algorithm",
+          "sessionKey",
+          "thumbprint"
+        ],
+        "type": "object",
+        "properties": {
+          "sessionKey": {
+            "maxLength": 2096,
+            "minLength": 0,
+            "type": "string",
+            "description": "random created key for this instance"
+          },
+          "thumbprint": {
+            "maxLength": 32,
+            "minLength": 0,
+            "type": "string",
+            "description": "key id to uniquely identify the key, Can be url or hash of the key."
+          },
+          "algorithm": {
+            "maxLength": 50,
+            "minLength": 1,
+            "type": "string",
+            "description": "algorithm used for protection of data"
+          }
+        }
+      },
+      "authenticate_context": {
+        "required": [
+          "id",
+          "requestTime",
+          "transactionId"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "minLength": 1,
+            "type": "string",
+            "description": "Identity used for authentication"
+          },
+          "transactionId": {
+            "maxLength": 50,
+            "minLength": 12,
+            "type": "string",
+            "description": "The current transaction id or service request id as per the relying party"
+          },
+          "requestTime": {
+            "maxLength": 30,
+            "minLength": 12,
+            "type": "string",
+            "description": "Timestamp in ISO8601"
+          },
+          "purpose": {
+            "maxLength": 256,
+            "minLength": 0,
+            "type": "string",
+            "description": "Purpose of the authentication request. Not mandatory but provides a way to ensure people know for what they are doing it"
+          },
+          "issuer": {
+            "maxLength": 250,
+            "minLength": 0,
+            "type": "string",
+            "description": "Issuer of this ID. Its optional. Auth can be rejected in some scenarios if this is not present"
+          },
+          "type": {
+            "maxLength": 150,
+            "minLength": 0,
+            "type": "string",
+            "description": "Type of the ID. Its optional and auth can not be rejected if the type is not present."
+          }
+        },
+        "example": null
+      },
+      "authenticate_body": {
+        "required": [
+          "authFactors",
+          "biometrics",
+          "consent",
+          "context",
+          "demographics",
+          "security"
+        ],
+        "type": "object",
+        "properties": {
+          "context": {
+            "$ref": "#/components/schemas/authenticate_context"
+          },
+          "consent": {
+            "$ref": "#/components/schemas/Consent"
+          },
+          "security": {
+            "$ref": "#/components/schemas/Encryption"
+          },
+          "demographics": {
+            "minItems": 1,
+            "uniqueItems": true,
+            "type": "array",
+            "description": "demographic information",
+            "items": {
+              "$ref": "#/components/schemas/DemoAttribute"
+            }
+          },
+          "biometrics": {
+            "minItems": 1,
+            "uniqueItems": true,
+            "type": "array",
+            "description": "ISO 639-1 or ISO 639-2/",
+            "items": {
+              "$ref": "#/components/schemas/BiometricData"
+            }
+          },
+          "authFactors": {
+            "minItems": 1,
+            "uniqueItems": true,
+            "type": "array",
+            "description": "Other auth factors that are supported.",
+            "items": {
+              "$ref": "#/components/schemas/AuthFactor_2"
+            }
+          },
+          "": {
+            "type": "string"
+          }
+        },
+        "description": "",
+        "x-examples": {
+          "example-1": {
+            "context": {
+              "id": "id object",
+              "transactionId": "ABC123456723",
+              "requestTime": "2016-07-16T19:20:30+5:30"
+            },
+            "consent": {
+              "type": "embedded / linked",
+              "data": "JWT",
+              "schema": "",
+              "signUri": "http://consent.govstack.global/consent.json.sig",
+              "linkUri": "http://consent.govstack.global/consent.json"
+            },
+            "demographics": [
+              {
+                "attribute": "name",
+                "operator": "equals",
+                "value": "sasi",
+                "lang": "ISO 639-1 language code"
+              },
+              {
+                "attribute": "dob",
+                "operator": "equals",
+                "value": "sasi",
+                "lang": "ISO 639-1 language code"
+              }
+            ],
+            "biometrics": [
+              {
+                "specVersion": "SBI spec version",
+                "data": {
+                  "digitalId": "Digital Id as described in this document signed using FTM key (SBI 2.0)",
+                  "deviceServiceVersion": "SBI version",
+                  "bioType": "Finger",
+                  "bioSubType": "UNKNOWN",
+                  "purpose": "Auth",
+                  "env": "Target environment",
+                  "domainUri": "URI of the auth server",
+                  "bioValue": "Encrypted with session key and base64urlencoded biometric data",
+                  "transactionId": "Unique transaction id",
+                  "timestamp": "Current datetime in ISO format",
+                  "requestedScore": "Floating point number to represent the minimum required score for the capture",
+                  "qualityScore": "Floating point number representing the score for the current capture"
+                },
+                "hash": "sha256 in hex format in upper case (previous hash + sha256 hash of the current biometric ISO data before encryption)",
+                "sessionKey": "Session key used for encrypting bioValue, encrypted with idv public key (dynamically selected based on the URI) and base64urlencoded",
+                "thumbprint": "SHA256 representation of the certificate (HEX encoded) that was used for encryption of session key. All texts to be treated as uppercase without any spaces or hyphens"
+              },
+              {
+                "specVersion": "SBI spec version",
+                "data": {
+                  "digitalId": "Digital Id as described in this document signed using FTM key (SBI 2.0)",
+                  "deviceServiceVersion": "SBI version",
+                  "bioType": "Finger",
+                  "bioSubType": "Left IndexFinger",
+                  "purpose": "Auth",
+                  "env": "Target environment",
+                  "domainUri": "URI of the auth server",
+                  "bioValue": "Encrypted with session key and base64urlencoded biometric data",
+                  "transactionId": "Unique transaction id",
+                  "timestamp": "Current datetime in ISO format",
+                  "requestedScore": "Floating point number to represent the minimum required score for the capture",
+                  "qualityScore": "Floating point number representing the score for the current capture"
+                },
+                "hash": "sha256 in hex format in upper case (previous hash + sha256 hash of the current biometric ISO data before encryption)",
+                "sessionKey": "Session key used for encrypting bioValue, encrypted with idv public key (dynamically selected based on the URI) and base64urlencoded",
+                "thumbprint": "SHA256 representation of the certificate (HEX encoded) that was used for encryption of session key. All texts to be treated as uppercase without any spaces or hyphens"
+              }
+            ],
+            "authFactors": [
+              {
+                "factors": "",
+                "specVersion": "",
+                "data": []
+              },
+              {
+                "factors": "",
+                "specVersion": "",
+                "data": []
+              }
+            ]
+          }
+        }
+      },
+      "inline_response_200": {
+        "required": [
+          "authResult",
+          "consentVerified",
+          "factorsVerified",
+          "purpose",
+          "transactionId",
+          "version"
+        ],
+        "type": "object",
+        "properties": {
+          "version": {
+            "type": "string",
+            "description": "Version of this response"
+          },
+          "responseTime": {
+            "type": "string",
+            "description": "ISO 8601"
+          },
+          "transactionId": {
+            "maxLength": 50,
+            "minLength": 12,
+            "type": "string",
+            "example": "TXN123456789"
+          },
+          "purpose": {
+            "type": "string",
+            "description": "Same value as purpose in the request"
+          },
+          "factorsVerified": {
+            "type": "array",
+            "description": "What are all the factors we verified. So in case the relying party needs a mandatory factor he can check and ensure if the authentication contained such a factor.",
+            "items": {
+              "type": "string"
+            }
+          },
+          "consentVerified": {
+            "type": "boolean",
+            "description": "Consent verification was performed or not.",
+            "default": false
+          },
+          "authResult": {
+            "$ref": "#/components/schemas/inline_response_200_authResult"
+          },
+          "errors": {
+            "type": "array",
+            "description": "Error code array. Messages for the respective errors has to be translated as ",
+            "items": {
+              "$ref": "#/components/schemas/inline_response_200_errors"
+            }
+          }
+        }
+      },
+      "BiometricData_data": {
+        "required": [
+          "bioSubType",
+          "bioType",
+          "bioValue",
+          "captureDevice",
+          "mimetype",
+          "timestamp",
+          "transactionId"
+        ],
+        "type": "object",
+        "properties": {
+          "captureDevice": {
+            "$ref": "#/components/schemas/CaptureDevice"
+          },
+          "deviceServiceVersion": {
+            "minLength": 1,
+            "type": "string",
+            "description": "version of SBI (secure biometric interface) spec driver "
+          },
+          "bioType": {
+            "minLength": 1,
+            "type": "string",
+            "description": "",
+            "enum": [
+              "Face",
+              "Finger",
+              "Iris",
+              "Voice",
+              "Palm"
+            ]
+          },
+          "bioSubType": {
+            "minLength": 1,
+            "type": "string",
+            "enum": [
+              "Left IndexFinger",
+              "Left MiddleFinger",
+              "Left RingFinger",
+              "Left LittleFinger",
+              "Left Thumb",
+              "Right IndexFinger",
+              "Right MiddleFinger",
+              "Right RingFinger",
+              "Right LittleFinger",
+              "Right Thumb",
+              "UNKNOWN",
+              "Left",
+              "Right"
+            ]
+          },
+          "purpose": {
+            "maxLength": 144,
+            "minLength": 1,
+            "type": "string",
+            "description": "simple string to explain the purpose of the auth. This will be notified to the user",
+            "enum": [
+              "Auth",
+              "KYC",
+              "Registration"
+            ]
+          },
+          "env": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "domainUri": {
+            "minLength": 1,
+            "type": "string",
+            "format": "uri"
+          },
+          "bioValue": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "requestedScore": {
+            "maximum": 100,
+            "minimum": 0,
+            "type": "number"
+          },
+          "transactionId": {
+            "maxLength": 50,
+            "minLength": 12,
+            "type": "string",
+            "example": "ABC123456789"
+          },
+          "timestamp": {
+            "minLength": 20,
+            "type": "string",
+            "example": "2016-07-16T19:20:30+5:30"
+          },
+          "qualityScore": {
+            "maximum": 100,
+            "minimum": 0,
+            "type": "number"
+          },
+          "mimetype": {
+            "maxLength": 256,
+            "minLength": 0,
+            "type": "string",
+            "description": "Mimetype limited to audio, video, image as per https://www.iana.org/assignments/media-types/media-types.xhtml#audio, https://www.iana.org/assignments/media-types/media-types.xhtml#video, https://www.iana.org/assignments/media-types/media-types.xhtml#image\nin cases of ISO send iso-19794"
+          }
+        },
+        "description": "The entire data in this object is encrypted as a single blob and attached here as a string - Refer the SBI Specification",
+        "example": null
+      },
+      "Credential_credentialSubject_idOf": {
+        "type": "object",
+        "properties": {
+          "attributeName": {
+            "maxLength": 256,
+            "minLength": 1,
+            "type": "string",
+            "description": "Name of the attribute"
+          },
+          "value": {
+            "maxLength": 1024,
+            "minLength": 0,
+            "type": "string",
+            "description": "Value for the given attribute. Note: It could be encrypted if the attribute name is part of the protected array."
+          },
+          "language": {
+            "maxLength": 3,
+            "minLength": 2,
+            "type": "string",
+            "description": "language in ISO 639-1 format. USe 639-2 only when the code is not available in 639-1"
+          }
+        },
+        "example": null
+      },
+      "Credential_credentialSubject": {
+        "required": [
+          "id",
+          "idOf"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "maxLength": 50,
+            "minLength": 10,
+            "type": "string",
+            "description": "id of subject"
+          },
+          "idOf": {
+            "type": "array",
+            "description": "Array of information about the subject",
+            "items": {
+              "$ref": "#/components/schemas/Credential_credentialSubject_idOf"
+            }
+          }
+        },
+        "description": "Subject information for the credential",
+        "example": null
+      },
+      "Credential_proof": {
+        "required": [
+          "created",
+          "jws",
+          "proofPurpose",
+          "type",
+          "verificationMethod"
+        ],
+        "type": "object",
+        "properties": {
+          "type": {
+            "maxLength": 10,
+            "minLength": 1,
+            "type": "string",
+            "description": "Type of the proof",
+            "enum": [
+              "RsaSignature2018",
+              "ED25519"
+            ]
+          },
+          "created": {
+            "type": "string",
+            "description": "What was it created",
+            "format": "date-time"
+          },
+          "proofPurpose": {
+            "maxLength": 256,
+            "minLength": 0,
+            "type": "string",
+            "description": "What is the purpose of this proof"
+          },
+          "verificationMethod": {
+            "maxLength": 256,
+            "minLength": 1,
+            "type": "string",
+            "description": "URL to the keys"
+          },
+          "jws": {
+            "maxLength": 10000,
+            "minLength": 0,
+            "type": "string",
+            "description": "JWS of the format header..signature"
+          }
+        },
+        "description": "Credential proof",
+        "example": null
+      },
+      "inline_response_200_authResult": {
+        "required": [
+          "tokenId",
+          "verified"
+        ],
+        "type": "object",
+        "properties": {
+          "verified": {
+            "type": "boolean",
+            "description": "result of the authentication. A simple boolean",
+            "default": false
+          },
+          "tokenId": {
+            "maxLength": 500,
+            "minLength": 12,
+            "type": "string",
+            "description": "Random Token either specific for this authentication or specific for an individual & Relying party combination."
+          },
+          "kycCredential": {
+            "$ref": "#/components/schemas/Credential"
+          },
+          "kycUri": {
+            "type": "string",
+            "description": "Link pointing to the KYC data credential"
+          }
+        },
+        "description": "Result of the authentication",
+        "example": null
+      },
+      "inline_response_200_errors": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string",
+            "description": "unique error code "
+          },
+          "message": {
+            "type": "string",
+            "description": "description of the error message"
+          },
+          "language": {
+            "type": "string",
+            "description": "ISO 639-2"
+          },
+          "action": {
+            "type": "string",
+            "description": "action that we want the user to make in order to correct the error."
+          }
+        },
+        "example": null
+      }
+    },
+    "responses": {},
+    "securitySchemes": {
+      "Authorization": {
+        "type": "openIdConnect",
+        "openIdConnectUrl": "https://idv.govstack.global/auth/openid-configuration"
+      }
+    }
+  }
+}

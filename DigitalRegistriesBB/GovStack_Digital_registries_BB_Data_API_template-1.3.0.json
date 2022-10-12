@@ -1,0 +1,1142 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "GovStack Digital Registries BB API examples",
+    "description": "Digital Registries System contains multiple registries in one instance. For each registry same set of APIs is described. In this example two example registries have been described.\n",
+    "contact": {
+      "email": "tambetartma88@gmail.com"
+    },
+    "version": "1.3.0",
+    "termsOfService": "#",
+    "license": {
+      "name": "Apache 2.0",
+      "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+    }
+  },
+  "servers": [
+    {
+      "description": "Information Mediator BB Security server",
+      "url": "http://ss2.egovstack.net/r1/eGovStack/COM/11222456/RegistrationBB/creg/"
+    }
+  ],
+  "tags": [
+    {
+      "name": "Registry data query API",
+      "description": "Registry data query API"
+    }
+  ],
+  "paths": {
+    "/data/<registryname>/<versionnumber>": {
+      "get": {
+        "tags": [
+          "Registry data query API"
+        ],
+        "description": "Searches (Regex supported) and returns multiple records as an array-list. ",
+        "operationId": "list",
+        "summary": "list",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/Information-Mediator-Client"
+          },
+          {
+            "name": "search",
+            "in": "query",
+            "description": "Field for searching random string type data from database",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "example": "John"
+            }
+          },
+          {
+            "name": "filter",
+            "in": "query",
+            "description": "Field name that user wishes to filter",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "example": "FirstName"
+            }
+          },
+          {
+            "name": "ordering",
+            "in": "query",
+            "description": "How user wishes to order the data",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "example": "descending"
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "description": "Result page number",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "example": 1
+            }
+          },
+          {
+            "name": "page_size",
+            "in": "query",
+            "description": "Number of results on one page",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "example": 10
+            }
+          },
+          {
+            "name": "query.<fieldname>",
+            "in": "query",
+            "description": "Example of searchable database field. If more searchable fields are in DB, then more similar fields will follow in input",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "example": "Value can be in any supported format, for an example 'string'",
+              "readOnly": true
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "count": {
+                      "type": "integer",
+                      "description": "Number of results",
+                      "example": 1
+                    },
+                    "next": {
+                      "type": "string",
+                      "format": "uri",
+                      "x-nullable": true,
+                      "description": "URI to next results page",
+                      "example": 1
+                    },
+                    "previous": {
+                      "type": "string",
+                      "format": "uri",
+                      "x-nullable": true
+                    },
+                    "results": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Example"
+                      }
+                    }
+                  },
+                  "required": [
+                    "count",
+                    "results"
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "apiKey": []
+          }
+        ]
+      }
+    },
+    "/data/<registryname>/<versionnumber>/create": {
+      "post": {
+        "tags": [
+          "Registry data query API"
+        ],
+        "description": "Creates a new record in the registry database.",
+        "operationId": "create",
+        "summary": "create",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/Information-Mediator-Client"
+          }
+        ],
+        "requestBody": {
+          "description": "",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "write": {
+                    "type": "object",
+                    "properties": {
+                      "content": {
+                        "$ref": "#/components/schemas/Example"
+                      }
+                    },
+                    "required": [
+                      "content"
+                    ]
+                  }
+                },
+                "required": [
+                  "write"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "content": {
+                      "$ref": "#/components/schemas/Example"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "apiKey": []
+          }
+        ]
+      }
+    },
+    "/data/<registryname>/<versionnumber>/exists": {
+      "post": {
+        "tags": [
+          "Registry data query API"
+        ],
+        "description": "Searches records based on input parameters and returns boolean answer (true/false).",
+        "operationId": "exists",
+        "summary": "exists",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/Information-Mediator-Client"
+          }
+        ],
+        "requestBody": {
+          "description": "",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "query": {
+                    "type": "object",
+                    "properties": {
+                      "content": {
+                        "$ref": "#/components/schemas/Example"
+                      }
+                    },
+                    "required": [
+                      "content"
+                    ]
+                  }
+                },
+                "required": [
+                  "query"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "answer": {
+                      "type": "object",
+                      "properties": {
+                        "status": {
+                          "type": "boolean",
+                          "example": true,
+                          "description": "Example object found in database"
+                        },
+                        "message": {
+                          "type": "string",
+                          "example": "Object found from database",
+                          "description": "More information about the object"
+                        }
+                      },
+                      "required": [
+                        "status"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "answer"
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "apiKey": []
+          }
+        ]
+      }
+    },
+    "/data/<registryname>/<versionnumber>/read": {
+      "post": {
+        "tags": [
+          "Registry data query API"
+        ],
+        "description": "Searches and returns one record.",
+        "operationId": "read",
+        "summary": "read",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/Information-Mediator-Client"
+          }
+        ],
+        "requestBody": {
+          "description": "",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "query": {
+                    "type": "object",
+                    "properties": {
+                      "content": {
+                        "$ref": "#/components/schemas/Example"
+                      }
+                    },
+                    "required": [
+                      "content"
+                    ]
+                  }
+                },
+                "required": [
+                  "query"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "content": {
+                      "$ref": "#/components/schemas/Example"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "apiKey": []
+          }
+        ]
+      }
+    },
+    "/data/<registryname>/<versionnumber>/update": {
+      "put": {
+        "tags": [
+          "Registry data query API"
+        ],
+        "description": "Updates one existing record in the registry database.",
+        "operationId": "update",
+        "summary": "update",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/Information-Mediator-Client"
+          }
+        ],
+        "requestBody": {
+          "description": "",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "query": {
+                    "type": "object",
+                    "description": "Search object that needs to be updated",
+                    "properties": {
+                      "content": {
+                        "$ref": "#/components/schemas/Example"
+                      }
+                    },
+                    "required": [
+                      "content"
+                    ]
+                  },
+                  "write": {
+                    "type": "object",
+                    "description": "Update found object with the following data",
+                    "properties": {
+                      "content": {
+                        "$ref": "#/components/schemas/Example"
+                      }
+                    },
+                    "required": [
+                      "content"
+                    ]
+                  }
+                },
+                "required": [
+                  "write"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "apiKey": []
+          }
+        ]
+      }
+    },
+    "/data/<registryname>/<versionnumber>/update-entries": {
+      "put": {
+        "tags": [
+          "Registry data query API"
+        ],
+        "description": "Updates multiple records in the registry database that match the input query.",
+        "operationId": "update-entries",
+        "summary": "update-entries",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/Information-Mediator-Client"
+          }
+        ],
+        "requestBody": {
+          "description": "",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "query": {
+                    "type": "object",
+                    "description": "Find objects that needs to be updated",
+                    "properties": {
+                      "content": {
+                        "$ref": "#/components/schemas/Example"
+                      }
+                    },
+                    "required": [
+                      "content"
+                    ]
+                  },
+                  "write": {
+                    "type": "object",
+                    "description": "Data that needs to be added to the found objects",
+                    "properties": {
+                      "content": {
+                        "$ref": "#/components/schemas/Example"
+                      }
+                    },
+                    "required": [
+                      "content"
+                    ]
+                  }
+                },
+                "required": [
+                  "write"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "apiKey": []
+          }
+        ]
+      }
+    },
+    "/data/<registryname>/<versionnumber>/update-or-create": {
+      "post": {
+        "tags": [
+          "Registry data query API"
+        ],
+        "description": "API updates existing record if matching with input parameters is successful. If record is not found the API will create a new record. ",
+        "operationId": "update-or-create",
+        "summary": "update-or-create",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/Information-Mediator-Client"
+          }
+        ],
+        "requestBody": {
+          "description": "",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "query": {
+                    "type": "object",
+                    "description": "Find object to update, if object not found, new will be created",
+                    "properties": {
+                      "content": {
+                        "$ref": "#/components/schemas/Example"
+                      }
+                    },
+                    "required": [
+                      "content"
+                    ]
+                  },
+                  "write": {
+                    "type": "object",
+                    "description": "Data that will be updated for found Example object. If object not found new object with this data is created",
+                    "properties": {
+                      "content": {
+                        "$ref": "#/components/schemas/Example"
+                      }
+                    },
+                    "required": [
+                      "content"
+                    ]
+                  }
+                },
+                "required": [
+                  "write"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "content": {
+                      "$ref": "#/components/schemas/Example"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "apiKey": []
+          }
+        ]
+      }
+    },
+    "/data/<registryname>/<versionnumber>/{ID}/delete": {
+      "delete": {
+        "tags": [
+          "Registry data query API"
+        ],
+        "description": "Delete record.",
+        "operationId": "delete",
+        "summary": "delete",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/Information-Mediator-Client"
+          },
+          {
+            "name": "ID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "ID1",
+              "description": "ID of the citizen that needs to be deleted from the Registry data query API"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "apiKey": []
+          }
+        ]
+      }
+    },
+    "/data/<registryname>/<versionnumber>/{uuid}/read-value/{field}.{ext}": {
+      "get": {
+        "tags": [
+          "Registry data query API"
+        ],
+        "description": "Searches and returns one record’s one field value.",
+        "operationId": "read-value",
+        "summary": "read-value",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/Information-Mediator-Client"
+          },
+          {
+            "name": "uuid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "Primary key field",
+              "example": "DB-1"
+            }
+          },
+          {
+            "name": "field",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "Data format. Endpoint: /data/DB/1.0/DB-1/read-value/First%20name.json",
+              "example": "First name"
+            }
+          },
+          {
+            "name": "ext",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "Data format. Endpoint: /data/DB/1.0/DB-1/read-value/First%20name.json",
+              "example": "json"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "value": {
+                          "anyOf": [
+                            {
+                              "type": "array",
+                              "items": {
+                                "anyOf": [
+                                  {
+                                    "type": "boolean"
+                                  },
+                                  {
+                                    "type": "integer"
+                                  },
+                                  {
+                                    "type": "number"
+                                  },
+                                  {
+                                    "type": "object"
+                                  },
+                                  {
+                                    "type": "string"
+                                  }
+                                ]
+                              }
+                            },
+                            {
+                              "type": "boolean"
+                            },
+                            {
+                              "type": "integer"
+                            },
+                            {
+                              "type": "number"
+                            },
+                            {
+                              "type": "object"
+                            },
+                            {
+                              "type": "string"
+                            }
+                          ]
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "apiKey": []
+          }
+        ]
+      }
+    },
+    "/data/MyPersonalDataUsage/1.0": {
+      "get": {
+        "tags": [
+          "MyPersonalDataUsage API"
+        ],
+        "description": "Allows a user to see who has read their personal data.",
+        "operationId": "DPU",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/Information-Mediator-Client"
+          },
+          {
+            "name": "userID",
+            "in": "query",
+            "description": "User's personal unique identifier",
+            "required": true,
+            "style": "form",
+            "schema": {
+              "type": "string",
+              "example": "EE378129277266"
+            }
+          },
+          {
+            "name": "DatabaseID",
+            "in": "query",
+            "description": "Database acronym",
+            "required": true,
+            "style": "form",
+            "schema": {
+              "type": "string",
+              "example": "MCTS"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "description": "Array of found data processign logs",
+                  "items": {
+                    "$ref": "#/components/schemas/PersonalDataUsage"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid ID supplied"
+          },
+          "404": {
+            "description": "Person requests not found"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "apiKey": {
+        "type": "apiKey",
+        "name": "Authorization",
+        "in": "header"
+      }
+    },
+    "parameters": {
+      "Information-Mediator-Client": {
+        "in": "header",
+        "name": "Information-Mediator-Client",
+        "example": "eGovStack/GOV/90000009/digitalregistries",
+        "description": "Format is: INSTANCE/CLASS/MEMBER/SUBSYSTEM",
+        "schema": {
+          "type": "string"
+        },
+        "required": true
+      }
+    },
+    "schemas": {
+      "MCC": {
+        "type": "object",
+        "properties": {
+          "ID": {
+            "type": "string",
+            "description": "Object ID in the database",
+            "example": "MCTS1"
+          },
+          "Child": {
+            "$ref": "#/components/schemas/Child"
+          },
+          "Registraion date": {
+            "type": "string",
+            "format": "date",
+            "description": "Date of registration",
+            "example": "2021-01-30"
+          },
+          "Expiry date": {
+            "type": "string",
+            "format": "date",
+            "description": "The expiry date of the registration",
+            "example": "2021-01-30"
+          },
+          "Caretaker": {
+            "$ref": "#/components/schemas/Caretaker"
+          }
+        }
+      },
+      "Child": {
+        "type": "object",
+        "properties": {
+          "ID": {
+            "type": "string",
+            "description": "Child's identifier",
+            "example": "xyz-12345678910"
+          },
+          "Firstname": {
+            "type": "string",
+            "description": "Child's first name",
+            "example": "Usha"
+          },
+          "Lastname": {
+            "type": "string",
+            "description": "Child's last name",
+            "example": "Bajaj"
+          },
+          "Birthdate": {
+            "type": "string",
+            "format": "date",
+            "description": "Child's birth date",
+            "example": "2021-01-30"
+          },
+          "Address": {
+            "type": "string",
+            "description": "Child's address",
+            "example": "Longroad 123, Big Village"
+          },
+          "Birth_certificate": {
+            "$ref": "#/components/schemas/Birth_certificate"
+          }
+        }
+      },
+      "Birth_certificate": {
+        "anyOf": [
+          {
+            "type": "object",
+            "description": "Birth certificate file",
+            "properties": {
+              "url": {
+                "type": "string",
+                "description": "URL to the birth certificate document",
+                "example": "https://gdbs.dev.training.eregistrations.org/data/mcc/files/ID23.pdf"
+              },
+              "originalName": {
+                "type": "string",
+                "description": "Document original name",
+                "example": "Birth certificate"
+              },
+              "type": {
+                "type": "string",
+                "description": "Document type",
+                "example": "application/pdf",
+                "enum": [
+                  "application/pdf",
+                  "image/jpeg",
+                  "image/png",
+                  "image/gif",
+                  "image/tiff",
+                  "image/bmp",
+                  "image/x-ms-bmp",
+                  "application/rtf",
+                  "text/rtf",
+                  "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+                  "application/vnd.oasis.opendocument.text"
+                ]
+              }
+            },
+            "required": [
+              "url",
+              "originalName",
+              "type"
+            ]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "$documentId": {
+                "type": "number"
+              }
+            },
+            "required": [
+              "$documentId"
+            ]
+          }
+        ]
+      },
+      "Caretaker": {
+        "type": "object",
+        "properties": {
+          "ID": {
+            "type": "string",
+            "description": "Caretaker's identifier",
+            "example": "EL129983773663"
+          },
+          "Firstname": {
+            "type": "string",
+            "description": "Caretaker's first name",
+            "example": "John"
+          },
+          "Lastname": {
+            "type": "string",
+            "description": "Caretaker's last name",
+            "example": "Smith"
+          },
+          "Birthdate": {
+            "type": "string",
+            "format": "date",
+            "description": "Caretaker's birth date",
+            "example": "1980-01-30"
+          },
+          "Phone": {
+            "type": "string",
+            "description": "Caretaker's phone number",
+            "example": "+37258000000"
+          },
+          "Email": {
+            "type": "string",
+            "description": "Caretaker's email",
+            "example": "jonh.smith@email.com"
+          },
+          "Picture": {
+            "$ref": "#/components/schemas/Picture"
+          },
+          "Document ID": {
+            "$ref": "#/components/schemas/Document_ID"
+          }
+        }
+      },
+      "Picture": {
+        "anyOf": [
+          {
+            "type": "object",
+            "description": "Caretaker's picture object in database",
+            "properties": {
+              "url": {
+                "type": "string",
+                "description": "URL to the Caretaker's picture file",
+                "example": "https://gdbs.dev.training.eregistrations.org/data/mcc/files/ID2243.pdf"
+              },
+              "originalName": {
+                "type": "string",
+                "description": "Caretaker's picture original file name",
+                "example": "John Smith avatar"
+              },
+              "type": {
+                "type": "string",
+                "description": "Picture type",
+                "example": "image/jpeg",
+                "enum": [
+                  "application/pdf",
+                  "image/jpeg",
+                  "image/png",
+                  "image/gif",
+                  "image/tiff",
+                  "image/bmp",
+                  "image/x-ms-bmp",
+                  "application/rtf",
+                  "text/rtf",
+                  "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+                  "application/vnd.oasis.opendocument.text"
+                ]
+              }
+            },
+            "required": [
+              "url",
+              "originalName",
+              "type"
+            ]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "$documentId": {
+                "type": "number"
+              }
+            },
+            "required": [
+              "$documentId"
+            ]
+          }
+        ]
+      },
+      "Document_ID": {
+        "anyOf": [
+          {
+            "type": "object",
+            "description": "Caretaker's identification document",
+            "properties": {
+              "url": {
+                "type": "string",
+                "description": "URL to the Caretaker's identification document",
+                "example": "https://gdbs.dev.training.eregistrations.org/data/mcc/files/ID223.pdf"
+              },
+              "originalName": {
+                "type": "string",
+                "description": "Identification document original name",
+                "example": "John Smith passport"
+              },
+              "type": {
+                "type": "string",
+                "description": "File type of identification document",
+                "example": "application/pdf",
+                "enum": [
+                  "application/pdf",
+                  "image/jpeg",
+                  "image/png",
+                  "image/gif",
+                  "image/tiff",
+                  "image/bmp",
+                  "image/x-ms-bmp",
+                  "application/rtf",
+                  "text/rtf",
+                  "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+                  "application/vnd.oasis.opendocument.text"
+                ]
+              }
+            },
+            "required": [
+              "url",
+              "originalName",
+              "type"
+            ]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "$documentId": {
+                "type": "number"
+              }
+            },
+            "required": [
+              "$documentId"
+            ]
+          }
+        ]
+      },
+      "PersonalDataUsage": {
+        "type": "object",
+        "properties": {
+          "ID": {
+            "type": "string",
+            "description": "Log record ID",
+            "example": "1234567"
+          },
+          "ReaderID": {
+            "type": "string",
+            "description": "Identifier of a reader who looked at personal data",
+            "example": "EE37819285773"
+          },
+          "ReaderInitials": {
+            "type": "string",
+            "description": "Reader's initials",
+            "example": "JD"
+          },
+          "ReaderInstitutionID": {
+            "type": "string",
+            "description": "Reader's instituition ID",
+            "example": "EE70049837"
+          },
+          "ReaderInstitutionName": {
+            "type": "string",
+            "description": "Reader's institution name",
+            "example": "East Hospital"
+          },
+          "ReaderApplicationName": {
+            "type": "string",
+            "description": "Reader's institution system name",
+            "example": "East Hospital healthcare back office"
+          },
+          "SearchDateTime": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Date and time of registration",
+            "example": "2017-07-21T17:32:28Z"
+          },
+          "Refrences": {
+            "type": "array",
+            "description": "Personal Data reference",
+            "items": {
+              "properties": {
+                "ReferenceID": {
+                  "type": "string",
+                  "description": "Registration ID",
+                  "example": "MCTS31"
+                }
+              }
+            }
+          }
+        }
+      },
+      "Example": {
+        "type": "object",
+        "properties": {
+          "ID": {
+            "type": "string",
+            "description": "Citizen's identifier",
+            "example": "EE378627348834"
+          },
+          "FirstName": {
+            "type": "string",
+            "description": "Citizen's first name",
+            "example": "John Helmut"
+          },
+          "LastName": {
+            "type": "string",
+            "description": "Citizen's last name",
+            "example": "Smith Carry"
+          },
+          "BirthCertificateID": {
+            "type": "string",
+            "description": "Birth certificate ID in CR",
+            "example": "RR-1234567889"
+          }
+        }
+      }
+    }
+  }
+}

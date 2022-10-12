@@ -1,6 +1,15 @@
-Short Description: Registries are centrally managed databases that uniquely identify persons, vendors, facilities, procedures, products and sites related to an organization, industry or activity.
+Digital Registries Building Block API Definitions
+This repository holds OpenAPI definitions for Digital Registries BB - one of the building blocks that have been developed by the GovStack expert working groups.
 
-Full Description: Registries store unique identifiers of persons, vendors, facilities, procedures, products and sites and are used to record and monitor resources and assets (physical or virtual). These resources are those that are used by a person, organization or industry, or they are consumed while performing certain activities. Registries store essential information for identification and verification purposes, such as name, biometrics/photos, location/contact details and basic profile of the person (eg age, sex qualification, etc), facility (eg type of entity, specialization) or thing (eg equipment type, serial number, warranty period).
+Each building block API definition must be stored in a json file that is compatible with the OpenAPI 3.0 standard
 
-Other Names: Directories, Functional registries
-https://solutions.dial.community/building_blocks/digital_registries
+Acknowledgement
+This specification was prepared by a team comprising Frank Grozel (UNCTAD), Ingmar Vali (UNCTAD), Tambet Artma (Centre of Registers and Information Systems), Saurav Bhattarai (GIZ), Dr Ramkumar (ITU), Rauno Kulla (UNCTAD).
+
+Status
+Current status of the specification is v.1.0 Currently under review.
+
+Reference
+UNCTAD eRegistrations: https://digitalgovernment.world/  
+UNCTAD https://unctad.org/
+Use Cases: https://solutions.dial.community/building_blocks/digital_registries
