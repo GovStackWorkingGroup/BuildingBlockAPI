@@ -1,0 +1,40 @@
+{
+  "$id": "http://govstack.global/schemas/IM/application.json",
+  "$schema": "http://json-schema.org/draft-07/schema",
+  "default": {},
+  "description": "The schema describing Application in GovStack Information Mediator Building Block",
+  "examples": [
+    {
+      "name": "Infant care",
+      "connecctionType": "https",
+      "certificate": ""
+    }
+  ],
+  "required": ["name"],
+  "title": "Application",
+  "type": "object",
+  "properties": {
+    "name": {
+      "description": "Name that uniquely identifies an application of given Member."
+      "examples": ["Ministry-Of-Health"],
+      "title": "Name",
+      "type": "string"
+    },
+    "connectionType": {
+      "default": "",
+      "description": "Type of the connection.",
+      "examples": "https",
+      "title": "connType",
+      "type": {
+        "enum" : ["https", "http"],
+      }
+    },
+    "certificate": {
+      "default": "",
+      "description": "Transport Key used by Application to reach Security Server",
+      "title": "Transport Key",
+      "type": "string",
+    }
+  },
+  "additionalProperties": true
+}

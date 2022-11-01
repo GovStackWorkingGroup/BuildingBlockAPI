@@ -1,0 +1,355 @@
+{
+  "openapi" : "3.0.0",
+  "info" : {
+    "title" : "GovStack IM Service Metadata API",
+    "version" : "0.3"
+  },
+  "servers" : [ {
+    "url" : "https://{securityserver}/r1",
+    "variables" : {
+      "securityserver" : {
+        "default" : "SECURITYSERVER",
+        "description" : "security server address"
+      }
+    }
+  } ],
+  "paths" : {
+    "/listClients" : {
+      "parameters" : [ {
+        "name" : "instanceId",
+        "required" : false,
+        "in" : "query",
+        "schema" : {
+          "type" : "string"
+        }
+      } ],
+      "get" : {
+        "tags" : [ "metaservices" ],
+        "summary" : "List of Clients of GovStack",
+        "operationId" : "listClients",
+        "parameters" : [ {
+          "name" : "serviceId",
+          "in" : "query",
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "X-GovStack-Client",
+          "in" : "header",
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "List of Clients of GovStack",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/restClientDetailsListType"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/{GovStackInstance}/{memberClass}/{memberCode}/{applicationCode}/listMethods" : {
+      "parameters" : [ {
+        "$ref" : "#/components/parameters/GovStackInstance"
+      }, {
+        "$ref" : "#/components/parameters/memberClass"
+      }, {
+        "$ref" : "#/components/parameters/memberCode"
+      }, {
+        "$ref" : "#/components/parameters/applicationCode"
+      } ],
+      "get" : {
+        "tags" : [ "metaservices" ],
+        "summary" : "List REST services and endpoints for a service provider",
+        "operationId" : "listMethods",
+        "parameters" : [ {
+          "name" : "serviceId",
+          "in" : "query",
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "X-GovStack-Client",
+          "in" : "header",
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "List of REST services and endpoints for a service provider",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/restServiceDetailsListType"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/{GovStackInstance}/{memberClass}/{memberCode}/{applicationCode}/allowedMethods" : {
+      "parameters" : [ {
+        "$ref" : "#/components/parameters/GovStackInstance"
+      }, {
+        "$ref" : "#/components/parameters/memberClass"
+      }, {
+        "$ref" : "#/components/parameters/memberCode"
+      }, {
+        "$ref" : "#/components/parameters/applicationCode"
+      } ],
+      "get" : {
+        "tags" : [ "metaservices" ],
+        "summary" : "List of allowed REST services and endpoints for a service provider",
+        "operationId" : "allowedMethods",
+        "parameters" : [ {
+          "name" : "serviceId",
+          "in" : "query",
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "X-GovStack-Client",
+          "in" : "header",
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "List of allowed REST services and endpoints for a service provider",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/restServiceDetailsListType"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/{GovStackInstance}/{memberClass}/{memberCode}/{applicationCode}/getOpenAPI" : {
+      "parameters" : [ {
+        "$ref" : "#/components/parameters/GovStackInstance"
+      }, {
+        "$ref" : "#/components/parameters/memberClass"
+      }, {
+        "$ref" : "#/components/parameters/memberCode"
+      }, {
+        "$ref" : "#/components/parameters/applicationCode"
+      } ],
+      "get" : {
+        "tags" : [ "metaservices" ],
+        "summary" : "Returns OpenAPI service description for a REST service",
+        "operationId" : "getOpenAPI",
+        "parameters" : [ {
+          "name" : "serviceCode",
+          "in" : "query",
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "X-GovStack-Client",
+          "in" : "header",
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OpenAPI description of the specified REST service",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "string"
+                }
+              },
+              "text/yaml" : {
+                "schema" : {
+                  "type" : "string"
+                }
+              }
+            }
+          },
+          "400" : {
+            "description" : "Error in request"
+          },
+          "500" : {
+            "description" : "Internal error"
+          }
+        }
+      }
+    }
+  },
+  "components" : {
+    "parameters" : {
+      "GovStackInstance" : {
+        "name" : "GovStackInstance",
+        "required" : true,
+        "in" : "path",
+        "schema" : {
+          "type" : "string"
+        }
+      },
+      "memberClass" : {
+        "name" : "memberClass",
+        "required" : true,
+        "in" : "path",
+        "schema" : {
+          "type" : "string"
+        }
+      },
+      "memberCode" : {
+        "name" : "memberCode",
+        "required" : true,
+        "in" : "path",
+        "schema" : {
+          "type" : "string"
+        }
+      },
+      "applicationCode" : {
+        "name" : "applicationCode",
+        "required" : true,
+        "in" : "path",
+        "schema" : {
+          "type" : "string"
+        }
+      }
+    },
+    "schemas" : {
+      "restClientDetailsListType" : {
+        "type" : "object",
+        "properties" : {
+          "member" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/restClientDetailsType"
+            }
+          }
+        }
+      },
+      "restClientDetailsType" : {
+        "type" : "object",
+        "properties" : {
+          "objectType" : {
+            "type" : "object",
+            "properties" : {
+              "object_type" : {
+                "type" : "string",
+                "enum" : [ "MEMBER", "SUBSYSTEM", "SERVER", "GLOBALGROUP", "SECURITYCATEGORY", "SERVICE", "CENTRALSERVICE", "LOCALGROUP" ]
+              }
+            }
+          },
+          "serviceType" : {
+            "type" : "string"
+          },
+          "GovStackInstance" : {
+            "type" : "string"
+          },
+          "memberClass" : {
+            "type" : "string"
+          },
+          "memberCode" : {
+            "type" : "string"
+          },
+          "applicationCode" : {
+            "type" : "string"
+          },
+          "serviceCode" : {
+            "type" : "string"
+          },
+          "serviceVersion" : {
+            "type" : "string"
+          },
+          "endpointList" : {
+            "type" : "object",
+            "properties" : {
+              "member" : {
+                "type" : "array",
+                "items" : {
+                  "$ref" : "#/components/schemas/endpoint"
+                }
+              }
+            }
+          }
+        }
+      },
+      "restServiceDetailsListType" : {
+        "type" : "object",
+        "properties" : {
+          "member" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/restServiceDetailsType"
+            }
+          }
+        }
+      },
+      "restServiceDetailsType" : {
+        "type" : "object",
+        "properties" : {
+          "objectType" : {
+            "type" : "object",
+            "properties" : {
+              "object_type" : {
+                "type" : "string",
+                "enum" : [ "MEMBER", "SUBSYSTEM", "SERVER", "GLOBALGROUP", "SECURITYCATEGORY", "SERVICE", "CENTRALSERVICE", "LOCALGROUP" ]
+              }
+            }
+          },
+          "serviceType" : {
+            "type" : "string"
+          },
+          "GovStackInstance" : {
+            "type" : "string"
+          },
+          "memberClass" : {
+            "type" : "string"
+          },
+          "memberCode" : {
+            "type" : "string"
+          },
+          "applicationCode" : {
+            "type" : "string"
+          },
+          "serviceCode" : {
+            "type" : "string"
+          },
+          "serviceVersion" : {
+            "type" : "string"
+          },
+          "endpointList" : {
+            "type" : "object",
+            "properties" : {
+              "member" : {
+                "type" : "array",
+                "items" : {
+                  "$ref" : "#/components/schemas/endpoint"
+                }
+              }
+            }
+          }
+        }
+      },
+      "endpoint" : {
+        "type" : "object",
+        "properties" : {
+          "method" : {
+            "type" : "string"
+          },
+          "path" : {
+            "type" : "string"
+          }
+        }
+      }
+    }
+  }
+}

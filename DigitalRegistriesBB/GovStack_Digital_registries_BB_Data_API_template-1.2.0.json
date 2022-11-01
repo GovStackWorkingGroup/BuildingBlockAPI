@@ -1,0 +1,1705 @@
+{
+  "openapi" : "3.0.0",
+  "info" : {
+    "title" : "GovStack Digital Registries BB API examples",
+    "description" : "Digital Registries System contains multiple registries in one instance. For each registry same set of APIs is described. In this example two example registries have been described.\n",
+    "contact" : {
+      "email" : "tambetartma88@gmail.com"
+    },
+    "version" : "1.1.0",
+    "termsOfService" : "#",
+    "license" : {
+      "name" : "Apache 2.0",
+      "url" : "http://www.apache.org/licenses/LICENSE-2.0.html"
+    }
+  },
+  "servers" : [ {
+    "description" : "Information Mediator BB Security server",
+    "url" : "http://ss2.egovstack.net/r1/eGovStack/COM/11222456/RegistrationBB/creg/"
+  } ],
+  "tags" : [ {
+    "name" : "Citizen registry",
+    "description" : "Citizen registry"
+  }, {
+    "name" : "Mother and Child Tracking System registry",
+    "description" : "MCTS registry data"
+  } ],
+  "paths" : {
+    "/data/mcc/2.1" : {
+      "get" : {
+        "tags" : [ "Mother and Child Tracking System registry" ],
+        "description" : "Searches (Regex supported) and returns multiple records as an array-list.",
+        "operationId" : "GDB-MCC(2.1)-list",
+        "summary" : "GDB-MCC(2.1)-list",
+        "parameters" : [ {
+          "$ref" : "#/components/parameters/Information-Mediator-Client"
+        }, {
+          "name" : "search",
+          "in" : "query",
+          "description" : "Field for searching free text string type data from the whole database",
+          "required" : false,
+          "schema" : {
+            "type" : "string",
+            "example" : "John"
+          }
+        }, {
+          "name" : "filter",
+          "in" : "query",
+          "description" : "Field name that user wishes to filter by",
+          "required" : false,
+          "schema" : {
+            "type" : "string",
+            "example" : "FirstName"
+          }
+        }, {
+          "name" : "ordering",
+          "in" : "query",
+          "description" : "How user wishes to order the data",
+          "required" : false,
+          "schema" : {
+            "type" : "string",
+            "example" : "descending"
+          }
+        }, {
+          "name" : "page",
+          "in" : "query",
+          "description" : "Result page number",
+          "required" : false,
+          "schema" : {
+            "type" : "integer",
+            "example" : 1
+          }
+        }, {
+          "name" : "page_size",
+          "in" : "query",
+          "description" : "Number of results on one page",
+          "required" : false,
+          "schema" : {
+            "type" : "integer",
+            "example" : 10
+          }
+        }, {
+          "name" : "query.ID",
+          "in" : "query",
+          "description" : "Registration ID",
+          "required" : false,
+          "schema" : {
+            "type" : "string",
+            "example" : "MCTS123",
+            "readOnly" : true
+          }
+        }, {
+          "name" : "query.Child",
+          "in" : "query",
+          "description" : "Child object data that is queried from database",
+          "required" : false,
+          "schema" : {
+            "$ref" : "#/components/schemas/Child"
+          }
+        }, {
+          "name" : "query.Child.ID",
+          "in" : "query",
+          "description" : "Child ID",
+          "required" : false,
+          "schema" : {
+            "type" : "string",
+            "example" : "xy-12345678910"
+          }
+        }, {
+          "name" : "query.Child.Firstname",
+          "in" : "query",
+          "description" : "Child first name",
+          "required" : false,
+          "schema" : {
+            "type" : "string",
+            "example" : "Usha"
+          }
+        }, {
+          "name" : "query.Child.Lastname",
+          "in" : "query",
+          "description" : "Child last name",
+          "required" : false,
+          "schema" : {
+            "type" : "string",
+            "example" : "Bajaj"
+          }
+        }, {
+          "name" : "query.Child.Birthdate",
+          "in" : "query",
+          "description" : "Child birth date",
+          "required" : false,
+          "schema" : {
+            "type" : "string",
+            "format" : "date",
+            "example" : "2021-01-30"
+          }
+        }, {
+          "name" : "query.Child.Address",
+          "in" : "query",
+          "description" : "Child's address",
+          "required" : false,
+          "schema" : {
+            "type" : "string",
+            "example" : "Longroad 123, Big Village"
+          }
+        }, {
+          "name" : "query.Child.Birth_certificate",
+          "in" : "query",
+          "description" : "Child's birth certificate data",
+          "required" : false,
+          "schema" : {
+            "$ref" : "#/components/schemas/Birth_certificate"
+          }
+        }, {
+          "name" : "query.Registration date",
+          "in" : "query",
+          "description" : "Record registration date",
+          "required" : false,
+          "schema" : {
+            "type" : "string",
+            "format" : "date",
+            "example" : "2021-01-30"
+          }
+        }, {
+          "name" : "query.Expiry date",
+          "in" : "query",
+          "description" : "Record expiry date",
+          "required" : false,
+          "schema" : {
+            "type" : "string",
+            "format" : "date",
+            "example" : "2021-01-30"
+          }
+        }, {
+          "name" : "query.Caretaker",
+          "in" : "query",
+          "description" : "Caretaker's information",
+          "required" : false,
+          "schema" : {
+            "$ref" : "#/components/schemas/Caretaker"
+          }
+        }, {
+          "name" : "query.Caretaker.ID",
+          "in" : "query",
+          "description" : "Caretaker's ID",
+          "required" : false,
+          "schema" : {
+            "type" : "string",
+            "example" : "EL125453643654"
+          }
+        }, {
+          "name" : "query.Caretaker.Firstname",
+          "in" : "query",
+          "description" : "Caretaker's first name",
+          "required" : false,
+          "schema" : {
+            "type" : "string",
+            "example" : "John"
+          }
+        }, {
+          "name" : "query.Caretaker.Lastname",
+          "in" : "query",
+          "description" : "Caretaker's last name",
+          "required" : false,
+          "schema" : {
+            "type" : "string",
+            "example" : "Smith"
+          }
+        }, {
+          "name" : "query.Caretaker.Birthdate",
+          "in" : "query",
+          "description" : "Caretaker's birth date",
+          "required" : false,
+          "schema" : {
+            "type" : "string",
+            "format" : "date",
+            "example" : "1980-01-30"
+          }
+        }, {
+          "name" : "query.Caretaker.Phone",
+          "in" : "query",
+          "description" : "Caretaker's phone number",
+          "required" : false,
+          "schema" : {
+            "type" : "string",
+            "example" : "+37258000000"
+          }
+        }, {
+          "name" : "query.Caretaker.Email",
+          "in" : "query",
+          "description" : "Caretaker email",
+          "required" : false,
+          "schema" : {
+            "type" : "string",
+            "example" : "john.smith@email.com"
+          }
+        }, {
+          "name" : "query.Caretaker.Picture",
+          "in" : "query",
+          "description" : "Caretaker's picture",
+          "required" : false,
+          "schema" : {
+            "$ref" : "#/components/schemas/Picture"
+          }
+        }, {
+          "name" : "query.Caretaker.Document_ID",
+          "in" : "query",
+          "description" : "Caretaker's document",
+          "required" : false,
+          "schema" : {
+            "$ref" : "#/components/schemas/Document_ID"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "object",
+                  "properties" : {
+                    "count" : {
+                      "type" : "integer",
+                      "description" : "Number of results",
+                      "example" : 1
+                    },
+                    "next" : {
+                      "type" : "string",
+                      "format" : "uri",
+                      "x-nullable" : true,
+                      "description" : "URI to next results page",
+                      "example" : 1
+                    },
+                    "previous" : {
+                      "type" : "string",
+                      "format" : "uri",
+                      "x-nullable" : true
+                    },
+                    "results" : {
+                      "type" : "array",
+                      "items" : {
+                        "type" : "object",
+                        "properties" : {
+                          "content" : {
+                            "$ref" : "#/components/schemas/MCC"
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "required" : [ "count", "results" ]
+                }
+              }
+            }
+          }
+        },
+        "security" : [ {
+          "apiKey" : [ ]
+        } ]
+      }
+    },
+    "/data/mcc/2.1/create" : {
+      "post" : {
+        "tags" : [ "Mother and Child Tracking System registry" ],
+        "description" : "Creates a new record in the registry database.",
+        "operationId" : "GDB-MCC(2.1)-create",
+        "summary" : "GDB-MCC(2.1)-create",
+        "parameters" : [ {
+          "$ref" : "#/components/parameters/Information-Mediator-Client"
+        } ],
+        "requestBody" : {
+          "description" : "",
+          "required" : true,
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "type" : "object",
+                "properties" : {
+                  "write" : {
+                    "type" : "object",
+                    "properties" : {
+                      "content" : {
+                        "$ref" : "#/components/schemas/MCC"
+                      }
+                    },
+                    "required" : [ "content" ]
+                  }
+                },
+                "required" : [ "write" ]
+              }
+            }
+          }
+        },
+        "responses" : {
+          "200" : {
+            "description" : "",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "object",
+                  "properties" : {
+                    "content" : {
+                      "$ref" : "#/components/schemas/MCC"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security" : [ {
+          "apiKey" : [ ]
+        } ]
+      }
+    },
+    "/data/mcc/2.1/exists" : {
+      "post" : {
+        "tags" : [ "Mother and Child Tracking System registry" ],
+        "description" : "Searches records based on input parameters and returns boolean answer (true/false).",
+        "operationId" : "GDB-MCC(2.1)-exists",
+        "summary" : "GDB-MCC(2.1)-exists",
+        "parameters" : [ {
+          "$ref" : "#/components/parameters/Information-Mediator-Client"
+        } ],
+        "requestBody" : {
+          "description" : "",
+          "required" : true,
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "type" : "object",
+                "properties" : {
+                  "query" : {
+                    "type" : "object",
+                    "properties" : {
+                      "content" : {
+                        "$ref" : "#/components/schemas/MCC"
+                      }
+                    },
+                    "required" : [ "content" ]
+                  }
+                },
+                "required" : [ "query" ]
+              }
+            }
+          }
+        },
+        "responses" : {
+          "200" : {
+            "description" : "",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "object",
+                  "properties" : {
+                    "answer" : {
+                      "type" : "object",
+                      "properties" : {
+                        "status" : {
+                          "type" : "boolean"
+                        },
+                        "message" : {
+                          "type" : "string"
+                        }
+                      },
+                      "required" : [ "status" ]
+                    }
+                  },
+                  "required" : [ "answer" ]
+                }
+              }
+            }
+          }
+        },
+        "security" : [ {
+          "apiKey" : [ ]
+        } ]
+      }
+    },
+    "/data/mcc/2.1/read" : {
+      "post" : {
+        "tags" : [ "Mother and Child Tracking System registry" ],
+        "description" : "Searches and returns one record.",
+        "operationId" : "GDB-MCC(2.1)-read",
+        "summary" : "GDB-MCC(2.1)-read",
+        "parameters" : [ {
+          "$ref" : "#/components/parameters/Information-Mediator-Client"
+        } ],
+        "requestBody" : {
+          "description" : "",
+          "required" : true,
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "type" : "object",
+                "properties" : {
+                  "query" : {
+                    "type" : "object",
+                    "properties" : {
+                      "content" : {
+                        "$ref" : "#/components/schemas/MCC"
+                      }
+                    },
+                    "required" : [ "content" ]
+                  }
+                },
+                "required" : [ "query" ]
+              }
+            }
+          }
+        },
+        "responses" : {
+          "200" : {
+            "description" : "",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "object",
+                  "properties" : {
+                    "content" : {
+                      "$ref" : "#/components/schemas/MCC"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security" : [ {
+          "apiKey" : [ ]
+        } ]
+      }
+    },
+    "/data/mcc/2.1/update" : {
+      "put" : {
+        "tags" : [ "Mother and Child Tracking System registry" ],
+        "description" : "Updates one existing record in the registry database.",
+        "operationId" : "GDB-MCC(2.1)-update",
+        "summary" : "GDB-MCC(2.1)-update",
+        "parameters" : [ {
+          "$ref" : "#/components/parameters/Information-Mediator-Client"
+        } ],
+        "requestBody" : {
+          "description" : "",
+          "required" : true,
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "type" : "object",
+                "properties" : {
+                  "query" : {
+                    "type" : "object",
+                    "properties" : {
+                      "content" : {
+                        "$ref" : "#/components/schemas/MCC"
+                      }
+                    },
+                    "required" : [ "content" ]
+                  },
+                  "write" : {
+                    "type" : "object",
+                    "properties" : {
+                      "content" : {
+                        "$ref" : "#/components/schemas/MCC"
+                      }
+                    },
+                    "required" : [ "content" ]
+                  }
+                },
+                "required" : [ "write" ]
+              }
+            }
+          }
+        },
+        "responses" : {
+          "200" : {
+            "description" : ""
+          }
+        },
+        "security" : [ {
+          "apiKey" : [ ]
+        } ]
+      }
+    },
+    "/data/mcc/2.1/update-entries" : {
+      "put" : {
+        "tags" : [ "Mother and Child Tracking System registry" ],
+        "description" : "Updates multiple records in the registry database that match the input query.",
+        "operationId" : "GDB-MCC(2.1)-update-entries",
+        "summary" : "GDB-MCC(2.1)-update-entries",
+        "parameters" : [ {
+          "$ref" : "#/components/parameters/Information-Mediator-Client"
+        } ],
+        "requestBody" : {
+          "description" : "",
+          "required" : true,
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "type" : "object",
+                "properties" : {
+                  "query" : {
+                    "type" : "object",
+                    "properties" : {
+                      "content" : {
+                        "$ref" : "#/components/schemas/MCC"
+                      }
+                    },
+                    "required" : [ "content" ]
+                  },
+                  "write" : {
+                    "type" : "object",
+                    "properties" : {
+                      "content" : {
+                        "$ref" : "#/components/schemas/MCC"
+                      }
+                    },
+                    "required" : [ "content" ]
+                  }
+                },
+                "required" : [ "write" ]
+              }
+            }
+          }
+        },
+        "responses" : {
+          "200" : {
+            "description" : ""
+          }
+        },
+        "security" : [ {
+          "apiKey" : [ ]
+        } ]
+      }
+    },
+    "/data/mcc/2.1/update-or-create" : {
+      "post" : {
+        "tags" : [ "Mother and Child Tracking System registry" ],
+        "description" : "API updates existing record if matching with input parameters is successful. If record is not found the API will create a new record.",
+        "operationId" : "GDB-MCC(2.1)-update-or-create",
+        "summary" : "GDB-MCC(2.1)-update-or-create",
+        "parameters" : [ {
+          "$ref" : "#/components/parameters/Information-Mediator-Client"
+        } ],
+        "requestBody" : {
+          "description" : "",
+          "required" : true,
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "type" : "object",
+                "properties" : {
+                  "query" : {
+                    "type" : "object",
+                    "properties" : {
+                      "content" : {
+                        "$ref" : "#/components/schemas/MCC"
+                      }
+                    },
+                    "required" : [ "content" ]
+                  },
+                  "write" : {
+                    "type" : "object",
+                    "properties" : {
+                      "content" : {
+                        "$ref" : "#/components/schemas/MCC"
+                      }
+                    },
+                    "required" : [ "content" ]
+                  }
+                },
+                "required" : [ "write" ]
+              }
+            }
+          }
+        },
+        "responses" : {
+          "200" : {
+            "description" : "",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "object",
+                  "properties" : {
+                    "content" : {
+                      "$ref" : "#/components/schemas/MCC"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security" : [ {
+          "apiKey" : [ ]
+        } ]
+      }
+    },
+    "/data/mcc/2.1/{ID}/delete" : {
+      "delete" : {
+        "tags" : [ "Mother and Child Tracking System registry" ],
+        "description" : "Delete record.",
+        "operationId" : "GDB-MCC(2.1)-delete",
+        "summary" : "GDB-MCC(2.1)-delete",
+        "parameters" : [ {
+          "$ref" : "#/components/parameters/Information-Mediator-Client"
+        }, {
+          "name" : "ID",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "204" : {
+            "description" : ""
+          }
+        },
+        "security" : [ {
+          "apiKey" : [ ]
+        } ]
+      }
+    },
+    "/data/mcc/2.1/{uuid}/read-value/{field}.{ext}" : {
+      "get" : {
+        "tags" : [ "Mother and Child Tracking System registry" ],
+        "description" : "Searches and returns one record’s one field value.",
+        "operationId" : "GDB-MCC(2.1)-read-value",
+        "summary" : "GDB-MCC(2.1)-read-value",
+        "parameters" : [ {
+          "$ref" : "#/components/parameters/Information-Mediator-Client"
+        }, {
+          "name" : "uuid",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "description" : "Primary key field",
+            "example" : "DB-1"
+          }
+        }, {
+          "name" : "field",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "description" : "Data format. Endpoint: /data/DB/1.0/DB-1/read-value/First%20name.json",
+            "example" : "First name"
+          }
+        }, {
+          "name" : "ext",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "description" : "Data format. Endpoint: /data/DB/1.0/DB-1/read-value/First%20name.json",
+            "example" : "json"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "anyOf" : [ {
+                    "type" : "string"
+                  }, {
+                    "type" : "object",
+                    "properties" : {
+                      "value" : {
+                        "anyOf" : [ {
+                          "type" : "array",
+                          "items" : {
+                            "anyOf" : [ {
+                              "type" : "boolean"
+                            }, {
+                              "type" : "integer"
+                            }, {
+                              "type" : "number"
+                            }, {
+                              "type" : "object"
+                            }, {
+                              "type" : "string"
+                            } ]
+                          }
+                        }, {
+                          "type" : "boolean"
+                        }, {
+                          "type" : "integer"
+                        }, {
+                          "type" : "number"
+                        }, {
+                          "type" : "object"
+                        }, {
+                          "type" : "string"
+                        } ]
+                      }
+                    }
+                  } ]
+                }
+              }
+            }
+          }
+        },
+        "security" : [ {
+          "apiKey" : [ ]
+        } ]
+      }
+    },
+    "/data/cr/1.0" : {
+      "get" : {
+        "tags" : [ "Citizen registry" ],
+        "description" : "Searches (Regex supported) and returns multiple records as an array-list. ",
+        "operationId" : "GDB-CR(1.0)-list",
+        "summary" : "GDB-CR(1.0)-list",
+        "parameters" : [ {
+          "$ref" : "#/components/parameters/Information-Mediator-Client"
+        }, {
+          "name" : "search",
+          "in" : "query",
+          "description" : "Field for searching random string type data from database",
+          "required" : false,
+          "schema" : {
+            "type" : "string",
+            "example" : "John"
+          }
+        }, {
+          "name" : "filter",
+          "in" : "query",
+          "description" : "Field name that user wishes to filter",
+          "required" : false,
+          "schema" : {
+            "type" : "string",
+            "example" : "FirstName"
+          }
+        }, {
+          "name" : "ordering",
+          "in" : "query",
+          "description" : "How user wishes to order the data",
+          "required" : false,
+          "schema" : {
+            "type" : "string",
+            "example" : "descending"
+          }
+        }, {
+          "name" : "page",
+          "in" : "query",
+          "description" : "Result page number",
+          "required" : false,
+          "schema" : {
+            "type" : "integer",
+            "example" : 1
+          }
+        }, {
+          "name" : "page_size",
+          "in" : "query",
+          "description" : "Number of results on one page",
+          "required" : false,
+          "schema" : {
+            "type" : "integer",
+            "example" : 10
+          }
+        }, {
+          "name" : "query.ID",
+          "in" : "query",
+          "description" : "Registration ID",
+          "required" : false,
+          "schema" : {
+            "type" : "string",
+            "example" : "EE378627348834",
+            "readOnly" : true
+          }
+        }, {
+          "name" : "query.FirstName",
+          "in" : "query",
+          "description" : "Citizen's first name",
+          "required" : false,
+          "schema" : {
+            "type" : "string",
+            "example" : "John"
+          }
+        }, {
+          "name" : "query.LastName",
+          "in" : "query",
+          "description" : "Citizen's last name",
+          "required" : false,
+          "schema" : {
+            "type" : "string",
+            "example" : "Smith"
+          }
+        }, {
+          "name" : "query.BirthCertificateID",
+          "in" : "query",
+          "description" : "Citizen's birth certificate ID",
+          "required" : false,
+          "schema" : {
+            "type" : "string",
+            "example" : "ID13575987358934-98"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "object",
+                  "properties" : {
+                    "count" : {
+                      "type" : "integer",
+                      "description" : "Number of results",
+                      "example" : 1
+                    },
+                    "next" : {
+                      "type" : "string",
+                      "format" : "uri",
+                      "x-nullable" : true,
+                      "description" : "URI to next results page",
+                      "example" : 1
+                    },
+                    "previous" : {
+                      "type" : "string",
+                      "format" : "uri",
+                      "x-nullable" : true
+                    },
+                    "results" : {
+                      "type" : "array",
+                      "items" : {
+                        "$ref" : "#/components/schemas/Citizen"
+                      }
+                    }
+                  },
+                  "required" : [ "count", "results" ]
+                }
+              }
+            }
+          }
+        },
+        "security" : [ {
+          "apiKey" : [ ]
+        } ]
+      }
+    },
+    "/data/cr/1.0/create" : {
+      "post" : {
+        "tags" : [ "Citizen registry" ],
+        "description" : "Creates a new record in the registry database.",
+        "operationId" : "GDB-CR(1.0)-create",
+        "summary" : "GDB-CR(1.0)-create",
+        "parameters" : [ {
+          "$ref" : "#/components/parameters/Information-Mediator-Client"
+        } ],
+        "requestBody" : {
+          "description" : "",
+          "required" : true,
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "type" : "object",
+                "properties" : {
+                  "write" : {
+                    "type" : "object",
+                    "properties" : {
+                      "content" : {
+                        "$ref" : "#/components/schemas/Citizen"
+                      }
+                    },
+                    "required" : [ "content" ]
+                  }
+                },
+                "required" : [ "write" ]
+              }
+            }
+          }
+        },
+        "responses" : {
+          "200" : {
+            "description" : "",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "object",
+                  "properties" : {
+                    "content" : {
+                      "$ref" : "#/components/schemas/Citizen"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security" : [ {
+          "apiKey" : [ ]
+        } ]
+      }
+    },
+    "/data/cr/1.0/exists" : {
+      "post" : {
+        "tags" : [ "Citizen registry" ],
+        "description" : "Searches records based on input parameters and returns boolean answer (true/false).",
+        "operationId" : "GDB-CR(1.0)-exists",
+        "summary" : "GDB-CR(1.0)-exists",
+        "parameters" : [ {
+          "$ref" : "#/components/parameters/Information-Mediator-Client"
+        } ],
+        "requestBody" : {
+          "description" : "",
+          "required" : true,
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "type" : "object",
+                "properties" : {
+                  "query" : {
+                    "type" : "object",
+                    "properties" : {
+                      "content" : {
+                        "$ref" : "#/components/schemas/Citizen"
+                      }
+                    },
+                    "required" : [ "content" ]
+                  }
+                },
+                "required" : [ "query" ]
+              }
+            }
+          }
+        },
+        "responses" : {
+          "200" : {
+            "description" : "",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "object",
+                  "properties" : {
+                    "answer" : {
+                      "type" : "object",
+                      "properties" : {
+                        "status" : {
+                          "type" : "boolean",
+                          "example" : true,
+                          "description" : "Citizen object found in database"
+                        },
+                        "message" : {
+                          "type" : "string",
+                          "example" : "Object found from database",
+                          "description" : "More information about the object"
+                        }
+                      },
+                      "required" : [ "status" ]
+                    }
+                  },
+                  "required" : [ "answer" ]
+                }
+              }
+            }
+          }
+        },
+        "security" : [ {
+          "apiKey" : [ ]
+        } ]
+      }
+    },
+    "/data/cr/1.0/read" : {
+      "post" : {
+        "tags" : [ "Citizen registry" ],
+        "description" : "Searches and returns one record.",
+        "operationId" : "GDB-CR(1.0)-read",
+        "summary" : "GDB-CR(1.0)-read",
+        "parameters" : [ {
+          "$ref" : "#/components/parameters/Information-Mediator-Client"
+        } ],
+        "requestBody" : {
+          "description" : "",
+          "required" : true,
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "type" : "object",
+                "properties" : {
+                  "query" : {
+                    "type" : "object",
+                    "properties" : {
+                      "content" : {
+                        "$ref" : "#/components/schemas/Citizen"
+                      }
+                    },
+                    "required" : [ "content" ]
+                  }
+                },
+                "required" : [ "query" ]
+              }
+            }
+          }
+        },
+        "responses" : {
+          "200" : {
+            "description" : "",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "object",
+                  "properties" : {
+                    "content" : {
+                      "$ref" : "#/components/schemas/Citizen"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security" : [ {
+          "apiKey" : [ ]
+        } ]
+      }
+    },
+    "/data/cr/1.0/update" : {
+      "put" : {
+        "tags" : [ "Citizen registry" ],
+        "description" : "Updates one existing record in the registry database.",
+        "operationId" : "GDB-CR(1.0)-update",
+        "summary" : "GDB-CR(1.0)-update",
+        "parameters" : [ {
+          "$ref" : "#/components/parameters/Information-Mediator-Client"
+        } ],
+        "requestBody" : {
+          "description" : "",
+          "required" : true,
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "type" : "object",
+                "properties" : {
+                  "query" : {
+                    "type" : "object",
+                    "description" : "Search object that needs to be updated",
+                    "properties" : {
+                      "content" : {
+                        "$ref" : "#/components/schemas/Citizen"
+                      }
+                    },
+                    "required" : [ "content" ]
+                  },
+                  "write" : {
+                    "type" : "object",
+                    "description" : "Update found object with the following data",
+                    "properties" : {
+                      "content" : {
+                        "$ref" : "#/components/schemas/Citizen"
+                      }
+                    },
+                    "required" : [ "content" ]
+                  }
+                },
+                "required" : [ "write" ]
+              }
+            }
+          }
+        },
+        "responses" : {
+          "200" : {
+            "description" : ""
+          }
+        },
+        "security" : [ {
+          "apiKey" : [ ]
+        } ]
+      }
+    },
+    "/data/cr/1.0/update-entries" : {
+      "put" : {
+        "tags" : [ "Citizen registry" ],
+        "description" : "Updates multiple records in the registry database that match the input query.",
+        "operationId" : "GDB-CR(1.0)-update-entries",
+        "summary" : "GDB-CR(1.0)-update-entries",
+        "parameters" : [ {
+          "$ref" : "#/components/parameters/Information-Mediator-Client"
+        } ],
+        "requestBody" : {
+          "description" : "",
+          "required" : true,
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "type" : "object",
+                "properties" : {
+                  "query" : {
+                    "type" : "object",
+                    "description" : "Find objects that needs to be updated",
+                    "properties" : {
+                      "content" : {
+                        "$ref" : "#/components/schemas/Citizen"
+                      }
+                    },
+                    "required" : [ "content" ]
+                  },
+                  "write" : {
+                    "type" : "object",
+                    "description" : "Data that needs to be added to the found objects",
+                    "properties" : {
+                      "content" : {
+                        "$ref" : "#/components/schemas/Citizen"
+                      }
+                    },
+                    "required" : [ "content" ]
+                  }
+                },
+                "required" : [ "write" ]
+              }
+            }
+          }
+        },
+        "responses" : {
+          "200" : {
+            "description" : ""
+          }
+        },
+        "security" : [ {
+          "apiKey" : [ ]
+        } ]
+      }
+    },
+    "/data/cr/1.0/update-or-create" : {
+      "post" : {
+        "tags" : [ "Citizen registry" ],
+        "description" : "API updates existing record if matching with input parameters is successful. If record is not found the API will create a new record. ",
+        "operationId" : "GDB-CR(1.0)-update-or-create",
+        "summary" : "GDB-CR(1.0)-update-or-create",
+        "parameters" : [ {
+          "$ref" : "#/components/parameters/Information-Mediator-Client"
+        } ],
+        "requestBody" : {
+          "description" : "",
+          "required" : true,
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "type" : "object",
+                "properties" : {
+                  "query" : {
+                    "type" : "object",
+                    "description" : "Find object to update, if object not found, new will be created",
+                    "properties" : {
+                      "content" : {
+                        "$ref" : "#/components/schemas/Citizen"
+                      }
+                    },
+                    "required" : [ "content" ]
+                  },
+                  "write" : {
+                    "type" : "object",
+                    "description" : "Data that will be updated for found citizen object. If object not found new object with this data is created",
+                    "properties" : {
+                      "content" : {
+                        "$ref" : "#/components/schemas/Citizen"
+                      }
+                    },
+                    "required" : [ "content" ]
+                  }
+                },
+                "required" : [ "write" ]
+              }
+            }
+          }
+        },
+        "responses" : {
+          "200" : {
+            "description" : "",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "object",
+                  "properties" : {
+                    "content" : {
+                      "$ref" : "#/components/schemas/Citizen"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security" : [ {
+          "apiKey" : [ ]
+        } ]
+      }
+    },
+    "/data/cr/1.0/{ID}/delete" : {
+      "delete" : {
+        "tags" : [ "Citizen registry" ],
+        "description" : "Delete record.",
+        "operationId" : "GDB-CR(1.0)-delete",
+        "summary" : "GDB-CR(1.0)-delete",
+        "parameters" : [ {
+          "$ref" : "#/components/parameters/Information-Mediator-Client"
+        }, {
+          "name" : "ID",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "example" : "ID1",
+            "description" : "ID of the citizen that needs to be deleted from the citizen registry"
+          }
+        } ],
+        "responses" : {
+          "204" : {
+            "description" : ""
+          }
+        },
+        "security" : [ {
+          "apiKey" : [ ]
+        } ]
+      }
+    },
+    "/data/cr/1.0/{uuid}/read-value/{field}.{ext}" : {
+      "get" : {
+        "tags" : [ "Citizen registry" ],
+        "description" : "Searches and returns one record’s one field value.",
+        "operationId" : "GDB-CR(1.0)-read-value",
+        "summary" : "GDB-CR(1.0)-read-value",
+        "parameters" : [ {
+          "$ref" : "#/components/parameters/Information-Mediator-Client"
+        }, {
+          "name" : "uuid",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "description" : "Primary key field",
+            "example" : "DB-1"
+          }
+        }, {
+          "name" : "field",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "description" : "Data format. Endpoint: /data/DB/1.0/DB-1/read-value/First%20name.json",
+            "example" : "First name"
+          }
+        }, {
+          "name" : "ext",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "description" : "Data format. Endpoint: /data/DB/1.0/DB-1/read-value/First%20name.json",
+            "example" : "json"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "anyOf" : [ {
+                    "type" : "string"
+                  }, {
+                    "type" : "object",
+                    "properties" : {
+                      "value" : {
+                        "anyOf" : [ {
+                          "type" : "array",
+                          "items" : {
+                            "anyOf" : [ {
+                              "type" : "boolean"
+                            }, {
+                              "type" : "integer"
+                            }, {
+                              "type" : "number"
+                            }, {
+                              "type" : "object"
+                            }, {
+                              "type" : "string"
+                            } ]
+                          }
+                        }, {
+                          "type" : "boolean"
+                        }, {
+                          "type" : "integer"
+                        }, {
+                          "type" : "number"
+                        }, {
+                          "type" : "object"
+                        }, {
+                          "type" : "string"
+                        } ]
+                      }
+                    }
+                  } ]
+                }
+              }
+            }
+          }
+        },
+        "security" : [ {
+          "apiKey" : [ ]
+        } ]
+      }
+    },
+    "/data/MyPersonalDataUsage/1.0" : {
+      "get" : {
+        "tags" : [ "MyPersonalDataUsage API" ],
+        "description" : "Allows a user to see who has read their personal data.",
+        "operationId" : "DPU",
+        "parameters" : [ {
+          "$ref" : "#/components/parameters/Information-Mediator-Client"
+        }, {
+          "name" : "userID",
+          "in" : "query",
+          "description" : "User's personal unique identifier",
+          "required" : true,
+          "style" : "form",
+          "schema" : {
+            "type" : "string",
+            "example" : "EE378129277266"
+          }
+        }, {
+          "name" : "DatabaseID",
+          "in" : "query",
+          "description" : "Database acronym",
+          "required" : true,
+          "style" : "form",
+          "schema" : {
+            "type" : "string",
+            "example" : "MCTS"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "Success Response",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "array",
+                  "description" : "Array of found data processign logs",
+                  "items" : {
+                    "$ref" : "#/components/schemas/PersonalDataUsage"
+                  }
+                }
+              }
+            }
+          },
+          "400" : {
+            "description" : "Invalid ID supplied"
+          },
+          "404" : {
+            "description" : "Person requests not found"
+          }
+        }
+      }
+    }
+  },
+  "components" : {
+    "securitySchemes" : {
+      "apiKey" : {
+        "type" : "apiKey",
+        "name" : "Authorization",
+        "in" : "header"
+      }
+    },
+    "parameters" : {
+      "Information-Mediator-Client" : {
+        "in" : "header",
+        "name" : "Information-Mediator-Client",
+        "example" : "eGovStack/GOV/90000009/digitalregistries",
+        "description" : "Format is: INSTANCE/CLASS/MEMBER/SUBSYSTEM",
+        "schema" : {
+          "type" : "string"
+        },
+        "required" : true
+      }
+    },
+    "schemas" : {
+      "MCC" : {
+        "type" : "object",
+        "properties" : {
+          "ID" : {
+            "type" : "string",
+            "description" : "Object ID in the database",
+            "example" : "MCTS1"
+          },
+          "Child" : {
+            "$ref" : "#/components/schemas/Child"
+          },
+          "Registraion date" : {
+            "type" : "string",
+            "format" : "date",
+            "description" : "Date of registration",
+            "example" : "2021-01-30"
+          },
+          "Expiry date" : {
+            "type" : "string",
+            "format" : "date",
+            "description" : "The expiry date of the registration",
+            "example" : "2021-01-30"
+          },
+          "Caretaker" : {
+            "$ref" : "#/components/schemas/Caretaker"
+          }
+        }
+      },
+      "Child" : {
+        "type" : "object",
+        "properties" : {
+          "ID" : {
+            "type" : "string",
+            "description" : "Child's identifier",
+            "example" : "xyz-12345678910"
+          },
+          "Firstname" : {
+            "type" : "string",
+            "description" : "Child's first name",
+            "example" : "Usha"
+          },
+          "Lastname" : {
+            "type" : "string",
+            "description" : "Child's last name",
+            "example" : "Bajaj"
+          },
+          "Birthdate" : {
+            "type" : "string",
+            "format" : "date",
+            "description" : "Child's birth date",
+            "example" : "2021-01-30"
+          },
+          "Address" : {
+            "type" : "string",
+            "description" : "Child's address",
+            "example" : "Longroad 123, Big Village"
+          },
+          "Birth_certificate" : {
+            "$ref" : "#/components/schemas/Birth_certificate"
+          }
+        }
+      },
+      "Birth_certificate" : {
+        "anyOf" : [ {
+          "type" : "object",
+          "description" : "Birth certificate file",
+          "properties" : {
+            "url" : {
+              "type" : "string",
+              "description" : "URL to the birth certificate document",
+              "example" : "https://gdbs.dev.training.eregistrations.org/data/mcc/files/ID23.pdf"
+            },
+            "originalName" : {
+              "type" : "string",
+              "description" : "Document original name",
+              "example" : "Birth certificate"
+            },
+            "type" : {
+              "type" : "string",
+              "description" : "Document type",
+              "example" : "application/pdf",
+              "enum" : [ "application/pdf", "image/jpeg", "image/png", "image/gif", "image/tiff", "image/bmp", "image/x-ms-bmp", "application/rtf", "text/rtf", "application/vnd.openxmlformats-officedocument.wordprocessingml.document", "application/vnd.oasis.opendocument.text" ]
+            }
+          },
+          "required" : [ "url", "originalName", "type" ]
+        }, {
+          "type" : "object",
+          "properties" : {
+            "$documentId" : {
+              "type" : "number"
+            }
+          },
+          "required" : [ "$documentId" ]
+        } ]
+      },
+      "Caretaker" : {
+        "type" : "object",
+        "properties" : {
+          "ID" : {
+            "type" : "string",
+            "description" : "Caretaker's identifier",
+            "example" : "EL129983773663"
+          },
+          "Firstname" : {
+            "type" : "string",
+            "description" : "Caretaker's first name",
+            "example" : "John"
+          },
+          "Lastname" : {
+            "type" : "string",
+            "description" : "Caretaker's last name",
+            "example" : "Smith"
+          },
+          "Birthdate" : {
+            "type" : "string",
+            "format" : "date",
+            "description" : "Caretaker's birth date",
+            "example" : "1980-01-30"
+          },
+          "Phone" : {
+            "type" : "string",
+            "description" : "Caretaker's phone number",
+            "example" : "+37258000000"
+          },
+          "Email" : {
+            "type" : "string",
+            "description" : "Caretaker's email",
+            "example" : "jonh.smith@email.com"
+          },
+          "Picture" : {
+            "$ref" : "#/components/schemas/Picture"
+          },
+          "Document ID" : {
+            "$ref" : "#/components/schemas/Document_ID"
+          }
+        }
+      },
+      "Picture" : {
+        "anyOf" : [ {
+          "type" : "object",
+          "description" : "Caretaker's picture object in database",
+          "properties" : {
+            "url" : {
+              "type" : "string",
+              "description" : "URL to the Caretaker's picture file",
+              "example" : "https://gdbs.dev.training.eregistrations.org/data/mcc/files/ID2243.pdf"
+            },
+            "originalName" : {
+              "type" : "string",
+              "description" : "Caretaker's picture original file name",
+              "example" : "John Smith avatar"
+            },
+            "type" : {
+              "type" : "string",
+              "description" : "Picture type",
+              "example" : "image/jpeg",
+              "enum" : [ "application/pdf", "image/jpeg", "image/png", "image/gif", "image/tiff", "image/bmp", "image/x-ms-bmp", "application/rtf", "text/rtf", "application/vnd.openxmlformats-officedocument.wordprocessingml.document", "application/vnd.oasis.opendocument.text" ]
+            }
+          },
+          "required" : [ "url", "originalName", "type" ]
+        }, {
+          "type" : "object",
+          "properties" : {
+            "$documentId" : {
+              "type" : "number"
+            }
+          },
+          "required" : [ "$documentId" ]
+        } ]
+      },
+      "Document_ID" : {
+        "anyOf" : [ {
+          "type" : "object",
+          "description" : "Caretaker's identification document",
+          "properties" : {
+            "url" : {
+              "type" : "string",
+              "description" : "URL to the Caretaker's identification document",
+              "example" : "https://gdbs.dev.training.eregistrations.org/data/mcc/files/ID223.pdf"
+            },
+            "originalName" : {
+              "type" : "string",
+              "description" : "Identification document original name",
+              "example" : "John Smith passport"
+            },
+            "type" : {
+              "type" : "string",
+              "description" : "File type of identification document",
+              "example" : "application/pdf",
+              "enum" : [ "application/pdf", "image/jpeg", "image/png", "image/gif", "image/tiff", "image/bmp", "image/x-ms-bmp", "application/rtf", "text/rtf", "application/vnd.openxmlformats-officedocument.wordprocessingml.document", "application/vnd.oasis.opendocument.text" ]
+            }
+          },
+          "required" : [ "url", "originalName", "type" ]
+        }, {
+          "type" : "object",
+          "properties" : {
+            "$documentId" : {
+              "type" : "number"
+            }
+          },
+          "required" : [ "$documentId" ]
+        } ]
+      },
+      "PersonalDataUsage" : {
+        "type" : "object",
+        "properties" : {
+          "ID" : {
+            "type" : "string",
+            "description" : "Log record ID",
+            "example" : "1234567"
+          },
+          "ReaderID" : {
+            "type" : "string",
+            "description" : "Identifier of a reader who looked at personal data",
+            "example" : "EE37819285773"
+          },
+          "ReaderInitials" : {
+            "type" : "string",
+            "description" : "Reader's initials",
+            "example" : "JD"
+          },
+          "ReaderInstitutionID" : {
+            "type" : "string",
+            "description" : "Reader's instituition ID",
+            "example" : "EE70049837"
+          },
+          "ReaderInstitutionName" : {
+            "type" : "string",
+            "description" : "Reader's institution name",
+            "example" : "East Hospital"
+          },
+          "ReaderApplicationName" : {
+            "type" : "string",
+            "description" : "Reader's institution system name",
+            "example" : "East Hospital healthcare back office"
+          },
+          "SearchDateTime" : {
+            "type" : "string",
+            "format" : "date-time",
+            "description" : "Date and time of registration",
+            "example" : "2017-07-21T17:32:28Z"
+          },
+          "Refrences" : {
+            "type" : "array",
+            "description" : "Personal Data reference",
+            "items" : {
+              "properties" : {
+                "ReferenceID" : {
+                  "type" : "string",
+                  "description" : "Registration ID",
+                  "example" : "MCTS31"
+                }
+              }
+            }
+          }
+        }
+      },
+      "Citizen" : {
+        "type" : "object",
+        "properties" : {
+          "ID" : {
+            "type" : "string",
+            "description" : "Citizen's identifier",
+            "example" : "EE378627348834"
+          },
+          "FirstName" : {
+            "type" : "string",
+            "description" : "Citizen's first name",
+            "example" : "John Helmut"
+          },
+          "LastName" : {
+            "type" : "string",
+            "description" : "Citizen's last name",
+            "example" : "Smith Carry"
+          },
+          "BirthCertificateID" : {
+            "type" : "string",
+            "description" : "Birth certificate ID in CR",
+            "example" : "RR-1234567889"
+          }
+        }
+      }
+    }
+  }
+}

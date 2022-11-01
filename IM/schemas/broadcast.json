@@ -1,0 +1,71 @@
+{
+  "$id": "http://example.com/example.json",
+  "$schema": "http://json-schema.org/draft-07/schema",
+  "default": {},
+  "description": "A broadcast is how an application must format data for the pub-sub layer. Note that no specification exists inside 'payload'.",
+  "examples": [
+    {
+      "type": "NEW_PATIENT",
+      "payload": {
+        "id": 13,
+        "name": "Taylor"
+      },
+      "error": false,
+      "meta": {}
+    }
+  ],
+  "required": ["type"],
+  "title": "Broadcast",
+  "type": "object",
+  "properties": {
+    "type": {
+      "$id": "#/properties/type",
+      "default": "",
+      "description": "The type of an action identifies to the consumer the nature of the action that has occurred. type is a string constant. If two types are the same, they MUST be strictly equivalent (using ===).",
+      "examples": [
+        "NEW_PATIENT",
+        "PAYMENT_COMPLETED",
+        "INSURANCE_PAYMENT_COMPLETED"
+      ],
+      "title": "Type",
+      "type": "string"
+    },
+    "payload": {
+      "$id": "#/properties/payload",
+      "default": "",
+      "description": "The optional payload property MAY be any type of value. It represents the payload of the action. Any information about the action that is not the type or status of the action should be part of the payload field. By convention, if error is true, the payload SHOULD be an error object. This is akin to rejecting a promise with an error object.",
+      "examples": [
+        {
+          "id": 13,
+          "name": "Taylor",
+          "dob": "2020-03-12"
+        },
+        {
+          "transaction": "fruitPurchase",
+          "bananas": 12,
+          "apples": 42,
+          "recipient": "MOA"
+        }
+      ],
+      "title": "The firstName schema",
+      "type": "object"
+    },
+    "error": {
+      "$id": "#/properties/error",
+      "default": false,
+      "description": "The optional error property MAY be set to true if the action represents an error. An action whose error is true is analogous to a rejected Promise. By convention, the payload SHOULD be an error object. If error has any other value besides true, including undefined and null, the action MUST NOT be interpreted as an error.",
+      "examples": [true, false],
+      "title": "Error",
+      "type": "boolean"
+    },
+    "meta": {
+      "$id": "#/properties/meta",
+      "default": null,
+      "description": "The optional meta property MAY be any type of value. It is intended for any extra information that is not part of the payload.",
+      "examples": [{ "sender": "MoH App v2" }, 42],
+      "title": "Meta",
+      "type": "object"
+    }
+  },
+  "additionalProperties": true
+}

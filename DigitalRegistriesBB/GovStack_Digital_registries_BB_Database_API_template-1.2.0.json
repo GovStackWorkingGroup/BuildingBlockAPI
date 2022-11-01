@@ -1,0 +1,571 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "GovStack Digital registries BB Database API template",
+    "description": "This is a sample API\n",
+    "contact": {
+      "email": "tambetartma88@gmail.com"
+    },
+    "version": "1.1.0",
+    "termsOfService": "#",
+    "license": {
+      "name": "Apache 2.0",
+      "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+    }
+  },
+  "servers": [
+    {
+      "description": "Eregistrations API",
+      "url": "http://ss2.egovstack.net/r1/eGovStack/COM/11222456/swaggerhub/creg/"
+    }
+  ],
+  "tags": [
+    {
+      "name": "Database API",
+      "description": "API endpoint that allows to query MCTS data from database"
+    },
+    {
+      "name": "Databases",
+      "description": "API gets all databases and schema versions as a list array"
+    }
+  ],
+  "paths": {
+    "/database/{id}": {
+      "get": {
+        "tags": [
+          "Database API"
+        ],
+        "description": "API endpoint that allows user to get database information with schema",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/Information-Mediator-Client"
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "example": 1,
+              "description": "Id of the database that schema is requested"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DatabaseInfo"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "apiKey": []
+          }
+        ]
+      },
+      "delete": {
+        "tags": [
+          "Database API"
+        ],
+        "description": "API endpoint that allows user to delete database schema",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/Information-Mediator-Client"
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "example": 1,
+              "description": "Id of the database that schema is requested"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string",
+                  "example": "Success"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "apiKey": []
+          }
+        ]
+      }
+    },
+    "/database/modify": {
+      "post": {
+        "tags": [
+          "Database API"
+        ],
+        "description": "API endpoint that allows user to create or modify database schema",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/Information-Mediator-Client"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "group_name": {
+                    "type": "string",
+                    "description": "Group name where this schema is located",
+                    "example": "Test"
+                  },
+                  "catalog_name": {
+                    "type": "string",
+                    "description": "Catalog name where this schema is located",
+                    "example": "Mother and Child"
+                  },
+                  "code": {
+                    "type": "string",
+                    "description": "Short code of the database",
+                    "example": "MCR"
+                  },
+                  "schema": {
+                    "allOf": [
+                      {
+                        "$ref": "#/components/schemas/DatabaseSchema"
+                      }
+                    ],
+                    "required": [
+                      "creationDate",
+                      "description",
+                      "filename"
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DatabaseSchema"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/databases": {
+      "get": {
+        "tags": [
+          "Databases"
+        ],
+        "description": "API endpoint that allows user to get information about all databases",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/Information-Mediator-Client"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DatabasesSchema"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "apiKey": []
+          }
+        ]
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "apiKey": {
+        "type": "apiKey",
+        "name": "Authorization",
+        "in": "header"
+      }
+    },
+    "parameters": {
+      "Information-Mediator-Client": {
+        "in": "header",
+        "name": "Information-Mediator-Client",
+        "example": "eGovStack/GOV/90000009/eregistrations-dev",
+        "description": "Format is: INSTANCE/CLASS/MEMBER/SUBSYSTEM",
+        "schema": {
+          "type": "string"
+        },
+        "required": true
+      }
+    },
+    "schemas": {
+      "DatabaseInfo": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "description": "Database ID",
+            "example": 353
+          },
+          "version": {
+            "type": "string",
+            "description": "Database version number",
+            "example": "2.7"
+          },
+          "name": {
+            "type": "string",
+            "description": "Database name",
+            "example": "MCTS"
+          },
+          "description": {
+            "type": "string",
+            "description": "Database description",
+            "example": "Database holding information about MCTS objects"
+          },
+          "institution": {
+            "type": "string",
+            "description": "Owner of the database (institution)",
+            "example": "Ministry of Social Affairs"
+          },
+          "number_format": {
+            "type": "string",
+            "description": "Number format in database",
+            "example": "{code}{indexNoByCode}"
+          },
+          "schema": {
+            "$ref": "#/components/schemas/DatabaseSchema"
+          },
+          "schema_tags": {
+            "type": "array",
+            "description": "List of different schema tags that are related to the database",
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string",
+                  "example": ""
+                },
+                "path": {
+                  "type": "string",
+                  "example": "/Child/Citizenship"
+                },
+                "is_fulltext": {
+                  "type": "boolean",
+                  "example": true
+                }
+              }
+            }
+          },
+          "schema_flags": {
+            "type": "array",
+            "description": "List of different schema flags that are related to the database",
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string",
+                  "example": "mandatory"
+                },
+                "path": {
+                  "type": "string",
+                  "example": "/ID"
+                }
+              }
+            }
+          },
+          "fields_uniques": {
+            "type": "array",
+            "items": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "example": ""
+              }
+            }
+          },
+          "is_draft": {
+            "type": "boolean",
+            "description": "Shows database draft status (is draft true/false)",
+            "example": false
+          },
+          "is_disabled": {
+            "type": "boolean",
+            "description": "Shows if database is disabled or not",
+            "example": false
+          },
+          "is_archived": {
+            "type": "boolean",
+            "description": "Shows if database is archived or not",
+            "example": false
+          },
+          "modified_at": {
+            "type": "string",
+            "description": "Shows database last modification time",
+            "example": "2021-10-03T08:35:01.775915Z"
+          },
+          "by_user_name": {
+            "type": "string",
+            "description": "Shows user name of a person who created the database",
+            "example": "ingmar.dev"
+          },
+          "by_user_auth_id": {
+            "type": "integer",
+            "description": "Shows id of a person who created the database",
+            "example": 1
+          },
+          "by_on_behalf_of_user_auth_id": {
+            "type": "integer",
+            "description": "Shows user id whose behalf was this database created",
+            "example": null
+          },
+          "by_on_behalf_of_user_name": {
+            "type": "string",
+            "description": "Shows user name whose behalf was this database created",
+            "example": null
+          },
+          "generic_services": {
+            "type": "array",
+            "description": "List of possible API services for this database",
+            "items": {
+              "type": "object",
+              "properties": {
+                "service_id": {
+                  "type": "integer",
+                  "example": 1
+                },
+                "name": {
+                  "type": "string",
+                  "example": "data-create"
+                },
+                "is_visible": {
+                  "type": "boolean",
+                  "example": true
+                },
+                "used_count": {
+                  "type": "integer",
+                  "example": 0
+                }
+              }
+            }
+          },
+          "data_index_increment": {
+            "type": "integer",
+            "description": "Shows database increment",
+            "example": 0
+          },
+          "has_logo": {
+            "type": "boolean",
+            "description": "Shows if this database has logo or not",
+            "example": false
+          }
+        }
+      },
+      "DatabaseSchema": {
+        "type": "object",
+        "description": "Schema object describing the database",
+        "properties": {
+          "type": {
+            "type": "string",
+            "example": "object"
+          },
+          "properties": {
+            "type": "object",
+            "properties": {
+              "ID": {
+                "type": "object",
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "example": "string"
+                  },
+                  "triggers": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "conditions": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "logic": {
+                                "type": "string",
+                                "example": "=="
+                              },
+                              "value": {
+                                "type": "string",
+                                "example": ""
+                              },
+                              "gate": {
+                                "type": "string",
+                                "example": "&&"
+                              }
+                            }
+                          }
+                        },
+                        "actions": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "type": {
+                                "type": "string",
+                                "example": "set-value"
+                              },
+                              "value": {
+                                "type": "string",
+                                "example": "MCTS{indexNoByCode}"
+                              },
+                              "field_id": {
+                                "type": "integer",
+                                "example": 1
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "primaryKey": {
+                    "type": "boolean",
+                    "example": true
+                  },
+                  "readOnly": {
+                    "type": "boolean",
+                    "example": true
+                  },
+                  "description": {
+                    "type": "string",
+                    "example": "Registration ID"
+                  },
+                  "example": {
+                    "type": "string",
+                    "example": "MCTS31"
+                  },
+                  "id": {
+                    "type": "integer",
+                    "example": 1
+                  }
+                }
+              },
+              "Child": {
+                "type": "object",
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "example": "string"
+                  },
+                  "properties": {
+                    "type": "object",
+                    "properties": {
+                      "ID": {
+                        "type": "object",
+                        "properties": {
+                          "type": {
+                            "type": "string",
+                            "example": "string"
+                          },
+                          "description": {
+                            "type": "string",
+                            "example": "Child ID"
+                          },
+                          "example": {
+                            "type": "string",
+                            "example": "ID2"
+                          },
+                          "id": {
+                            "type": "integer",
+                            "example": 13
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "incrementIndex": {
+            "type": "integer",
+            "example": 20
+          },
+          "required": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "example": "ID"
+            }
+          }
+        }
+      },
+      "DatabasesSchema": {
+        "type": "object",
+        "description": "Example of databases API request response body",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "description": "ID of databases",
+            "example": 85
+          },
+          "name": {
+            "type": "string",
+            "description": "Name of databases group",
+            "example": "Mother and Child"
+          },
+          "code": {
+            "type": "string",
+            "description": "Short name of databases group",
+            "example": "MCTS"
+          },
+          "databases": {
+            "type": "array",
+            "description": "Array of databases schemas",
+            "items": {
+              "$ref": "#/components/schemas/DatabaseInfo"
+            }
+          },
+          "group_id": {
+            "type": "integer",
+            "description": "ID of databases group",
+            "example": 10
+          },
+          "order": {
+            "type": "integer",
+            "description": "Order number of databases group",
+            "example": 76
+          },
+          "data_index_increment": {
+            "type": "integer",
+            "description": "Data index increment of databases group",
+            "example": 3
+          }
+        }
+      }
+    }
+  }
+}
