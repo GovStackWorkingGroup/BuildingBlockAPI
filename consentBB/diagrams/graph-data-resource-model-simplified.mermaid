@@ -1,0 +1,19 @@
+graph BT
+
+    subgraph Individual's Consent Choices
+    consentRecord(Consent Record)
+    individual(Individual) --> consentRecord
+    end
+
+    individual -.- registration(Registration<br>Functional ID or<br>Foundational ID)
+
+    subgraph Configuration
+    agreement(Consent Agreement) --> consentRecord
+    policy --> agreement
+    end
+
+    org --> policy(Data Policy)
+
+    consumer(Organization <br> Consumer) -..- agreement
+    consumer -..- consentRecord
+    org(Organization <br> Provider or Controller) --> agreement

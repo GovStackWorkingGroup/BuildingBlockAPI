@@ -1,0 +1,63 @@
+Endpoint slug,Type,Use case,Scenario,Arguments,Returns,Description,Data sensitivity,summary,operationId,responseOK,security
+API tag: org,,,,,,,,,,,
+CRUDL for Policy object,,,,,,,,,,,
+/org/policy/,GET,"UC-C-PIC-A-001, UC-C-PIC-A-002",,PolicyFilter,Policy<list>,LIST - Fetches list of readable Policy objects,FALSE,Returns a list of readable Policy objects,orgListPolicy,A list of Policy objects readable for the current session's credentials.,admin
+/org/policy/,POST,UC-C-PIC-A-001,,Policy,"Policy, Revision",CREATE - Creates a new Policy object and returns the new object and a PolicyRevision,FALSE,,orgCreatePolicy,"A set consisting of the new Policy object created, together with the initial Revision object.",org
+/org/policy/{id}/,GET,UC-C-PIC-A-003,,PolicyFilter,"Policy, Revision","READ - get a Policy object + latest Revision. If a PolicyFilter is supplied and contains a revision_id, then this specific revision is returned.",FALSE,,orgReadPolicy,,org
+/org/policy/{id}/revisions/,GET,UC-C-PIC-A-003,,,"Policy, Revision<List>",LIST - returns a Policy object with a list of all Revisions,FALSE,,orgListPolicyRevisions,,org
+/org/policy/{id}/,PUT,UC-C-PIC-A-002,,Policy,"Policy, Revision","UPDATE - Updates an existing Policy object, returning the updated version and a new revision. Updating a Policy does not affect existing references in Agreement, the new revision should be specified for Agreement.",FALSE,,orgUpdatePolicy,,org
+/org/policy/{id}/,DELETE,UC-C-PIC-A-004,,,Revision,"DELETE - Deletes an existing Policy object, returning the updated version and a new revision. Deleting a Policy is not possible if it's associated with active Agreement.",FALSE,,orgDeletePolicy,,org
+CRUDL for Agreement object,,,,,,,FALSE,,,,org
+/org/agreement/,GET,UC-C-PIC-A-003,,AgreementFilter,Agreement<List>,,FALSE,,orgListAgreement,,org
+/org/agreement/{id}/,GET,UC-C-PIC-A-003,,,"Agreement, Revision",READ - fetches the latest version of an Agreement,FALSE,,orgReadAgreement,,org
+/org/agreement/,POST,UC-C-PIC-A-001,,Agreement,"Agreement, Revision",CREATE - A new Agreement object is created and returned together with AgreementRevision,FALSE,,orgCreateAgreement,,org
+/org/agreement/{id}/,PUT,UC-C-PIC-A-002,,Agreement,"Agreement, Revision",UPDATE - An existing Agreement object is created and returned together with AgreementRevision,FALSE,,orgUpdateAgreement,,org
+/org/agreement/,DELETE,UC-C-PIC-A-004,,,Revision,,FALSE,,orgDeleteAgreement,,org
+Limited ConsentRecord operations,,,,,,,,,,,org
+/org/record/{id}/,GET,,,,ConsentRecord,READ - fetches a ConsentRecord,TRUE,,orgReadConsentRecord,,org
+/org/record/{id}/withdraw/,PUT,,,,ConsentRecord,"UPDATE - invalidates/withdraws a ConsentRecord, for usage in unconventional withdrawal of consent, for instance if withdrawal happens through an email or phone call.",TRUE,,orgUpdateConsentRecord,,org
+"CRUD for ""Individual"" object",,,,,,,TRUE,,,,org
+/org/individual/,POST,,,RegistryReference,Individual,CREATE - Creates an Individual in the Consent system,TRUE,,orgIndividualCreate,,org
+/org/individual/{id}/,GET,,,,Individual,READ - Fetch an Individual in the Consent system,TRUE,,orgIndividualRead,,org
+/org/individual/{id}/,PUT,,,,Individual,UPDATE - Updates an Individual in the Consent system,TRUE,,orgIndividualUpdate,,org
+/org/individual/{id}/,DELETE,,,,Individual,DELETE - entirely removes an individual from the system and cascades necessary actions to related ConsentRecord objects,TRUE,,orgIndividualDelete,,org
+,,,,,,,,,,,
+,,,,,,,,,,,
+API tag: dataconsumer,,,,,,,,,,,
+/dataconsumer/config/agreement/,GET,,1.1,AgreementFilter,Agreement<List>,LIST - Fetch agreements,FALSE,,,,consumer
+/dataconsumer/consent/,GET,,"3.1, 1.2",ConsentRecordFilter,ConsentRecord<List>,"LIST - Fetch consent records. For a given Agreement and Individual, query if consent exists",TRUE,,,,consumer
+/dataconsumer/agreement/{id}/,GET,,1.2,,Agreement,READ - Fetch a specific agreement,FALSE,,,,consumer
+,,,,,,,,,,,consumer
+API tag: individual,,,,,,,,,,,
+/individual/{id}/agreement/{agreementId}/,POST,UC-C-PIC-I-002,1.2,"Individual, Agreement, Revision","ConsentRecord, Revision","CREATE - For a particular Individual and a particular Agreement, create a new Consent Record pointing to the current Revision of a given Agreement",TRUE,,,,individual
+/individual/{id}/consentrecord/{consentRecordId}/,PUT,UC-C-PIC-I-003,,"Individual, Agreement, Revision","ConsentRecord, Revision",UPDATE*,TRUE,,,,individual
+/individual/{id}/agreement/{agreementId}/withdraw/,PUT,UC-C-PIC-I-003,,Individual,"ConsentRecord, Revision",UPDATE*,TRUE,,,,individual
+/individual/{id}/agreement/,GET,UC-C-PIC-I-001,,,"ConsentRecord<list>, Agreement<list>",LIST,TRUE,,,,individual
+/individual/{id}/agreement/{agreementId}/,GET,UC-C-PIC-I-001,,,"ConsentRecord, Revision<list>",LIST,TRUE,,,,individual
+/individual/{id}/,DELETE,,,,,"DELETE - Cascading delete operation for Right To Be Forgotten, deletes all Consent Records that shall not be retained and have a ""forgettable"" Agreement.",TRUE,,,,individual
+,,,,,,,,,,,
+API tag: auditor,,,,,,,,,,,
+/auditor/tracker/,GET,"UC-C-PIC-AT-001, UC-C-PIC-AT-002",,,AuditTracker,LIST - show available AuditTracker objects,,,,,
+/auditor/tracker/,POST,"UC-C-PIC-AT-001, UC-C-PIC-AT-002",,AuditTracker,AuditTracker,CREATE - A new AuditTracker is set up,,,,,
+/auditor/tracker/{id}/,GET,"UC-C-PIC-AT-001, UC-C-PIC-AT-002",,,AuditTracker,READ - get the details of an AuditTracker,,,,,
+/auditor/tracker/{id}/,PUT,"UC-C-PIC-AT-001, UC-C-PIC-AT-002",,AuditTracker,AuditTracker,UPDATE - get the details of an AuditTracker,,,,,
+/auditor/tracker/{id}/,DELETE,"UC-C-PIC-AT-001, UC-C-PIC-AT-002",,,AuditTracker,DELETE - removes an AuditTracker,,,,,
+/auditor/consentrecord/,GET,UC-C-PIC-AT-003,,ConsentRecordFilter,ConsentRecord<List>,LIST - fetch ConsentRecord objects,,,,,
+/auditor/agreement/,GET,UC-C-PIC-AT-003,,AgreementFilter,Agreement<List>,LIST - fetch configured Agreement objects,,,,,
+,,,,,,,,,,,
+API tag: notification,,,,,,,,,,,
+,,,,,,,,,,,
+API tag: callback,,,,,,,,,,,
+/callback/registrybb/revision/{id}/,,,,RegistryReference,,"For asynchronous flows, the Consenent Management BB will require a callback from the Registry BB when saving and updating records on an Individual.",FALSE,,,,
+,,,,,,,,,,,
+,,,,,,,,,,,
+Questions / notes,,,,,,,,,,,
+"Sensitive/Personal data - Make Individual ID stored as some kind of anonymous token in HTTP headers, session state or like-wise. We should avoid spilling over individually identifiable data in HTTP server logs etc.",,,,,,,,,,,
+"Right To Be Forgotten, all the rights actually...",,,,,,,,,,,
+List filters and pagination,,,,,,,,,,,
+"Should we have CRUD for ""Individual""?",,,,,,,,,,,
+"Is there a ""Registry BB"" (used in UC sequence diagrams) -- or just a Registration BB?",,,,,,,,,,,
+TODO,,,,,,,,,,,
+m2m fields: Policy <> Agreement,,,,,,,,,,,
+atomic endpoints: List of ConsentRecordChoice and Policy,,,,,,,,,,,
+"Return values, especially lists in return values",,,,,,,,,,,

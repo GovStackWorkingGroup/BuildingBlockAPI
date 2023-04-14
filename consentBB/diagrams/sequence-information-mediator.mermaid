@@ -1,0 +1,15 @@
+sequenceDiagram
+    Workflow BB->>Consent BB: Verifies that consent exists
+
+    Consent BB->>Workflow BB: Success
+
+    Workflow BB->>Information Mediator BB: Discover data service
+    
+    Information Mediator BB->>Workflow BB: ExternalService URL
+
+    Workflow BB->>Information Mediator BB: Consume data*)
+    
+    Information Mediator BB->>Workflow BB: Data from ExternalService
+
+
+    Note over Workflow BB: *) Consumes data which requires consent

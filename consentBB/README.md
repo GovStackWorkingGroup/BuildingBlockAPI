@@ -37,14 +37,20 @@ Working Group Representative: Ramkumar ([psramkumar2@gmail.com](psramkumar2@gmai
 
 The key deliverables are as summarised below:
 
-1. [Consent BB definition](https://docs.google.com/document/d/1e4HbGN-3iskIvZnzKzWwiW9YnBLo0-4c/edit?usp=sharing&ouid=106785504742865552721&rtpof=true&sd=true)
+1. [Consent BB definition 0.8.1](https://docs.google.com/document/d/1fNsEQWvb7-tC-_s99yrurNNoGVyoaXKB/edit#)
 2. [Use case specifications](https://github.com/lalc/BuildingBlockAPI/tree/main/consent-management/usecases)
-3. Functional and technical requirements
-4. Draft APIs
+3. Functional and technical requirements (see Consent BB Definition)
+4. OpenAPI specs - Latest version: [0.8.1](https://app.swaggerhub.com/apis/GovStack/consent-management-bb/)
+5. Rendered diagrams and diagram sources (maintained in Git)
 
 ## Release Status
 
-Work ongoing
+All diagrams and API specifications contained here are subject to ongoing changes by an internal GovStack Working Group, following this roadmap:
+
+* Wave 2, Internal Review (April 14th, 2022)
+* Release certification (May 8th, 2022)
+* Limited publication (Deadline TBA)
+* Community-wide publication (~July 1st 2022)
 
 ## Contributing
 
